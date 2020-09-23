@@ -42,7 +42,7 @@ namespace Hosta.Net
 			var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
 			var ipAddress = ipHostInfo.AddressList[0];
 
-			Debug.Log($"Bound to address at {ipAddress.ToString()}");
+			//Logger.Log($"Bound to address at {ipAddress.ToString()}");
 
 			// Merge IP with port to create the local endpoint
 			var localEndPoint = new IPEndPoint(ipAddress, port);
@@ -132,7 +132,7 @@ namespace Hosta.Net
 			{
 				// Dispose of managed resources
 				listening = false;
-				Debug.Log("SocketListener disposed.");
+				//Logger.Log("SocketListener disposed.");
 				disposed = true;
 			}
 		}

@@ -79,7 +79,7 @@ namespace Hosta.Net
 				{
 					socket.EndReceive(ar);
 					int length = BitConverter.ToInt32(sizeBuffer, 0);
-					Debug.Log(length);
+					//Logger.Log(length);
 					if (length > MaxLength) throw new Exception("Message was too to receive!");
 					ReadMessage(tcs, length);
 				}
@@ -140,7 +140,6 @@ namespace Hosta.Net
 		private void WriteLengthAndMessage(TaskCompletionSource<object> tcs, byte[] message)
 		{
 			List<byte> package = new List<byte>();
-			Debug.Log(message.Length);
 			package.AddRange(BitConverter.GetBytes(message.Length));
 			package.AddRange(message);
 			byte[] blob = package.ToArray();
