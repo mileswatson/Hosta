@@ -10,7 +10,7 @@ namespace Hosta.Net
 	/// <summary>
 	/// An APM to TAP wrapper for the default socket class.
 	/// </summary>
-	public class SocketMessenger
+	public class SocketMessenger : IDisposable
 	{
 		/// <summary>
 		/// The system socket to communicate with.
