@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net.Sockets;
+﻿using Hosta.Tools;
+using System;
+using System.Linq.Expressions;
 using System.Net;
-using System.Threading.Tasks;
+using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
-using Hosta.Tools;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Hosta.Net
 {
@@ -17,20 +14,20 @@ namespace Hosta.Net
 	/// </summary>
 	public class SocketServer : IDisposable
 	{
-		// The underlying bound socket
-		private Socket listener;
-
-		private AccessQueue acceptQueue = new AccessQueue();
+		/// <summary>
+		/// Underlying listener socket.
+		/// </summary>
+		private readonly Socket listener;
 
 		/// <summary>
-		/// The number of empty TCS in the queue.
+		/// Only one accept can happen at a time.
 		/// </summary>
-		private int waiting = 0;
+		private readonly AccessQueue acceptQueue = new AccessQueue();
 
 		/// <summary>
-		/// Whether the socket is listening.
+		/// Controls logging.
 		/// </summary>
-		private bool listening = false;
+		private readonly Logger logger;
 
 		/// <summary>
 		/// Constructs a socket listener bound to the given port.
@@ -38,11 +35,12 @@ namespace Hosta.Net
 		/// <param name="port">The port to bind to.</param>
 		public SocketServer(int port)
 		{
+			// Initialise logger
+			logger = new Logger(this);
+
 			// Get the IP of the local machine
 			var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
 			var ipAddress = ipHostInfo.AddressList[0];
-
-			//Logger.Log($"Bound to address at {ipAddress.ToString()}");
 
 			// Merge IP with port to create the local endpoint
 			var localEndPoint = new IPEndPoint(ipAddress, port);
@@ -55,10 +53,13 @@ namespace Hosta.Net
 
 			// Bind to endpoint
 			listener.Bind(localEndPoint);
+			logger.Log($"Listener has been bound to {localEndPoint}.", VerbosityLevel.Detailed);
 
 			// Start listening
 			listener.Listen(100);
-			listening = true;
+			logger.Log("Listener is listening.", VerbosityLevel.Detailed);
+
+			logger.Log("Construction finished.", VerbosityLevel.Important);
 		}
 
 		/// <summary>
@@ -67,46 +68,66 @@ namespace Hosta.Net
 		/// <returns>The accepted SocketMessenger.</returns>
 		public async Task<SocketMessenger> Accept()
 		{
-			if (!listening) throw new Exception("Not listening!");
+			ThrowIfDisposed();
+			logger.Log("Waiting for an accept queue pass...", VerbosityLevel.Detailed);
 			await acceptQueue.GetPass();
-			if (!listening)
-			{
-				Dispose();
-				throw new Exception("Not listening!");
-			}
+			logger.Log("Accept queue pass obtained.", VerbosityLevel.Detailed);
+			ThrowIfDisposed();
+
 			var tcs = new TaskCompletionSource<Socket>();
-			var timeout = Task.Delay(5000);
 			try
 			{
+				logger.Log("Starting accept...", VerbosityLevel.Detailed);
 				listener.BeginAccept(
-								new AsyncCallback(ar =>
-								{
-									try
-									{
-										// End the accept process
-										Socket connection = listener.EndAccept(ar);
+					new AsyncCallback(ar =>
+					{
+						try
+						{
+							// End the accept process
+							Socket connection = listener.EndAccept(ar);
 
-										// Set the result
-										tcs.SetResult(connection);
-									}
-									catch (Exception e)
-									{
-										tcs.SetException(e);
-									}
-								}),
-								null
-							);
-				await Task.WhenAny(tcs.Task, timeout);
-				if (!tcs.Task.IsCompleted)
+							// Set the result
+							tcs.SetResult(connection);
+						}
+						catch (Exception e)
+						{
+							tcs.SetException(e);
+						}
+					}),
+					null
+				);
+
+				// Wait for finish, periodically checking for disposal
+				var cts = new CancellationTokenSource();
+				do
 				{
-					if (listening) Dispose();
-					throw new TimeoutException("Socket machine broke");
+					var timeout = Task.Delay(1000, cts.Token);
+					await Task.WhenAny(tcs.Task, timeout);
+					if (tcs.Task.IsCompleted)
+					{
+						break;
+					}
+					ThrowIfDisposed();
+				} while (true);
+				cts.Cancel();
+
+				// Attempt to return the result
+				try
+				{
+					var socket = tcs.Task.Result;
+					logger.Log("Connected successfully!", VerbosityLevel.Standard);
+					return new SocketMessenger(tcs.Task.Result);
 				}
-				return new SocketMessenger(tcs.Task.Result);
+				catch (Exception e)
+				{
+					logger.LogAndThrow(e, VerbosityLevel.Important);
+					return null;
+				}
 			}
 			finally
 			{
 				acceptQueue.ReturnPass();
+				logger.Log("Accept queue pass returned.", VerbosityLevel.Detailed);
 			}
 		}
 
@@ -116,7 +137,7 @@ namespace Hosta.Net
 
 		private void ThrowIfDisposed()
 		{
-			if (disposed) throw new ObjectDisposedException("AccessQueue has been disposed!");
+			if (disposed) logger.LogAndThrow(new ObjectDisposedException("Attempted post-disposal use!"), VerbosityLevel.Important);
 		}
 
 		public void Dispose()
@@ -131,9 +152,14 @@ namespace Hosta.Net
 			if (disposing)
 			{
 				// Dispose of managed resources
-				listening = false;
-				//Logger.Log("SocketListener disposed.");
+
+				logger.Log("Starting disposal...", VerbosityLevel.Standard);
+
+				listener.Close();
+				logger.Log("Listener has been closed.", VerbosityLevel.Detailed);
+
 				disposed = true;
+				logger.Log("Disposal finished.", VerbosityLevel.Important);
 			}
 		}
 	}

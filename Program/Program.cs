@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Hosta.Net;
+using Hosta.Tools;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
-using Hosta.Net;
-using Hosta.Tools;
 
 namespace Hosta
 {
@@ -15,8 +12,6 @@ namespace Hosta
 		public static void Main()
 		{
 			Logger.SetDirectory(@"C:\Users\Miles\Documents\Documents\Programming\NEA\Hosta\Logs", "Program");
-			var a = new Logger(new object(), "test");
-			a.Log("another quick test!");
 
 			using var listener = new SocketServer(11000);
 			var accept = listener.Accept();
