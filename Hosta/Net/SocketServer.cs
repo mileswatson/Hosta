@@ -14,17 +14,9 @@ namespace Hosta.Net
 	/// </summary>
 	public class SocketServer : IDisposable
 	{
-		private int port;
+		public readonly int port;
 
-		public int Port {
-			get { return port; }
-		}
-
-		private IPAddress address;
-
-		public IPAddress Address {
-			get { return address; }
-		}
+		public readonly IPAddress address;
 
 		/// <summary>
 		/// Underlying listener socket.
@@ -96,11 +88,9 @@ namespace Hosta.Net
 					null
 				);
 
-				// Wait for finish, periodically checking for disposal
-				var cts = new CancellationTokenSource();
 				do
 				{
-					var timeout = Task.Delay(1000, cts.Token);
+					var timeout = Task.Delay(1000);
 					await Task.WhenAny(tcs.Task, timeout);
 					if (tcs.Task.IsCompleted)
 					{
@@ -108,7 +98,6 @@ namespace Hosta.Net
 					}
 					ThrowIfDisposed();
 				} while (true);
-				cts.Cancel();
 
 				// Attempt to return the result
 				try
@@ -116,7 +105,7 @@ namespace Hosta.Net
 					var socket = tcs.Task.Result;
 					return new SocketMessenger(tcs.Task.Result);
 				}
-				catch (Exception e)
+				catch
 				{
 					return null;
 				}
