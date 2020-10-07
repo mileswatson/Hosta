@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Hosta.Crypto;
+using Hosta.Net;
+using Hosta.Tools;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
-using Hosta.Net;
+using System.Security.Cryptography;
 
 namespace Hosta
 {
@@ -13,22 +13,23 @@ namespace Hosta
 	{
 		public static void Main()
 		{
-			var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
-			var listener = new SocketListener(11000);
-			var a = listener.Start(cts.Token);
+			using var socketServer = new SocketServer(11000);
+			var accept = socketServer.Accept();
 
-			Socket s = new Socket(SocketType.Stream, ProtocolType.Tcp);
-			var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-			var ipAddress = ipHostInfo.AddressList[0];
-			var remoteEndPoint = new IPEndPoint(ipAddress, 11000);
-			s.Connect(remoteEndPoint);
-			var client = new SocketMessenger(s);
-			client.Send(new byte[] { 0, 1, 52 }).Wait();
-			var handler = listener.Accept().Result;
+			var socketClient = new SocketClient();
+			using SocketMessenger requester = socketClient.Connect(socketServer.address, socketServer.port).Result;
+			requester.Send(new byte[] { 0, 1, 52 }).Wait();
+
+			using SocketMessenger handler = accept.Result;
+
 			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
-			client.Dispose();
-			handler.Dispose();
-			a.Wait();
+
+			/*
+			var start = new byte[] { 1 };
+			AesCrypter aes = new AesCrypter(SecureRandom.GetBytes(32));
+			var finish = aes.Decrypt(aes.Encrypt(start));
+			Console.WriteLine(string.Join(",", finish.Select(o => o.ToString()).ToArray()));
+			*/
 		}
 	}
 }

@@ -1,16 +1,14 @@
-﻿using System;
+﻿using Hosta.Tools;
+using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using System.Threading.Tasks;
-
-using Hosta.Tools;
 
 namespace Hosta.Net
 {
 	/// <summary>
 	/// An APM to TAP wrapper for the default socket class.
 	/// </summary>
-	public class SocketMessenger
+	public class SocketMessenger : IDisposable
 	{
 		/// <summary>
 		/// The system socket to communicate with.
@@ -53,6 +51,7 @@ namespace Hosta.Net
 		{
 			ThrowIfDisposed();
 			await readQueue.GetPass();
+			ThrowIfDisposed();
 			try
 			{
 				var tcs = new TaskCompletionSource<byte[]>();
@@ -62,7 +61,7 @@ namespace Hosta.Net
 			catch (Exception e)
 			{
 				Dispose();
-				throw e;
+				return null;
 			}
 			finally
 			{
@@ -70,6 +69,10 @@ namespace Hosta.Net
 			}
 		}
 
+		/// <summary>
+		/// Reads the length, then calls ReadMessage.
+		/// </summary>
+		/// <param name="tcs">TCS to pass to ReadMessage.</param>
 		private void ReadLength(TaskCompletionSource<byte[]> tcs)
 		{
 			byte[] sizeBuffer = new byte[4];
@@ -79,8 +82,7 @@ namespace Hosta.Net
 				{
 					socket.EndReceive(ar);
 					int length = BitConverter.ToInt32(sizeBuffer, 0);
-					Debug.Log(length);
-					if (length > MaxLength) throw new Exception("Message was too to receive!");
+					if (length > MaxLength) throw new Exception("Message was too long to receive!");
 					ReadMessage(tcs, length);
 				}
 				catch (Exception e)
@@ -90,6 +92,11 @@ namespace Hosta.Net
 			}, null);
 		}
 
+		/// <summary>
+		/// Reads the message, then returns it via the TCS.
+		/// </summary>
+		/// <param name="tcs">TCS to set result of.</param>
+		/// <param name="length">Length of message to read.</param>
 		private void ReadMessage(TaskCompletionSource<byte[]> tcs, int length)
 		{
 			byte[] messageBuffer = new byte[length];
@@ -119,6 +126,8 @@ namespace Hosta.Net
 		{
 			ThrowIfDisposed();
 			await writeQueue.GetPass();
+			ThrowIfDisposed();
+
 			try
 			{
 				var tcs = new TaskCompletionSource<object>();
@@ -129,7 +138,6 @@ namespace Hosta.Net
 			catch (Exception e)
 			{
 				Dispose();
-				throw e;
 			}
 			finally
 			{
@@ -140,7 +148,6 @@ namespace Hosta.Net
 		private void WriteLengthAndMessage(TaskCompletionSource<object> tcs, byte[] message)
 		{
 			List<byte> package = new List<byte>();
-			Debug.Log(message.Length);
 			package.AddRange(BitConverter.GetBytes(message.Length));
 			package.AddRange(message);
 			byte[] blob = package.ToArray();
@@ -164,7 +171,7 @@ namespace Hosta.Net
 
 		private void ThrowIfDisposed()
 		{
-			if (disposed) throw new ObjectDisposedException("SocketStream has been disposed!");
+			if (disposed) throw new ObjectDisposedException("Attempted post-disposal use!");
 		}
 
 		public void Dispose()
@@ -179,8 +186,10 @@ namespace Hosta.Net
 			if (disposing)
 			{
 				// Dispose of managed resources
+
 				if (readQueue != null) readQueue.Dispose();
 				if (writeQueue != null) writeQueue.Dispose();
+
 				socket.Close();
 			}
 
