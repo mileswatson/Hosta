@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hosta", "Hosta\Hosta.csproj", "{122738E1-EB26-4CD2-809F-4448E1A28D33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosta", "Hosta\Hosta.csproj", "{122738E1-EB26-4CD2-809F-4448E1A28D33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Program", "Program\Program.csproj", "{620BDBD2-91A8-4937-997F-BAB097435240}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Program", "Program\Program.csproj", "{620BDBD2-91A8-4937-997F-BAB097435240}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

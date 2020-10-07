@@ -1,5 +1,4 @@
-﻿using Hosta.Crypto;
-using Hosta.Net;
+﻿using Hosta.Net;
 using Hosta.Tools;
 using System;
 using System.Linq;
