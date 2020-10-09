@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net.Mail;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Hosta.Crypto;
 
@@ -19,6 +16,10 @@ namespace Hosta.Net
 		private readonly KDFRatchet sendRatchet;
 		private readonly byte[] clicks;
 
+		/// <summary>
+		/// Creates a new instance of a SecureMessenger
+		/// </summary>
+		/// <param name="initiator">Indicates whether the socketMessenger initiated a connection or not.</param>
 		public SecureMessenger(SocketMessenger socketMessenger, byte[] key, bool initiator)
 		{
 			this.socketMessenger = socketMessenger;
@@ -29,6 +30,9 @@ namespace Hosta.Net
 			this.clicks = hmac.ComputeHash(new byte[] { 3 });
 		}
 
+		/// <summary>
+		/// Asynchronously sends an encrypted message.
+		/// </summary>
 		public Task Send(byte[] message)
 		{
 			ThrowIfDisposed();
@@ -36,6 +40,9 @@ namespace Hosta.Net
 			return socketMessenger.Send(package);
 		}
 
+		/// <summary>
+		/// Asynchronously receives an encrypted message.
+		/// </summary>
 		public async Task<byte[]> Receive()
 		{
 			ThrowIfDisposed();

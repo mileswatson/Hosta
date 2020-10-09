@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Hosta.Net
 {
+	/// <summary>
+	/// An server that spawns encrypted sessions.
+	/// </summary>
 	public class SecureServer : IDisposable
 	{
 		private readonly SocketServer server;
@@ -25,6 +28,10 @@ namespace Hosta.Net
 			}
 		}
 
+		/// <summary>
+		/// Creates a new instance of a SecureServer.
+		/// </summary>
+		/// <param name="authKey">The encryption key to use - if null, a key exchange is performed.</param>
 		public SecureServer(int port, byte[] authKey = null)
 		{
 			if (!(authKey is null))
@@ -34,6 +41,9 @@ namespace Hosta.Net
 			server = new SocketServer(port);
 		}
 
+		/// <summary>
+		/// Accepts and verifies a secure connection.
+		/// </summary>
 		public async Task<SecureMessenger> Accept()
 		{
 			ThrowIfDisposed();
