@@ -17,11 +17,15 @@ namespace Hosta
 			var accept = socketServer.Accept();
 
 			var socketClient = new SocketClient();
-			using SocketMessenger requester = socketClient.Connect(socketServer.address, socketServer.port).Result;
-			requester.Send(new byte[] { 0, 1, 52 }).Wait();
+			using SecureMessenger requester = new SecureMessenger(socketClient.Connect(socketServer.address, socketServer.port).Result, new byte[] { 1 }, new byte[] { 2 }, new byte[] { 3 });
+			requester.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			requester.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			requester.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
 
-			using SocketMessenger handler = accept.Result;
+			using SecureMessenger handler = new SecureMessenger(accept.Result, new byte[] { 2 }, new byte[] { 1 }, new byte[] { 3 });
 
+			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
 			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
 
 			/*

@@ -58,7 +58,7 @@ namespace Hosta.Net
 				ReadLength(tcs);
 				return await tcs.Task;
 			}
-			catch (Exception e)
+			catch
 			{
 				Dispose();
 				return null;
@@ -135,7 +135,7 @@ namespace Hosta.Net
 				WriteLengthAndMessage(tcs, message);
 				await tcs.Task;
 			}
-			catch (Exception e)
+			catch
 			{
 				Dispose();
 			}

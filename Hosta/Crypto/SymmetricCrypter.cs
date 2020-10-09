@@ -9,7 +9,7 @@ namespace Hosta.Crypto
 	/// <summary>
 	/// Used to create and open encrypted packages.
 	/// </summary>
-	public class AesCrypter
+	public class SymmetricCrypter
 	{
 		public const int KEY_SIZE = 32;
 		public const int NONCE_SIZE = 12;
@@ -31,7 +31,7 @@ namespace Hosta.Crypto
 		/// Creates a new AesCrypter.
 		/// </summary>
 		/// <param name="key">Default is an array of 0 bytes.</param>
-		public AesCrypter(byte[] key = null)
+		public SymmetricCrypter(byte[] key = null)
 		{
 			this.key = key is null ? new byte[KEY_SIZE] : key;
 		}
