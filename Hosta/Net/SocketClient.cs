@@ -16,7 +16,6 @@ namespace Hosta.Net
 		/// <summary>
 		/// Initiates a connection with a SocketServer.
 		/// </summary>
-		/// <returns>The connected SocketMessenger.</returns>
 		public Task<SocketMessenger> Connect(IPAddress address, int port)
 		{
 			Socket s = new Socket(SocketType.Stream, ProtocolType.Tcp);

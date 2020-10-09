@@ -12,16 +12,30 @@ namespace Hosta
 	{
 		public static void Main()
 		{
-			using var socketServer = new SocketServer(11000);
-			var accept = socketServer.Accept();
+			using var secureServer = new SecureServer(11000);
 
-			var socketClient = new SocketClient();
-			using SocketMessenger requester = socketClient.Connect(socketServer.address, socketServer.port).Result;
-			requester.Send(new byte[] { 0, 1, 52 }).Wait();
+			var secureClient = new SecureClient();
+			var a = secureClient.Connect(secureServer.Address, secureServer.Port);
+			var b = secureServer.Accept();
 
-			using SocketMessenger handler = accept.Result;
+			using var client = a.Result;
+			using var handler = b.Result;
+
+			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+
+			handler.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			handler.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			handler.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
 
 			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
+
+			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
 
 			/*
 			var start = new byte[] { 1 };
