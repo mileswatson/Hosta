@@ -7,7 +7,7 @@ namespace Hosta.Crypto
 	/// Static class to allow cryptographically secure pseudorandom
 	/// number generation (CSPRNG).
 	/// </summary>
-	public static class SecureRandom
+	public static class SecureRandomGenerator
 	{
 		/// <summary>
 		/// Generates cryptographically-secure random bytes.

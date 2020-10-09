@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Mail;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Hosta.Crypto;
@@ -12,19 +13,20 @@ namespace Hosta.Net
 	/// </summary>
 	public class SecureMessenger : IDisposable
 	{
-		private SocketMessenger socketMessenger;
-		private SymmetricCrypter crypter;
-		private KDFRatchet receiveRatchet;
-		private KDFRatchet sendRatchet;
-		private byte[] clicks;
+		private readonly SocketMessenger socketMessenger;
+		private readonly SymmetricCrypter crypter;
+		private readonly KDFRatchet receiveRatchet;
+		private readonly KDFRatchet sendRatchet;
+		private readonly byte[] clicks;
 
-		public SecureMessenger(SocketMessenger socketMessenger, byte[] sendKey = null, byte[] receiveKey = null, byte[] clicks = null)
+		public SecureMessenger(SocketMessenger socketMessenger, byte[] key, bool initiator)
 		{
 			this.socketMessenger = socketMessenger;
 			crypter = new SymmetricCrypter();
-			sendRatchet = new KDFRatchet(sendKey);
-			receiveRatchet = new KDFRatchet(receiveKey);
-			this.clicks = clicks;
+			var hmac = new HMACSHA256(key);
+			sendRatchet = new KDFRatchet(hmac.ComputeHash(initiator ? new byte[] { 1 } : new byte[] { 2 }));
+			receiveRatchet = new KDFRatchet(hmac.ComputeHash(initiator ? new byte[] { 2 } : new byte[] { 1 }));
+			this.clicks = hmac.ComputeHash(new byte[] { 3 });
 		}
 
 		public Task Send(byte[] message)

@@ -8,7 +8,7 @@ namespace Hosta.Crypto
 	public class KeyExchanger : IDisposable
 	{
 		private ECDiffieHellman secret = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP521);
-		private ECDiffieHellman foreignPublic = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP521);
+		private readonly ECDiffieHellman foreignPublic = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP521);
 
 		public byte[] Token {
 			get {

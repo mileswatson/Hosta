@@ -44,7 +44,7 @@ namespace Hosta.Crypto
 		/// <returns>The secure package.</returns>
 		public byte[] Encrypt(byte[] plainblob, byte[] overrideKey = null)
 		{
-			var nonce = SecureRandom.GetBytes(NONCE_SIZE);
+			var nonce = SecureRandomGenerator.GetBytes(NONCE_SIZE);
 			var cipherblob = new byte[plainblob.Length];
 			var tag = new byte[TAG_SIZE];
 			using var aes = new AesGcm(overrideKey is null ? key : overrideKey);
