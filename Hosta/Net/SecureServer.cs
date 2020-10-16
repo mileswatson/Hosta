@@ -34,10 +34,7 @@ namespace Hosta.Net
 		/// <param name="authKey">The encryption key to use - if null, a key exchange is performed.</param>
 		public SecureServer(int port, byte[] authKey = null)
 		{
-			if (!(authKey is null))
-			{
-				this.authKey = authKey;
-			}
+			this.authKey = authKey;
 			server = new SocketServer(port);
 		}
 
