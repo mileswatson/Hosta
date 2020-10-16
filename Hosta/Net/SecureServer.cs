@@ -85,7 +85,6 @@ namespace Hosta.Net
 				// Dispose of managed resources
 
 				server.Dispose();
-				authKey = null;
 
 				disposed = true;
 			}
