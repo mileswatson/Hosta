@@ -45,17 +45,13 @@ namespace Hosta.Net
 		{
 			ThrowIfDisposed();
 			var insecureMessenger = await server.Accept();
-			byte[] key;
-			if (authKey is null)
+			byte[] key = authKey;
+			if (key is null)
 			{
 				var exchanger = new KeyExchanger();
 				var sent = insecureMessenger.Send(exchanger.Token);
 				key = exchanger.KeyFromToken(await insecureMessenger.Receive());
 				await sent;
-			}
-			else
-			{
-				key = authKey;
 			}
 			var secureMessenger = new SecureMessenger(insecureMessenger, key, false);
 			byte[] myValues = SecureRandomGenerator.GetBytes(32);
