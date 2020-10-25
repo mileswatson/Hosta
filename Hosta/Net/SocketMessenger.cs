@@ -1,6 +1,7 @@
 ﻿using Hosta.Tools;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace Hosta.Net
@@ -13,7 +14,7 @@ namespace Hosta.Net
 		/// <summary>
 		/// The system socket to communicate with.
 		/// </summary>
-		private readonly System.Net.Sockets.Socket socket;
+		private readonly Socket socket;
 
 		/// <summary>
 		/// Allows one message to be received at a time.
@@ -36,7 +37,7 @@ namespace Hosta.Net
 		/// <param name="connectedSocket">
 		/// The underlying socket to use.
 		/// </param>
-		public SocketMessenger(System.Net.Sockets.Socket connectedSocket)
+		public SocketMessenger(Socket connectedSocket)
 		{
 			socket = connectedSocket;
 		}
@@ -82,7 +83,7 @@ namespace Hosta.Net
 				{
 					socket.EndReceive(ar);
 					int length = BitConverter.ToInt32(sizeBuffer, 0);
-					if (length > MaxLength) throw new Exception("Message was too long to receive!");
+					if (length <= 0 || length > MaxLength) throw new ArgumentOutOfRangeException("Message was an invalid length!");
 					ReadMessage(tcs, length);
 				}
 				catch (Exception e)
@@ -127,11 +128,10 @@ namespace Hosta.Net
 			ThrowIfDisposed();
 			await writeQueue.GetPass();
 			ThrowIfDisposed();
-
 			try
 			{
 				var tcs = new TaskCompletionSource<object>();
-				if (message.Length > MaxLength) throw new Exception("Message is too large");
+				if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException("Message is too large");
 				WriteLengthAndMessage(tcs, message);
 				await tcs.Task;
 			}

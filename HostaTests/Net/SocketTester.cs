@@ -1,13 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Hosta.Net;
 using Hosta.Crypto;
-using System.Net.Cache;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Linq;
+using System;
 
 namespace HostaTests.Net
 {
@@ -56,16 +52,7 @@ namespace HostaTests.Net
 		public void TestInvalid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			var threw = false;
-			try
-			{
-				var sent = a.Send(bytes);
-			}
-			catch
-			{
-				threw = true;
-			}
-			Assert.IsTrue(threw);
+			Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a.Send(bytes));
 		}
 	}
 }

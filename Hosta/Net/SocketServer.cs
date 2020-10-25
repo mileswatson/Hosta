@@ -85,6 +85,7 @@ namespace Hosta.Net
 					null
 				);
 
+				// Check periodically for disposal
 				do
 				{
 					var timeout = Task.Delay(1000);

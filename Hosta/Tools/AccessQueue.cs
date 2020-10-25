@@ -18,8 +18,6 @@ namespace Hosta.Tools
 
 		private int available = 1;
 
-		private bool checkingForSpace = false;
-
 		/// <summary>
 		/// Queues for access to the resource.
 		/// </summary>
@@ -51,8 +49,6 @@ namespace Hosta.Tools
 		/// </summary>
 		private void CheckForSpace()
 		{
-			if (checkingForSpace) return;
-			checkingForSpace = true;
 			lock (waitingTasks)
 			{
 				var currentNode = waitingTasks.First;
@@ -64,7 +60,6 @@ namespace Hosta.Tools
 					tcs.SetResult(null);
 					currentNode = currentNode.Next;
 				}
-				checkingForSpace = false;
 			}
 		}
 
