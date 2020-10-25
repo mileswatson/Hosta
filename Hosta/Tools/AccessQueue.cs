@@ -17,16 +17,8 @@ namespace Hosta.Tools
 			= new LinkedList<TaskCompletionSource<object>>();
 
 		private int available = 1;
-		private readonly int maximum = 1;
 
 		private bool checkingForSpace = false;
-
-		/// <summary>
-		/// Constructs a new AccessQueue.
-		/// </summary>
-		public AccessQueue()
-		{
-		}
 
 		/// <summary>
 		/// Queues for access to the resource.
@@ -46,16 +38,16 @@ namespace Hosta.Tools
 		/// </summary>
 		public void ReturnPass()
 		{
-			if (available == maximum)
+			if (available == 1)
 			{
-				throw new SemaphoreFullException("All passes have been given returned!");
+				throw new SemaphoreFullException("All passes have been returned!");
 			}
 			available++;
 			CheckForSpace();
 		}
 
 		/// <summary>
-		/// Task that checks to see if there's any
+		/// Allocates any available passes.
 		/// </summary>
 		private void CheckForSpace()
 		{
@@ -98,19 +90,16 @@ namespace Hosta.Tools
 			{
 				// Dispose of managed resources
 				CheckForSpace();
-				if (waitingTasks != null)
+				lock (waitingTasks)
 				{
-					lock (waitingTasks)
+					var currentNode = waitingTasks.First;
+					while (currentNode != null)
 					{
-						var currentNode = waitingTasks.First;
-						while (currentNode != null)
-						{
-							var tcs = currentNode.Value;
-							waitingTasks.Remove(currentNode);
-							tcs.SetException(
-								new ObjectDisposedException("AccessQueue has been disposed!"));
-							currentNode = currentNode.Next;
-						}
+						var tcs = currentNode.Value;
+						waitingTasks.Remove(currentNode);
+						tcs.SetException(
+							new ObjectDisposedException("AccessQueue has been disposed!"));
+						currentNode = currentNode.Next;
 					}
 				}
 			}
