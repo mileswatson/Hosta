@@ -1,25 +1,26 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Hosta.Net;
 using Hosta.Crypto;
-using System.Threading.Tasks;
-using System.Linq;
+using Hosta.Net;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 
 namespace HostaTests.Net
 {
 	[TestClass]
-	public class SocketTester
+	public class SecureTester
 	{
-		public SocketMessenger a;
-		public SocketMessenger b;
+		public SecureMessenger a;
+		public SecureMessenger b;
 
-		public SocketTester()
+		public SecureTester()
 		{
-			using var server = new SocketServer(12000);
+			using var server = new SecureServer(12000);
 
-			SocketClient client = new SocketClient();
+			SecureClient client = new SecureClient();
 
-			var connected = client.Connect(server.address, server.port);
+			var connected = client.Connect(server.Address, server.Port);
 
 			a = server.Accept().Result;
 
@@ -33,10 +34,25 @@ namespace HostaTests.Net
 			Assert.IsNotNull(b);
 		}
 
+		[TestMethod]
+		public void SharedKeySession()
+		{
+			var sharedKey = SecureRandomGenerator.GetBytes(100);
+
+			using var server = new SecureServer(12000, sharedKey);
+
+			SecureClient client = new SecureClient();
+
+			var connected = client.Connect(server.Address, server.Port, sharedKey);
+
+			Assert.IsNotNull(server.Accept().Result);
+			Assert.IsNotNull(connected.Result);
+		}
+
 		[DataTestMethod]
 		[DataRow(1)]
 		[DataRow(563)]
-		[DataRow(1 << 15)]
+		[DataRow((1 << 15) - 28)]
 		public async Task TestValid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
@@ -48,7 +64,7 @@ namespace HostaTests.Net
 
 		[DataTestMethod]
 		[DataRow(0)]
-		[DataRow((1 << 15) + 1)]
+		[DataRow((1 << 15) - 27)]
 		public void TestInvalid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
