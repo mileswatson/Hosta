@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Hosta.Crypto;
 using Hosta.Net;
-using Hosta.Crypto;
-using System.Threading.Tasks;
-using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HostaTests.Net
 {

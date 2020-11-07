@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Hosta.Crypto;
+using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Hosta.Crypto;
 
 namespace Hosta.Net
 {
