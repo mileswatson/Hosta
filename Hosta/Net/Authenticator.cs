@@ -14,41 +14,41 @@ namespace Hosta.Net
 			this.self = self;
 		}
 
-		public async Task<AuthenticatedMessenger> AuthenticateClient(SecureMessenger secureMessenger)
+		public async Task<AuthenticatedMessenger> AuthenticateClient(ProtectedMessenger protectedMessenger)
 		{
 			ThrowIfDisposed();
 
 			// Throw if client has the wrong address.
-			var wantedID = Transcoder.TextFromBytes(await secureMessenger.Receive());
+			var wantedID = Transcoder.TextFromBytes(await protectedMessenger.Receive());
 			if (wantedID != self.ID) throw new Exception("Wrong address!");
 
 			// Send the public key and the signature.
 			await Task.WhenAll(
-				secureMessenger.Send(self.PublicIdentityInfo),
-				secureMessenger.Send(self.Sign(secureMessenger.ID))
+				protectedMessenger.Send(self.PublicIdentityInfo),
+				protectedMessenger.Send(self.Sign(protectedMessenger.ID))
 			);
 
 			// Gets the client public key
-			var pkInfo = await secureMessenger.Receive();
+			var pkInfo = await protectedMessenger.Receive();
 			var clientIdentity = new PublicIdentity(pkInfo);
 
 			// Verifies the client's signature.
-			if (!clientIdentity.Verify(secureMessenger.ID, await secureMessenger.Receive()))
+			if (!clientIdentity.Verify(protectedMessenger.ID, await protectedMessenger.Receive()))
 				throw new Exception("Could not authenticate session!");
 
 			// Returns client ID and secureMessenger
-			return new AuthenticatedMessenger(secureMessenger, clientIdentity);
+			return new AuthenticatedMessenger(protectedMessenger, clientIdentity);
 		}
 
-		public async Task<AuthenticatedMessenger> AuthenticateServer(SecureMessenger secureMessenger, string serverID)
+		public async Task<AuthenticatedMessenger> AuthenticateServer(ProtectedMessenger protectedMessenger, string serverID)
 		{
 			ThrowIfDisposed();
 
 			// Initialise connection attempt.
-			await secureMessenger.Send(Transcoder.BytesFromText(serverID));
+			await protectedMessenger.Send(Transcoder.BytesFromText(serverID));
 
 			// Receive the server's public key.
-			var pkInfo = await secureMessenger.Receive();
+			var pkInfo = await protectedMessenger.Receive();
 			PublicIdentity serverIdentity;
 			serverIdentity = new PublicIdentity(pkInfo);
 
@@ -56,16 +56,16 @@ namespace Hosta.Net
 			if (serverIdentity.ID != serverID) throw new Exception("Wrong address!");
 
 			// Verifies the server's signature.
-			var signature = await secureMessenger.Receive();
-			if (!serverIdentity.Verify(secureMessenger.ID, signature)) throw new Exception("Could not authenticate session!");
+			var signature = await protectedMessenger.Receive();
+			if (!serverIdentity.Verify(protectedMessenger.ID, signature)) throw new Exception("Could not authenticate session!");
 
 			// Send the public key and the signature.
 			await Task.WhenAll(
-				secureMessenger.Send(self.PublicIdentityInfo),
-				secureMessenger.Send(self.Sign(secureMessenger.ID))
+				protectedMessenger.Send(self.PublicIdentityInfo),
+				protectedMessenger.Send(self.Sign(protectedMessenger.ID))
 			);
 
-			return new AuthenticatedMessenger(secureMessenger, serverIdentity);
+			return new AuthenticatedMessenger(protectedMessenger, serverIdentity);
 		}
 
 		//// Implements IDisposable

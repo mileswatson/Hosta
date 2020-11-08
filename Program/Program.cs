@@ -8,14 +8,20 @@ namespace Hosta
 	{
 		public static void Main()
 		{
-			using var secureServer = new SecureServer(11000);
+			using var socketServer = new SocketServer(11000);
 
-			var secureClient = new SecureClient();
-			var a = secureClient.Connect(secureServer.Address, secureServer.Port);
-			var b = secureServer.Accept();
+			var socketClient = new SocketClient();
 
-			using var client = a.Result;
-			using var handler = b.Result;
+			var a1 = socketClient.Connect(socketServer.address, socketServer.port);
+			var b1 = socketServer.Accept();
+
+			Protector protector = new Protector();
+
+			var a2 = protector.Protect(a1.Result, true);
+			var b2 = protector.Protect(b1.Result, false);
+
+			var client = a2.Result;
+			var handler = b2.Result;
 
 			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
 			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();

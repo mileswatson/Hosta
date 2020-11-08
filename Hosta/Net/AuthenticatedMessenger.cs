@@ -7,26 +7,26 @@ namespace Hosta.Net
 {
 	public class AuthenticatedMessenger : IDisposable
 	{
-		private readonly SecureMessenger secureMessenger;
+		private readonly ProtectedMessenger protectedMessenger;
 
 		public readonly PublicIdentity otherIdentity;
 
-		public AuthenticatedMessenger(SecureMessenger secureMessenger, PublicIdentity otherIdentity)
+		public AuthenticatedMessenger(ProtectedMessenger secureMessenger, PublicIdentity otherIdentity)
 		{
-			this.secureMessenger = secureMessenger;
+			this.protectedMessenger = secureMessenger;
 			this.otherIdentity = otherIdentity;
 		}
 
 		public Task Send(string data)
 		{
 			ThrowIfDisposed();
-			return secureMessenger.Send(Transcoder.BytesFromText(data));
+			return protectedMessenger.Send(Transcoder.BytesFromText(data));
 		}
 
 		public async Task<string> Receive()
 		{
 			ThrowIfDisposed();
-			var message = await secureMessenger.Receive();
+			var message = await protectedMessenger.Receive();
 			try
 			{
 				return Transcoder.TextFromBytes(message);
@@ -59,7 +59,7 @@ namespace Hosta.Net
 			if (disposing)
 			{
 				// Dispose of managed resources
-				secureMessenger.Dispose();
+				protectedMessenger.Dispose();
 			}
 
 			disposed = true;

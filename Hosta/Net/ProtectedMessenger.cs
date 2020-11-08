@@ -8,7 +8,7 @@ namespace Hosta.Net
 	/// <summary>
 	/// Used to send/receive messages over an encrypted session.
 	/// </summary>
-	public class SecureMessenger : IDisposable
+	public class ProtectedMessenger : IDisposable
 	{
 		private readonly SocketMessenger socketMessenger;
 		private readonly SymmetricCrypter crypter;
@@ -22,7 +22,7 @@ namespace Hosta.Net
 		/// Creates a new instance of a SecureMessenger
 		/// </summary>
 		/// <param name="initiator">Indicates whether the socketMessenger initiated a connection or not.</param>
-		public SecureMessenger(SocketMessenger socketMessenger, byte[] key, bool initiator)
+		public ProtectedMessenger(SocketMessenger socketMessenger, byte[] key, bool initiator)
 		{
 			this.socketMessenger = socketMessenger;
 			crypter = new SymmetricCrypter();

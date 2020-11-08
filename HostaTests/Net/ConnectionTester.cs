@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace HostaTests.Net
 {
 	[TestClass]
-	public class SocketTester
+	public class ConnectionTester
 	{
 		public SocketMessenger a;
 		public SocketMessenger b;
 
-		public SocketTester()
+		public ConnectionTester()
 		{
 			using var server = new SocketServer(12000);
 

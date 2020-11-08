@@ -1,5 +1,5 @@
-﻿using System.Security.Cryptography;
-using Hosta.Tools;
+﻿using Hosta.Tools;
+using System.Security.Cryptography;
 
 namespace Hosta.Crypto
 {
