@@ -7,13 +7,22 @@ namespace Hosta.Net
 {
 	public class Authenticator : IDisposable
 	{
+		/// <summary>
+		/// Used to sign data.
+		/// </summary>
 		private PrivateIdentity self;
 
+		/// <summary>
+		/// Creates a new Authenticator from a Private Identity.
+		/// </summary>
 		public Authenticator(PrivateIdentity self)
 		{
 			this.self = self;
 		}
 
+		/// <summary>
+		/// Authenticates ta connection with the client..
+		/// </summary>
 		public async Task<AuthenticatedMessenger> AuthenticateClient(ProtectedMessenger protectedMessenger)
 		{
 			ThrowIfDisposed();
@@ -40,6 +49,9 @@ namespace Hosta.Net
 			return new AuthenticatedMessenger(protectedMessenger, clientIdentity);
 		}
 
+		/// <summary>
+		/// Authenticates a connection with the server.
+		/// </summary>
 		public async Task<AuthenticatedMessenger> AuthenticateServer(ProtectedMessenger protectedMessenger, string serverID)
 		{
 			ThrowIfDisposed();

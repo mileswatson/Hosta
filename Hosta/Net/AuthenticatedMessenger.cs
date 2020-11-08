@@ -5,24 +5,43 @@ using System.Threading.Tasks;
 
 namespace Hosta.Net
 {
+	/// <summary>
+	/// Represents an authenticated connection.
+	/// </summary>
 	public class AuthenticatedMessenger : IDisposable
 	{
+		/// <summary>
+		/// Underlying Protected Messenger.
+		/// </summary>
 		private readonly ProtectedMessenger protectedMessenger;
 
+		/// <summary>
+		/// Identity of the correspondent.
+		/// </summary>
 		public readonly PublicIdentity otherIdentity;
 
+		/// <summary>
+		/// Creates a new authenticated messenger, given a secure messenger and an identity.
+		/// </summary>
 		public AuthenticatedMessenger(ProtectedMessenger secureMessenger, PublicIdentity otherIdentity)
 		{
 			this.protectedMessenger = secureMessenger;
 			this.otherIdentity = otherIdentity;
 		}
 
+		/// <summary>
+		/// Converts the string to bytes, then sends it across the authenticated connection.
+		/// </summary>
 		public Task Send(string data)
 		{
 			ThrowIfDisposed();
 			return protectedMessenger.Send(Transcoder.BytesFromText(data));
 		}
 
+		/// <summary>
+		/// Receives bytes from an authenticated connection, then converts them to a string.
+		/// </summary>
+		/// <returns></returns>
 		public async Task<string> Receive()
 		{
 			ThrowIfDisposed();

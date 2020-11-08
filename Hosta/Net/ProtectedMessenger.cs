@@ -10,12 +10,34 @@ namespace Hosta.Net
 	/// </summary>
 	public class ProtectedMessenger : IDisposable
 	{
+		/// <summary>
+		/// Underlying Socket Messenger.
+		/// </summary>
 		private readonly SocketMessenger socketMessenger;
+
+		/// <summary>
+		/// Used to encrypte / decrypt messages.
+		/// </summary>
 		private readonly SymmetricCrypter crypter;
+
+		/// <summary>
+		/// Ticks over when a message is received.
+		/// </summary>
 		private readonly KDFRatchet receiveRatchet;
+
+		/// <summary>
+		/// Ticks over when a message is sent.
+		/// </summary>
 		private readonly KDFRatchet sendRatchet;
+
+		/// <summary>
+		/// The value that the ratchets are changed by.
+		/// </summary>
 		private readonly byte[] clicks;
 
+		/// <summary>
+		/// A unique conversation ID derived from the key.
+		/// </summary>
 		public readonly byte[] ID;
 
 		/// <summary>
