@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using Hosta.Tools;
 
 namespace Hosta.Crypto
 {
@@ -22,18 +23,22 @@ namespace Hosta.Crypto
 		}
 
 		/// <summary>
+		/// The ID of the PrivateIdentity.
+		/// </summary>
+		public readonly string ID;
+
+		/// <summary>
 		/// Generates a new private identity using the nistP521 curve.
 		/// </summary>
 		public PrivateIdentity()
 		{
 			privateKey = ECDsa.Create(ECCurve.NamedCurves.nistP521);
+			ID = PublicIdentity.IDFromPublicInformation(PublicIdentityInfo);
 		}
 
 		/// <summary>
 		/// Signs data using the private key.
 		/// </summary>
-		/// <param name="data">Data to sign.</param>
-		/// <returns>Signature.</returns>
 		public byte[] Sign(byte[] data)
 		{
 			return privateKey.SignData(data, HashAlgorithmName.SHA256);

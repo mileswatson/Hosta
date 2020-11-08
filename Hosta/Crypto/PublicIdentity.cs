@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using Hosta.Tools;
 
 namespace Hosta.Crypto
 {
@@ -12,12 +13,15 @@ namespace Hosta.Crypto
 		/// </summary>
 		private ECDsa publicKey = ECDsa.Create();
 
+		public readonly string ID;
+
 		/// <summary>
 		/// Creates a new PublicIdentity from the given information.
 		/// </summary>
 		public PublicIdentity(byte[] publicIdentityInfo)
 		{
 			publicKey.ImportSubjectPublicKeyInfo(publicIdentityInfo, out _);
+			ID = IDFromPublicInformation(publicIdentityInfo);
 		}
 
 		/// <summary>
@@ -27,6 +31,15 @@ namespace Hosta.Crypto
 		public bool Verify(byte[] data, byte[] signature)
 		{
 			return publicKey.VerifyData(data, signature, HashAlgorithmName.SHA256);
+		}
+
+		/// <summary>
+		/// Generates an ID from public key information.
+		/// </summary>
+		public static string IDFromPublicInformation(byte[] publicInformation)
+		{
+			using var hasher = SHA256.Create();
+			return Transcoder.HexFromBytes(hasher.ComputeHash(publicInformation));
 		}
 	}
 }

@@ -16,6 +16,8 @@ namespace Hosta.Net
 		private readonly KDFRatchet sendRatchet;
 		private readonly byte[] clicks;
 
+		public readonly byte[] ID;
+
 		/// <summary>
 		/// Creates a new instance of a SecureMessenger
 		/// </summary>
@@ -27,7 +29,8 @@ namespace Hosta.Net
 			var hmac = new HMACSHA256(key);
 			sendRatchet = new KDFRatchet(hmac.ComputeHash(initiator ? new byte[] { 1 } : new byte[] { 2 }));
 			receiveRatchet = new KDFRatchet(hmac.ComputeHash(initiator ? new byte[] { 2 } : new byte[] { 1 }));
-			this.clicks = hmac.ComputeHash(new byte[] { 3 });
+			ID = hmac.ComputeHash(new byte[] { 3 });
+			this.clicks = hmac.ComputeHash(new byte[] { 4 });
 		}
 
 		/// <summary>
