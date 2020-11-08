@@ -11,7 +11,7 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Underlying ECDsa object to use.
 		/// </summary>
-		private ECDsa privateKey;
+		private readonly ECDsa privateKey;
 
 		/// <summary>
 		/// Returns the PublicIdentityInfo

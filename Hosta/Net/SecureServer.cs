@@ -12,7 +12,7 @@ namespace Hosta.Net
 	public class SecureServer : IDisposable
 	{
 		private readonly SocketServer server;
-		private byte[] authKey;
+		private readonly byte[] authKey;
 
 		public int Port {
 			get {

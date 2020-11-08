@@ -11,7 +11,7 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Underlying ECDsa object to use.
 		/// </summary>
-		private ECDsa publicKey = ECDsa.Create();
+		private readonly ECDsa publicKey = ECDsa.Create();
 
 		public readonly string ID;
 
