@@ -26,7 +26,7 @@ namespace Hosta.Crypto
 		}
 
 		/// <summary>
-		/// Creates a new AesCrypter.
+		/// Creates a new SymmetricCrypter.
 		/// </summary>
 		/// <param name="key">Default is an array of 0 bytes.</param>
 		public SymmetricCrypter(byte[] key = null)
@@ -51,7 +51,7 @@ namespace Hosta.Crypto
 		}
 
 		/// <summary>
-		/// Decrypts data using AES-GCM, then packages it with the authentication code and nonce.
+		/// Decrypts data using AES-GCM, then verifies it with the authentication code.
 		/// </summary>
 		/// <param name="package">The secure package to open.</param>
 		/// <param name="overrideKey">An optional key to override the default key.</param>
