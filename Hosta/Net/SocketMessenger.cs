@@ -62,7 +62,7 @@ namespace Hosta.Net
 			catch
 			{
 				Dispose();
-				return null;
+				throw;
 			}
 			finally
 			{
@@ -138,6 +138,7 @@ namespace Hosta.Net
 			catch
 			{
 				Dispose();
+				throw;
 			}
 			finally
 			{

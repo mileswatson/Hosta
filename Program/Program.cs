@@ -1,13 +1,44 @@
-﻿using Hosta.Net;
-using System;
-using System.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.Net;
+using System.Threading.Tasks;
 
-namespace Hosta
+using Hosta.Crypto;
+using Hosta.Net;
+
+using Node;
+
+namespace Program
 {
 	public class Class
 	{
 		public static void Main()
 		{
+			var serverID = new PrivateIdentity();
+			var server = new APIServer(serverID, 12000);
+			var listening = server.Listen();
+
+			var client = new APIClient(new PrivateIdentity());
+
+			var sw = new Stopwatch();
+			sw.Start();
+
+			var message = client.Communicate(serverID.ID,
+				server.address,
+				12000,
+				"hello world"
+				).Result;
+
+			sw.Stop();
+			Console.WriteLine(message);
+			Console.WriteLine(sw.ElapsedMilliseconds);
+
+			server.Dispose();
+			listening.Wait();
+
+			/*
+			var tcs = new TaskCompletionSource();
+
 			using var socketServer = new SocketServer(11000);
 
 			var socketClient = new SocketClient();
@@ -38,8 +69,7 @@ namespace Hosta
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
-
-			Console.ReadKey();
+			*/
 		}
 	}
 }
