@@ -21,7 +21,7 @@ namespace Hosta.Net
 		}
 
 		/// <summary>
-		/// Authenticates ta connection with the client..
+		/// Authenticates the connection with the client.
 		/// </summary>
 		public async Task<AuthenticatedMessenger> AuthenticateClient(ProtectedMessenger protectedMessenger)
 		{

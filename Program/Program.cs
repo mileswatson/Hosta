@@ -39,12 +39,7 @@ namespace Hosta
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
 
-			/*
-			var start = new byte[] { 1 };
-			AesCrypter aes = new AesCrypter(SecureRandom.GetBytes(32));
-			var finish = aes.Decrypt(aes.Encrypt(start));
-			Console.WriteLine(string.Join(",", finish.Select(o => o.ToString()).ToArray()));
-			*/
+			Console.ReadKey();
 		}
 	}
 }
