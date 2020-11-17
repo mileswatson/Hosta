@@ -25,7 +25,7 @@ namespace Program
 
 			var message = client.Communicate(serverID.ID,
 				server.address,
-				12000,
+				server.port,
 				"hello world"
 				).Result;
 
