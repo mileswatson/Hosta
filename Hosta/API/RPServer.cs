@@ -5,13 +5,14 @@ using Hosta.Net;
 using Hosta.Crypto;
 using System.Threading.Tasks;
 using System.Net;
+using System.Threading;
 
-namespace Node
+namespace Hosta.API
 {
 	/// <summary>
 	/// A server that handles API requests.
 	/// </summary>
-	public class APIServer : IDisposable
+	public class RPServer : IDisposable
 	{
 		/// <summary>
 		/// Underlying Socket Server to listen for incoming
@@ -36,23 +37,17 @@ namespace Node
 			= new HashSet<IDisposable>();
 
 		/// <summary>
-		/// The IP address that the server is bound to.
-		/// </summary>
-		public readonly IPAddress address;
-
-		/// <summary>
 		/// The port that the server is bound to.
 		/// </summary>
-		public readonly int port;
+		public readonly IPEndPoint endPoint;
 
 		/// <summary>
 		/// Creates a new API server, and binds it to the given port.
 		/// </summary>
-		public APIServer(PrivateIdentity privateIdentity, int port)
+		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint)
 		{
-			listener = new SocketServer(port);
-			address = listener.address;
-			port = listener.port;
+			listener = new SocketServer(endPoint);
+			this.endPoint = endPoint;
 			authenticator = new Authenticator(privateIdentity);
 		}
 
@@ -68,7 +63,8 @@ namespace Node
 			while (!disposed)
 			{
 				// Check for disposal at least every second.
-				using var timeout = Task.Delay(1000);
+				using var cts = new CancellationTokenSource();
+				using var timeout = Task.Delay(1000, cts.Token);
 				await Task.WhenAny(accepted, timeout);
 				if (accepted.IsCompleted)
 				{
@@ -83,6 +79,7 @@ namespace Node
 						accepted = listener.Accept();
 					}
 				}
+				cts.Cancel();
 			}
 		}
 
@@ -128,7 +125,7 @@ namespace Node
 			Handle(messenger);
 		}
 
-		public async void Handle(AuthenticatedMessenger messenger)
+		public static async void Handle(AuthenticatedMessenger messenger)
 		{
 			// Repeatedly echo client back.
 			try
@@ -147,6 +144,17 @@ namespace Node
 			}
 		}
 
+		public static IPAddress GetLocal()
+		{
+			return Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+		}
+
+		public static IPAddress GetExternal()
+		{
+			var externalip = new WebClient().DownloadString("http://icanhazip.com");
+			return IPAddress.Parse(externalip.Trim());
+		}
+
 		//// Implements IDisposable
 
 		private bool disposed = false;
@@ -159,6 +167,7 @@ namespace Node
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)

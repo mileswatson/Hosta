@@ -4,9 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 
 using Hosta.Crypto;
-using Hosta.Net;
-
-using Node;
+using Hosta.API;
 
 namespace Program
 {
@@ -14,18 +12,20 @@ namespace Program
 	{
 		public static void Main()
 		{
+			var serverEndpoint = new IPEndPoint(RPServer.GetExternal(), 12000);
+			Console.WriteLine(serverEndpoint);
+
 			var serverID = new PrivateIdentity();
-			var server = new APIServer(serverID, 12000);
+			var server = new RPServer(serverID, serverEndpoint);
 			var listening = server.Listen();
 
-			var client = new APIClient(new PrivateIdentity());
+			var client = new RPClient(new PrivateIdentity());
 
 			var sw = new Stopwatch();
 			sw.Start();
 
 			var message = client.Communicate(serverID.ID,
-				server.address,
-				server.port,
+				serverEndpoint,
 				"hello world"
 				).Result;
 

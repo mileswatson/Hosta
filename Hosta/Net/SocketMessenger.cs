@@ -1,6 +1,7 @@
 ﻿using Hosta.Tools;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -83,7 +84,7 @@ namespace Hosta.Net
 				{
 					socket.EndReceive(ar);
 					int length = BitConverter.ToInt32(sizeBuffer, 0);
-					if (length <= 0 || length > MaxLength) throw new ArgumentOutOfRangeException("Message was an invalid length!");
+					if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
 					ReadMessage(tcs, length);
 				}
 				catch (Exception e)
@@ -131,7 +132,7 @@ namespace Hosta.Net
 			try
 			{
 				var tcs = new TaskCompletionSource<object>();
-				if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException("Message is too large");
+				if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException(nameof(message));
 				WriteLengthAndMessage(tcs, message);
 				await tcs.Task;
 			}
@@ -166,6 +167,34 @@ namespace Hosta.Net
 			}, null);
 		}
 
+		/// <summary>
+		/// Initiates a connection with a SocketServer.
+		/// </summary>
+		public static Task<SocketMessenger> CreateAndConnect(IPEndPoint serverEndpoint)
+		{
+			Socket s = new Socket(SocketType.Stream, ProtocolType.Tcp);
+			var tcs = new TaskCompletionSource<SocketMessenger>();
+
+			s.BeginConnect(
+				serverEndpoint,
+				new AsyncCallback(ar =>
+				{
+					try
+					{
+						s.EndConnect(ar);
+						tcs.SetResult(new SocketMessenger(s));
+					}
+					catch (Exception e)
+					{
+						tcs.SetException(e);
+						s.Dispose();
+					}
+				}),
+				null
+			);
+			return tcs.Task;
+		}
+
 		//// Implements IDisposable
 
 		private bool disposed = false;
@@ -178,6 +207,7 @@ namespace Hosta.Net
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)

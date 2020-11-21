@@ -1,8 +1,10 @@
-﻿using Hosta.Crypto;
+﻿using Hosta.API;
+using Hosta.Crypto;
 using Hosta.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace HostaTests.Net
@@ -18,10 +20,11 @@ namespace HostaTests.Net
 
 		public ProtectionTester()
 		{
-			using var server = new SocketServer(12000);
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
-			var client = new SocketClient();
-			var connected = client.Connect(server.address, server.port);
+			using var server = new SocketServer(serverEndpoint);
+
+			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
 			socket1 = server.Accept().Result;
 			socket2 = connected.Result;
@@ -49,13 +52,13 @@ namespace HostaTests.Net
 		[DataRow(1000)]
 		public async Task TestProtectorStatic(int length)
 		{
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
+
 			byte[] key = SecureRandomGenerator.GetBytes(length);
 
-			using var server = new SocketServer(12000);
+			using var server = new SocketServer(serverEndpoint);
 
-			var client = new SocketClient();
-
-			var connected = client.Connect(server.address, server.port);
+			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
 			var p1 = new Protector(key);
 			var p2 = new Protector(key);

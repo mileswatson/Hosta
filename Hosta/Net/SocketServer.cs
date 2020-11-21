@@ -13,8 +13,6 @@ namespace Hosta.Net
 	{
 		public readonly int port;
 
-		public readonly IPAddress address;
-
 		/// <summary>
 		/// Underlying listener socket.
 		/// </summary>
@@ -29,15 +27,9 @@ namespace Hosta.Net
 		/// Constructs a socket listener bound to the given port.
 		/// </summary>
 		/// <param name="port">The port to bind to.</param>
-		public SocketServer(int port)
+		public SocketServer(IPEndPoint endPoint)
 		{
-			// Get the IP of the local machine
-			var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-			address = ipHostInfo.AddressList[0];
-			this.port = port;
-
-			// Merge IP with port to create the local endpoint
-			var localEndPoint = new IPEndPoint(address, port);
+			var address = endPoint.Address;
 
 			// Create the listener
 			listener = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -46,7 +38,7 @@ namespace Hosta.Net
 			listener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
 			// Bind to endpoint
-			listener.Bind(localEndPoint);
+			listener.Bind(endPoint);
 
 			// Start listening
 			listener.Listen(100);
@@ -126,6 +118,7 @@ namespace Hosta.Net
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)

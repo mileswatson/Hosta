@@ -5,20 +5,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Program
+namespace Hosta.API
 {
-	public class APIClient
+	public class RPClient
 	{
-		/// <summary>
-		/// Used during the certificate creation process.
-		/// </summary>
-		private readonly PrivateIdentity self;
-
-		/// <summary>
-		/// Establishes a connection.
-		/// </summary>
-		private readonly SocketClient socketClient = new SocketClient();
-
 		/// <summary>
 		/// Protects an established connection with encryption.
 		/// </summary>
@@ -38,9 +28,8 @@ namespace Program
 		/// <summary>
 		/// Creates a new instance of an APIClient.
 		/// </summary>
-		public APIClient(PrivateIdentity privateIdentity)
+		public RPClient(PrivateIdentity privateIdentity)
 		{
-			self = privateIdentity;
 			authenticator = new Authenticator(privateIdentity);
 		}
 
@@ -48,7 +37,7 @@ namespace Program
 		/// Connects to an APIServer and performs a handshake.
 		/// </summary>
 		/// <returns>An authenticated connection to the server.</returns>
-		private async Task<AuthenticatedMessenger> ConnectAndHandshake(string serverID, IPAddress address, int port)
+		private async Task<AuthenticatedMessenger> ConnectAndHandshake(string serverID, IPEndPoint serverEndpoint)
 		{
 			// Check if a connection is in progress / has been made
 			if (connections.ContainsKey(serverID))
@@ -67,7 +56,7 @@ namespace Program
 			AuthenticatedMessenger messenger;
 			try
 			{
-				socketMessenger = await socketClient.Connect(address, port);
+				socketMessenger = await SocketMessenger.CreateAndConnect(serverEndpoint);
 				protectedMessenger = await protector.Protect(socketMessenger, true);
 				messenger = await authenticator.AuthenticateServer(protectedMessenger, serverID);
 			}
@@ -92,9 +81,9 @@ namespace Program
 		/// A quick test to check that the APIServer is responding correctly.
 		/// </summary>
 		/// <returns>Hopefully the same string that was sent.</returns>
-		public async Task<string> Communicate(string serverID, IPAddress address, int port, string message)
+		public async Task<string> Communicate(string serverID, IPEndPoint serverEndpoint, string message)
 		{
-			var connection = await ConnectAndHandshake(serverID, address, port);
+			var connection = await ConnectAndHandshake(serverID, serverEndpoint);
 			var sent = connection.Send(message);
 			var received = connection.Receive();
 			await sent;
