@@ -1,13 +1,41 @@
-﻿using Hosta.Net;
+﻿using Hosta.API;
+using Hosta.Crypto;
 using System;
-using System.Linq;
+using System.Diagnostics;
+using System.Net;
 
-namespace Hosta
+namespace Program
 {
 	public class Class
 	{
 		public static void Main()
 		{
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
+
+			var serverID = new PrivateIdentity();
+			var server = new RPServer(serverID, serverEndpoint);
+			var listening = server.Listen();
+
+			var client = new RPClient(new PrivateIdentity());
+
+			var sw = new Stopwatch();
+			sw.Start();
+
+			var message = client.Communicate(serverID.ID,
+				serverEndpoint,
+				"hello world"
+				).Result;
+
+			sw.Stop();
+			Console.WriteLine(message);
+			Console.WriteLine(sw.ElapsedMilliseconds);
+
+			server.Dispose();
+			listening.Wait();
+
+			/*
+			var tcs = new TaskCompletionSource();
+
 			using var socketServer = new SocketServer(11000);
 
 			var socketClient = new SocketClient();
@@ -38,12 +66,6 @@ namespace Hosta
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
 			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
-
-			/*
-			var start = new byte[] { 1 };
-			AesCrypter aes = new AesCrypter(SecureRandom.GetBytes(32));
-			var finish = aes.Decrypt(aes.Encrypt(start));
-			Console.WriteLine(string.Join(",", finish.Select(o => o.ToString()).ToArray()));
 			*/
 		}
 	}

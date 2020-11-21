@@ -13,8 +13,7 @@ namespace Hosta.Tools
 		/// <summary>
 		/// Enforces order of the queue.
 		/// </summary>
-		private readonly LinkedList<TaskCompletionSource<object>> waitingTasks
-			= new LinkedList<TaskCompletionSource<object>>();
+		private readonly LinkedList<TaskCompletionSource<object>> waitingTasks = new();
 
 		private int available = 1;
 
@@ -75,6 +74,7 @@ namespace Hosta.Tools
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)

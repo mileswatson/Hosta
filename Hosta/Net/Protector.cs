@@ -40,19 +40,20 @@ namespace Hosta.Net
 				await sent;
 			}
 
-			// Send test data
+			// Send test data.
 			var protectedMessenger = new ProtectedMessenger(socketMessenger, key, initiator);
 			byte[] myValues = SecureRandomGenerator.GetBytes(32);
 			var a = protectedMessenger.Send(myValues);
 
-			// Echo bytes back
+			// Echo bytes back.
 			var b = protectedMessenger.Send(await protectedMessenger.Receive());
 			await Task.WhenAll(a, b);
 
-			// Check integrity of test data
-			if (!Enumerable.SequenceEqual<byte>(myValues, await protectedMessenger.Receive())) throw new Exception("Could not verify connection!");
+			// Check integrity of test data.
+			if (!Enumerable.SequenceEqual<byte>(myValues, await protectedMessenger.Receive()))
+				throw new Exception("Could not verify connection!");
 
-			// Return protected messenger
+			// Return protected messenger, as the connection has been validated.
 			return protectedMessenger;
 		}
 	}

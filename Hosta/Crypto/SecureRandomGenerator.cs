@@ -11,12 +11,10 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Generates cryptographically-secure random bytes.
 		/// </summary>
-		/// <param name="size">The number of bytes.</param>
-		/// <returns>The generated random bytes.</returns>
-		public static byte[] GetBytes(int size)
+		public static byte[] GetBytes(int length)
 		{
 			var rng = RandomNumberGenerator.Create();
-			byte[] randombytes = new byte[size];
+			byte[] randombytes = new byte[length];
 			rng.GetBytes(randombytes);
 			return randombytes;
 		}

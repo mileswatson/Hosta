@@ -21,7 +21,12 @@ namespace Hosta.Net
 		public readonly PublicIdentity otherIdentity;
 
 		/// <summary>
-		/// Creates a new authenticated messenger, given a secure messenger and an identity.
+		/// Limits to one response at a time.
+		/// </summary>
+		public readonly AccessQueue accessQueue;
+
+		/// <summary>
+		/// Creates a new authenticated messenger, given a protected messenger and a public identity.
 		/// </summary>
 		public AuthenticatedMessenger(ProtectedMessenger secureMessenger, PublicIdentity otherIdentity)
 		{
@@ -41,7 +46,6 @@ namespace Hosta.Net
 		/// <summary>
 		/// Receives bytes from an authenticated connection, then converts them to a string.
 		/// </summary>
-		/// <returns></returns>
 		public async Task<string> Receive()
 		{
 			ThrowIfDisposed();
@@ -69,6 +73,7 @@ namespace Hosta.Net
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -77,7 +82,7 @@ namespace Hosta.Net
 
 			if (disposing)
 			{
-				// Dispose of managed resources
+				// Dispose of protected messenger
 				protectedMessenger.Dispose();
 			}
 

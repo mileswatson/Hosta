@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hosta\Hosta.csproj" />
-    <ProjectReference Include="..\Node\Node.csproj" />
   </ItemGroup>
 
 </Project>

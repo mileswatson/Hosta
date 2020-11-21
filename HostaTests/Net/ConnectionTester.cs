@@ -1,8 +1,10 @@
-﻿using Hosta.Crypto;
+﻿using Hosta.API;
+using Hosta.Crypto;
 using Hosta.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace HostaTests.Net
@@ -15,11 +17,11 @@ namespace HostaTests.Net
 
 		public ConnectionTester()
 		{
-			using var server = new SocketServer(12000);
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
-			SocketClient client = new SocketClient();
+			using var server = new SocketServer(serverEndpoint);
 
-			var connected = client.Connect(server.address, server.port);
+			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
 			a = server.Accept().Result;
 

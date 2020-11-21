@@ -1,6 +1,7 @@
 ﻿using Hosta.Tools;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
@@ -34,9 +35,6 @@ namespace Hosta.Net
 		/// <summary>
 		/// Constructs a new SocketMessenger from a connected socket.
 		/// </summary>
-		/// <param name="connectedSocket">
-		/// The underlying socket to use.
-		/// </param>
 		public SocketMessenger(Socket connectedSocket)
 		{
 			socket = connectedSocket;
@@ -45,13 +43,13 @@ namespace Hosta.Net
 		/// <summary>
 		/// An APM to TAP wrapper for reading a message from the stream.
 		/// </summary>
-		/// <returns>
-		/// An awaitable task that resolves to the received blob.
-		/// </returns>
 		public async Task<byte[]> Receive()
 		{
 			ThrowIfDisposed();
+
+			// Enforce order.
 			await readQueue.GetPass();
+
 			ThrowIfDisposed();
 			try
 			{
@@ -61,8 +59,9 @@ namespace Hosta.Net
 			}
 			catch
 			{
+				// Any exception is fatal.
 				Dispose();
-				return null;
+				throw;
 			}
 			finally
 			{
@@ -73,7 +72,6 @@ namespace Hosta.Net
 		/// <summary>
 		/// Reads the length, then calls ReadMessage.
 		/// </summary>
-		/// <param name="tcs">TCS to pass to ReadMessage.</param>
 		private void ReadLength(TaskCompletionSource<byte[]> tcs)
 		{
 			byte[] sizeBuffer = new byte[4];
@@ -82,8 +80,11 @@ namespace Hosta.Net
 				try
 				{
 					socket.EndReceive(ar);
+
+					// Reads length and checks it is valid.
 					int length = BitConverter.ToInt32(sizeBuffer, 0);
-					if (length <= 0 || length > MaxLength) throw new ArgumentOutOfRangeException("Message was an invalid length!");
+					if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
+
 					ReadMessage(tcs, length);
 				}
 				catch (Exception e)
@@ -96,8 +97,6 @@ namespace Hosta.Net
 		/// <summary>
 		/// Reads the message, then returns it via the TCS.
 		/// </summary>
-		/// <param name="tcs">TCS to set result of.</param>
-		/// <param name="length">Length of message to read.</param>
 		private void ReadMessage(TaskCompletionSource<byte[]> tcs, int length)
 		{
 			byte[] messageBuffer = new byte[length];
@@ -119,25 +118,26 @@ namespace Hosta.Net
 		/// An APM to TAP wrapper for writing
 		/// bytes to the TCP stream.
 		/// </summary>
-		/// <param name="message">The message to send.</param>
-		/// <returns>
-		/// An awaitable task.
-		/// </returns>
 		public async Task Send(byte[] message)
 		{
 			ThrowIfDisposed();
+
+			// Checks length before attempting to send.
+			if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException(nameof(message));
+
 			await writeQueue.GetPass();
 			ThrowIfDisposed();
 			try
 			{
 				var tcs = new TaskCompletionSource<object>();
-				if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException("Message is too large");
 				WriteLengthAndMessage(tcs, message);
 				await tcs.Task;
 			}
 			catch
 			{
+				// Any exception is fatal.
 				Dispose();
+				throw;
 			}
 			finally
 			{
@@ -147,9 +147,11 @@ namespace Hosta.Net
 
 		private void WriteLengthAndMessage(TaskCompletionSource<object> tcs, byte[] message)
 		{
+			// Concatenate length and message
 			List<byte> package = new List<byte>();
 			package.AddRange(BitConverter.GetBytes(message.Length));
 			package.AddRange(message);
+
 			byte[] blob = package.ToArray();
 			socket.BeginSend(blob, 0, blob.Length, 0, ar =>
 			{
@@ -165,6 +167,34 @@ namespace Hosta.Net
 			}, null);
 		}
 
+		/// <summary>
+		/// Initiates a connection with a SocketServer.
+		/// </summary>
+		public static Task<SocketMessenger> CreateAndConnect(IPEndPoint serverEndpoint)
+		{
+			Socket s = new Socket(SocketType.Stream, ProtocolType.Tcp);
+			var tcs = new TaskCompletionSource<SocketMessenger>();
+
+			s.BeginConnect(
+				serverEndpoint,
+				new AsyncCallback(ar =>
+				{
+					try
+					{
+						s.EndConnect(ar);
+						tcs.SetResult(new SocketMessenger(s));
+					}
+					catch (Exception e)
+					{
+						tcs.SetException(e);
+						s.Dispose();
+					}
+				}),
+				null
+			);
+			return tcs.Task;
+		}
+
 		//// Implements IDisposable
 
 		private bool disposed = false;
@@ -177,6 +207,7 @@ namespace Hosta.Net
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -185,7 +216,7 @@ namespace Hosta.Net
 
 			if (disposing)
 			{
-				// Dispose of managed resources
+				// Dispose of waiting reads and writes.
 
 				if (readQueue != null) readQueue.Dispose();
 				if (writeQueue != null) writeQueue.Dispose();

@@ -13,8 +13,6 @@ namespace Hosta.Net
 	{
 		public readonly int port;
 
-		public readonly IPAddress address;
-
 		/// <summary>
 		/// Underlying listener socket.
 		/// </summary>
@@ -29,15 +27,9 @@ namespace Hosta.Net
 		/// Constructs a socket listener bound to the given port.
 		/// </summary>
 		/// <param name="port">The port to bind to.</param>
-		public SocketServer(int port)
+		public SocketServer(IPEndPoint endPoint)
 		{
-			// Get the IP of the local machine
-			var ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-			address = ipHostInfo.AddressList[0];
-			this.port = port;
-
-			// Merge IP with port to create the local endpoint
-			var localEndPoint = new IPEndPoint(address, port);
+			var address = endPoint.Address;
 
 			// Create the listener
 			listener = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -46,7 +38,7 @@ namespace Hosta.Net
 			listener.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 
 			// Bind to endpoint
-			listener.Bind(localEndPoint);
+			listener.Bind(endPoint);
 
 			// Start listening
 			listener.Listen(100);
@@ -71,10 +63,10 @@ namespace Hosta.Net
 					{
 						try
 						{
-							// End the accept process
+							// End the accept process.
 							Socket connection = listener.EndAccept(ar);
 
-							// Set the result
+							// Set the result.
 							tcs.SetResult(connection);
 						}
 						catch (Exception e)
@@ -98,15 +90,8 @@ namespace Hosta.Net
 				} while (true);
 
 				// Attempt to return the result
-				try
-				{
-					var socket = tcs.Task.Result;
-					return new SocketMessenger(tcs.Task.Result);
-				}
-				catch
-				{
-					return null;
-				}
+				var socket = tcs.Task.Result;
+				return new SocketMessenger(tcs.Task.Result);
 			}
 			finally
 			{
@@ -126,19 +111,19 @@ namespace Hosta.Net
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed) return;
+			disposed = true;
 
 			if (disposing)
 			{
-				// Dispose of managed resources
-
-				listener.Close();
-
-				disposed = true;
+				// Dispose of the listening socket and accept queue.
+				acceptQueue.Dispose();
+				listener.Dispose();
 			}
 		}
 	}
