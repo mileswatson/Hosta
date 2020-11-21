@@ -16,7 +16,7 @@ namespace Hosta.Net
 		private readonly SocketMessenger socketMessenger;
 
 		/// <summary>
-		/// Used to encrypte / decrypt messages.
+		/// Used to encrypt / decrypt messages.
 		/// </summary>
 		private readonly SymmetricCrypter crypter;
 
@@ -49,8 +49,12 @@ namespace Hosta.Net
 			this.socketMessenger = socketMessenger;
 			crypter = new SymmetricCrypter();
 			var hmac = new HMACSHA256(key);
+
+			// Chooses different keys depending on whether the connection was initiated,
+			// so that the client and server can have opposite ratchets.
 			sendRatchet = new KDFRatchet(hmac.ComputeHash(initiator ? new byte[] { 1 } : new byte[] { 2 }));
 			receiveRatchet = new KDFRatchet(hmac.ComputeHash(initiator ? new byte[] { 2 } : new byte[] { 1 }));
+
 			ID = hmac.ComputeHash(new byte[] { 3 });
 			this.clicks = hmac.ComputeHash(new byte[] { 4 });
 		}
@@ -87,6 +91,7 @@ namespace Hosta.Net
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)

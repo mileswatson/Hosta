@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Hosta.API;
+using Hosta.Crypto;
+using System;
 using System.Diagnostics;
 using System.Net;
-using System.Threading.Tasks;
-
-using Hosta.Crypto;
-using Hosta.API;
 
 namespace Program
 {
@@ -12,8 +10,7 @@ namespace Program
 	{
 		public static void Main()
 		{
-			var serverEndpoint = new IPEndPoint(RPServer.GetExternal(), 12000);
-			Console.WriteLine(serverEndpoint);
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
 			var serverID = new PrivateIdentity();
 			var server = new RPServer(serverID, serverEndpoint);

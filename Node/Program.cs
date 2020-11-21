@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Hosta.Crypto;
-using Hosta.API;
-
-namespace Node
+﻿namespace Node
 {
 	internal class Program
 	{

@@ -11,8 +11,6 @@ namespace Hosta.Tools
 		/// <summary>
 		/// Encodes a string using UTF8.
 		/// </summary>
-		/// <param name="text">The text to encode.</param>
-		/// <returns>The encoded bytes.</returns>
 		public static byte[] BytesFromText(string text)
 		{
 			return Encoding.UTF8.GetBytes(text);
@@ -21,8 +19,6 @@ namespace Hosta.Tools
 		/// <summary>
 		/// Decodes UTF8 encoded bytes.
 		/// </summary>
-		/// <param name="utf8bytes">The encoded bytes to decode.</param>
-		/// <returns>The decoded string.</returns>
 		public static string TextFromBytes(byte[] utf8bytes)
 		{
 			var enc = new UTF8Encoding(false, true);
@@ -40,8 +36,6 @@ namespace Hosta.Tools
 		/// <summary>
 		/// Encodes bytes as a hex string.
 		/// </summary>
-		/// <param name="bytes"></param>
-		/// <returns>The encoded string.</returns>
 		public static string HexFromBytes(byte[] bytes)
 		{
 			StringBuilder hex = new StringBuilder(bytes.Length * 2);
@@ -53,8 +47,6 @@ namespace Hosta.Tools
 		/// <summary>
 		/// Decodes a hex string to bytes.
 		/// </summary>
-		/// <param name="hex">The hex string to decode.</param>
-		/// <returns>The decoded bytes.</returns>
 		public static byte[] BytesFromHex(string hex)
 		{
 			if (hex.Length % 2 != 0)

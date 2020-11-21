@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using Hosta.Crypto;
 using Hosta.Net;
-using Hosta.Crypto;
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Hosta.API
 {
@@ -23,7 +22,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Protects an established connection with encryption.
 		/// </summary>
-		private readonly Protector protector = new Protector();
+		private readonly Protector protector = new();
 
 		/// <summary>
 		/// Used for authenticating the client.
@@ -33,16 +32,15 @@ namespace Hosta.API
 		/// <summary>
 		/// Set of current connections.
 		/// </summary>
-		private readonly HashSet<IDisposable> connections
-			= new HashSet<IDisposable>();
+		private readonly HashSet<IDisposable> connections = new();
 
 		/// <summary>
-		/// The port that the server is bound to.
+		/// The endpoint that the RP Server is bound to.
 		/// </summary>
 		public readonly IPEndPoint endPoint;
 
 		/// <summary>
-		/// Creates a new API server, and binds it to the given port.
+		/// Creates a new API server, and binds it to the given endpoint.
 		/// </summary>
 		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint)
 		{
@@ -64,19 +62,26 @@ namespace Hosta.API
 			{
 				// Check for disposal at least every second.
 				using var cts = new CancellationTokenSource();
-				using var timeout = Task.Delay(1000, cts.Token);
+				var timeout = Task.Delay(1000, cts.Token);
 				await Task.WhenAny(accepted, timeout);
 				if (accepted.IsCompleted)
 				{
 					try
 					{
-						Handshake(await accepted);
+						var socketMessenger = await accepted;
+						Handshake(socketMessenger);
 					}
-					finally
+					catch { }
+
+					try
 					{
 						// Always ensure to get accept a new connection,
 						// regardless of whether the previous once failed.
 						accepted = listener.Accept();
+					}
+					catch
+					{
+						break;
 					}
 				}
 				cts.Cancel();
@@ -96,14 +101,12 @@ namespace Hosta.API
 				// Add connections to the HashSet for easy disposal signalling
 				connections.Add(socketMessenger);
 
-				ThrowIfDisposed();
 				protectedMessenger = await protector.Protect(socketMessenger, false);
 
 				// Ensure one of the connections is in the HashSet at all time
 				connections.Add(protectedMessenger);
 				connections.Remove(socketMessenger);
 
-				ThrowIfDisposed();
 				messenger = await authenticator.AuthenticateClient(protectedMessenger);
 			}
 			catch
@@ -125,6 +128,9 @@ namespace Hosta.API
 			Handle(messenger);
 		}
 
+		/// <summary>
+		/// Handles a client connection.
+		/// </summary>
 		public static async void Handle(AuthenticatedMessenger messenger)
 		{
 			// Repeatedly echo client back.
@@ -144,11 +150,17 @@ namespace Hosta.API
 			}
 		}
 
+		/// <summary>
+		/// Gets the local IP address.
+		/// </summary>
 		public static IPAddress GetLocal()
 		{
 			return Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
 		}
 
+		/// <summary>
+		/// Gets the external IP address.
+		/// </summary>
 		public static IPAddress GetExternal()
 		{
 			var externalip = new WebClient().DownloadString("http://icanhazip.com");
@@ -159,11 +171,6 @@ namespace Hosta.API
 
 		private bool disposed = false;
 
-		private void ThrowIfDisposed()
-		{
-			if (disposed) throw new ObjectDisposedException("Attempted post-disposal use!");
-		}
-
 		public void Dispose()
 		{
 			Dispose(true);
@@ -173,15 +180,16 @@ namespace Hosta.API
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed) return;
-			disposed = true;
 
 			if (disposing)
 			{
-				// Dispose of managed resources
-
+				// Dispose of listener and connections
 				listener.Dispose();
 				foreach (var connection in connections) connection.Dispose();
+				connections.Clear();
 			}
+
+			disposed = true;
 		}
 	}
 }

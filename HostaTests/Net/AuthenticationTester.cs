@@ -1,9 +1,9 @@
-﻿using Hosta.Crypto;
+﻿using Hosta.API;
+using Hosta.Crypto;
 using Hosta.Net;
-using Hosta.API;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace HostaTests.Net
 {

@@ -55,7 +55,7 @@ namespace Hosta.Crypto
 		/// </summary>
 		/// <param name="package">The secure package to open.</param>
 		/// <param name="overrideKey">An optional key to override the default key.</param>
-		/// <returns></returns>
+		/// <returns>The decrypted message.</returns>
 		public byte[] Decrypt(byte[] package, byte[] overrideKey = null)
 		{
 			var messageLength = package.Length - NONCE_SIZE - TAG_SIZE;

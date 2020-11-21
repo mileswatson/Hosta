@@ -37,7 +37,7 @@ namespace Hosta.Net
 				protectedMessenger.Send(self.Sign(protectedMessenger.ID))
 			);
 
-			// Gets the client public key
+			// Gets the client public key.
 			var pkInfo = await protectedMessenger.Receive();
 			var clientIdentity = new PublicIdentity(pkInfo);
 
@@ -45,7 +45,7 @@ namespace Hosta.Net
 			if (!clientIdentity.Verify(protectedMessenger.ID, await protectedMessenger.Receive()))
 				throw new Exception("Could not authenticate session!");
 
-			// Returns client ID and secureMessenger
+			// Returns an authenticated messenger.
 			return new AuthenticatedMessenger(protectedMessenger, clientIdentity);
 		}
 
@@ -101,9 +101,11 @@ namespace Hosta.Net
 
 			if (disposing)
 			{
+				// Nullify reference to private key
 				self = null;
-				disposed = true;
 			}
+
+			disposed = true;
 		}
 	}
 }

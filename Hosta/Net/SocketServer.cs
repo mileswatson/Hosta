@@ -63,10 +63,10 @@ namespace Hosta.Net
 					{
 						try
 						{
-							// End the accept process
+							// End the accept process.
 							Socket connection = listener.EndAccept(ar);
 
-							// Set the result
+							// Set the result.
 							tcs.SetResult(connection);
 						}
 						catch (Exception e)
@@ -90,15 +90,8 @@ namespace Hosta.Net
 				} while (true);
 
 				// Attempt to return the result
-				try
-				{
-					var socket = tcs.Task.Result;
-					return new SocketMessenger(tcs.Task.Result);
-				}
-				catch
-				{
-					return null;
-				}
+				var socket = tcs.Task.Result;
+				return new SocketMessenger(tcs.Task.Result);
 			}
 			finally
 			{
@@ -124,14 +117,13 @@ namespace Hosta.Net
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed) return;
+			disposed = true;
 
 			if (disposing)
 			{
-				// Dispose of managed resources
-
-				listener.Close();
-
-				disposed = true;
+				// Dispose of the listening socket and accept queue.
+				acceptQueue.Dispose();
+				listener.Dispose();
 			}
 		}
 	}

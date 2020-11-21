@@ -43,6 +43,7 @@ namespace Hosta.Crypto
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -51,8 +52,9 @@ namespace Hosta.Crypto
 
 			if (disposing)
 			{
-				// Disposed of managed resources
+				// Disposed of keys.
 				secret.Dispose();
+				foreignPublic.Dispose();
 			}
 
 			disposed = true;
