@@ -186,6 +186,34 @@ namespace Hosta.Net
 			return tcs.Task;
 		}
 
+		/// <summary>
+		/// Initiates a connection with a SocketServer.
+		/// </summary>
+		public static Task<SocketMessenger> CreateAndConnect(IPEndPoint serverEndpoint)
+		{
+			Socket s = new Socket(SocketType.Stream, ProtocolType.Tcp);
+			var tcs = new TaskCompletionSource<SocketMessenger>();
+
+			s.BeginConnect(
+				serverEndpoint,
+				new AsyncCallback(ar =>
+				{
+					try
+					{
+						s.EndConnect(ar);
+						tcs.SetResult(new SocketMessenger(s));
+					}
+					catch (Exception e)
+					{
+						tcs.SetException(e);
+						s.Dispose();
+					}
+				}),
+				null
+			);
+			return tcs.Task;
+		}
+
 		//// Implements IDisposable
 
 		private bool disposed = false;
