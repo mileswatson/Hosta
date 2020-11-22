@@ -1,5 +1,4 @@
-﻿using Hosta.API;
-using Hosta.Crypto;
+﻿using Hosta.Crypto;
 using Hosta.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net;
