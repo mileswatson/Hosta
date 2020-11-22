@@ -1,6 +1,5 @@
 ﻿using Hosta.RPC;
 using Hosta.Crypto;
-using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Net;
