@@ -53,15 +53,9 @@ namespace Hosta.Net
 			ThrowIfDisposed();
 			try
 			{
-				// Read the length from the stream
-				var lengthBytes = await ReadFixedLength(4);
-
-				// Convert the length to an integer and check that it's valid.
-				int length = BitConverter.ToInt32(lengthBytes, 0);
-				if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
-
-				// Read the message from the stream
-				return await ReadFixedLength(length);
+				var tcs = new TaskCompletionSource<byte[]>();
+				ReadLength(tcs);
+				return await tcs.Task;
 			}
 			catch
 			{
@@ -76,15 +70,37 @@ namespace Hosta.Net
 		}
 
 		/// <summary>
-		/// A TAP to APM wrapper for reading a message from a stream.
+		/// Reads the length, then calls ReadMessage.
 		/// </summary>
-		private Task<byte[]> ReadFixedLength(int length)
+		private void ReadLength(TaskCompletionSource<byte[]> tcs)
 		{
-			var tcs = new TaskCompletionSource<byte[]>();
+			byte[] sizeBuffer = new byte[4];
+			socket.BeginReceive(sizeBuffer, 0, 4, 0, ar =>
+			{
+				try
+				{
+					socket.EndReceive(ar);
 
-			// Read data into fixed length buffer.
+					// Reads length and checks it is valid.
+					int length = BitConverter.ToInt32(sizeBuffer, 0);
+					if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
+
+					ReadMessage(tcs, length);
+				}
+				catch (Exception e)
+				{
+					tcs.SetException(e);
+				}
+			}, null);
+		}
+
+		/// <summary>
+		/// Reads the message, then returns it via the TCS.
+		/// </summary>
+		private void ReadMessage(TaskCompletionSource<byte[]> tcs, int length)
+		{
 			byte[] messageBuffer = new byte[length];
-			socket.BeginReceive(messageBuffer, 0, length, SocketFlags.None, ar =>
+			socket.BeginReceive(messageBuffer, 0, length, 0, ar =>
 			{
 				try
 				{
@@ -96,12 +112,11 @@ namespace Hosta.Net
 					tcs.SetException(e);
 				}
 			}, null);
-			return tcs.Task;
 		}
 
 		/// <summary>
-		/// Asynchronously sends a message over
-		/// a TCP stream.
+		/// An APM to TAP wrapper for writing
+		/// bytes to the TCP stream.
 		/// </summary>
 		public async Task Send(byte[] message)
 		{
@@ -111,10 +126,12 @@ namespace Hosta.Net
 			if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException(nameof(message));
 
 			await writeQueue.GetPass();
-
+			ThrowIfDisposed();
 			try
 			{
-				await WriteLengthAndMessage(message);
+				var tcs = new TaskCompletionSource<object>();
+				WriteLengthAndMessage(tcs, message);
+				await tcs.Task;
 			}
 			catch
 			{
@@ -128,62 +145,26 @@ namespace Hosta.Net
 			}
 		}
 
-		/// <summary>
-		/// An TAP to APM wrapper for writing a message to a stream.
-		/// </summary>
-		private Task WriteLengthAndMessage(byte[] message)
+		private void WriteLengthAndMessage(TaskCompletionSource<object> tcs, byte[] message)
 		{
-			var tcs = new TaskCompletionSource();
-
-			// Concatenate length and message.
+			// Concatenate length and message
 			List<byte> package = new List<byte>();
 			package.AddRange(BitConverter.GetBytes(message.Length));
 			package.AddRange(message);
 
-			// Convert to an array and send.
 			byte[] blob = package.ToArray();
 			socket.BeginSend(blob, 0, blob.Length, 0, ar =>
 			{
 				try
 				{
 					socket.EndSend(ar);
-					tcs.SetResult();
+					tcs.SetResult(null);
 				}
 				catch (Exception e)
 				{
 					tcs.SetException(e);
 				}
 			}, null);
-
-			return tcs.Task;
-		}
-
-		/// <summary>
-		/// Initiates a connection with a SocketServer.
-		/// </summary>
-		public static Task<SocketMessenger> CreateAndConnect(IPEndPoint serverEndpoint)
-		{
-			Socket s = new Socket(SocketType.Stream, ProtocolType.Tcp);
-			var tcs = new TaskCompletionSource<SocketMessenger>();
-
-			s.BeginConnect(
-				serverEndpoint,
-				new AsyncCallback(ar =>
-				{
-					try
-					{
-						s.EndConnect(ar);
-						tcs.SetResult(new SocketMessenger(s));
-					}
-					catch (Exception e)
-					{
-						tcs.SetException(e);
-						s.Dispose();
-					}
-				}),
-				null
-			);
-			return tcs.Task;
 		}
 
 		/// <summary>

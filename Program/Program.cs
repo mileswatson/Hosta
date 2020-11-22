@@ -1,50 +1,72 @@
-﻿using Hosta.RPC;
+﻿using Hosta.API;
 using Hosta.Crypto;
-using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Net;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Program
 {
-	public class Class : ICallable
+	public class Class
 	{
 		public static void Main()
 		{
 			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
 			var serverID = new PrivateIdentity();
-			var server = new RPServer(serverID, serverEndpoint, new Class());
-			var listening = server.ListenForClients();
+			var server = new RPServer(serverID, serverEndpoint);
+			var listening = server.Listen();
 
-			var client = RPClient.CreateAndConnect(serverID.ID, serverEndpoint, new PrivateIdentity()).Result;
+			var client = new RPClient(new PrivateIdentity());
 
 			var sw = new Stopwatch();
 			sw.Start();
 
-			var calls = new List<Task<string>>();
-			for (int i = 0; i < 1000; i++)
-			{
-				calls.Add(client.Call("this is call #", i.ToString()));
-			}
-
-			for (int i = 0; i < calls.Count; i++)
-			{
-				Console.WriteLine(calls[i].Result);
-			}
+			var message = client.Communicate(serverID.ID,
+				serverEndpoint,
+				"hello world"
+				).Result;
 
 			sw.Stop();
+			Console.WriteLine(message);
 			Console.WriteLine(sw.ElapsedMilliseconds);
 
 			server.Dispose();
 			listening.Wait();
-		}
 
-		public Task<string> Call(string procedure, string args)
-		{
-			return Task<string>.FromResult(procedure + args);
+			/*
+			var tcs = new TaskCompletionSource();
+
+			using var socketServer = new SocketServer(11000);
+
+			var socketClient = new SocketClient();
+
+			var a1 = socketClient.Connect(socketServer.address, socketServer.port);
+			var b1 = socketServer.Accept();
+
+			Protector protector = new Protector();
+
+			var a2 = protector.Protect(a1.Result, true);
+			var b2 = protector.Protect(b1.Result, false);
+
+			var client = a2.Result;
+			var handler = b2.Result;
+
+			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			client.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+
+			handler.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			handler.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+			handler.Send(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).Wait();
+
+			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", handler.Receive().Result.Select(o => o.ToString()).ToArray()));
+
+			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
+			Console.WriteLine(string.Join(",", client.Receive().Result.Select(o => o.ToString()).ToArray()));
+			*/
 		}
 	}
 }
