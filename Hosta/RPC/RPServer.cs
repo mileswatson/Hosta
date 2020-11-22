@@ -1,18 +1,24 @@
 ﻿using Hosta.Crypto;
 using Hosta.Net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Hosta.API
+namespace Hosta.RPC
 {
 	/// <summary>
 	/// A server that handles API requests.
 	/// </summary>
 	public class RPServer : IDisposable
 	{
+		/// <summary>
+		/// Handles procedure calls.
+		/// </summary>
+		public readonly ICallable callHandler;
+
 		/// <summary>
 		/// Underlying Socket Server to listen for incoming
 		/// connection requests.
@@ -42,17 +48,18 @@ namespace Hosta.API
 		/// <summary>
 		/// Creates a new API server, and binds it to the given endpoint.
 		/// </summary>
-		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint)
+		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint, ICallable callHandler)
 		{
 			listener = new SocketServer(endPoint);
 			this.endPoint = endPoint;
 			authenticator = new Authenticator(privateIdentity);
+			this.callHandler = callHandler;
 		}
 
 		/// <summary>
 		/// Repeatedly listens for connection requests until disposed.
 		/// </summary>
-		public async Task Listen()
+		public async Task ListenForClients()
 		{
 			// Get possibly accepted listener.
 			var accepted = listener.Accept();
@@ -91,7 +98,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Performs a handshake with a client.
 		/// </summary>
-		public async void Handshake(SocketMessenger socketMessenger)
+		private async void Handshake(SocketMessenger socketMessenger)
 		{
 			// Begin process of connecting and upgrading
 			ProtectedMessenger protectedMessenger = null;
@@ -125,21 +132,20 @@ namespace Hosta.API
 				return;
 			}
 			// As the connection is complete, handle the client.
-			Handle(messenger);
+			ListenToClient(messenger);
 		}
 
 		/// <summary>
-		/// Handles a client connection.
+		/// Listens to client connections.
 		/// </summary>
-		public static async void Handle(AuthenticatedMessenger messenger)
+		private async void ListenToClient(AuthenticatedMessenger messenger)
 		{
-			// Repeatedly echo client back.
 			try
 			{
 				while (true)
 				{
 					string received = await messenger.Receive();
-					await messenger.Send(received);
+					HandleRequest(messenger, received);
 				}
 			}
 			catch { }
@@ -147,7 +153,45 @@ namespace Hosta.API
 			{
 				// Ensure the messenger is disposed of at the end.
 				messenger.Dispose();
+				connections.Remove(messenger);
 			}
+		}
+
+		/// <summary>
+		/// Asynchronously handle a request.
+		/// </summary>
+		private async void HandleRequest(AuthenticatedMessenger messenger, string message)
+		{
+			RPCall call;
+			try
+			{
+				call = JsonConvert.DeserializeObject<RPCall>(message);
+			}
+			catch
+			{
+				// Fatal exception
+				messenger.Dispose();
+				connections.Remove(messenger);
+				return;
+			}
+
+			// Try calling the local function.
+			string returnValues;
+			bool success;
+			try
+			{
+				returnValues = await callHandler.Call(call.Procedure, call.ProcedureArgs);
+				success = true;
+			}
+			catch (Exception e)
+			{
+				returnValues = e.Message;
+				success = false;
+			}
+
+			// Send the response.
+			var response = new RPResponse { ID = call.ID, Success = success, ReturnValues = returnValues };
+			await messenger.Send(JsonConvert.SerializeObject(response));
 		}
 
 		/// <summary>
