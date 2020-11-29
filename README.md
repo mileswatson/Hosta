@@ -1,6 +1,4 @@
-# Hosta
-
-A distributed social media platform made with C#.
+![](img/project-banner.png)
 
 ## Crypto
 
