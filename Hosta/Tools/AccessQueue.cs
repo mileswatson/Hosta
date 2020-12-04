@@ -25,7 +25,10 @@ namespace Hosta.Tools
 		{
 			ThrowIfDisposed();
 			var tcs = new TaskCompletionSource<object>();
-			waitingTasks.AddLast(tcs);
+			lock (waitingTasks)
+			{
+				waitingTasks.AddLast(tcs);
+			}
 			CheckForSpace();
 			return tcs.Task;
 		}

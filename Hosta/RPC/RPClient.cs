@@ -33,7 +33,7 @@ namespace Hosta.RPC
 		}
 
 		/// <summary>
-		/// Connects to an RPCServer, and starts listening for responses.
+		/// Creates an RPClient and connects it to an RPServer.
 		/// </summary>
 		public static async Task<RPClient> CreateAndConnect(string serverID, IPEndPoint serverEndpoint, PrivateIdentity self)
 		{
@@ -78,11 +78,13 @@ namespace Hosta.RPC
 					HandleResponse(received);
 				}
 			}
-			catch { }
+			catch
+			{
+			}
 			finally
 			{
-				// Ensure the messenger is disposed of at the end.
-				messenger.Dispose();
+				// Clean-up at the end
+				Dispose();
 			}
 		}
 

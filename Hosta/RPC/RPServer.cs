@@ -191,7 +191,20 @@ namespace Hosta.RPC
 
 			// Send the response.
 			var response = new RPResponse { ID = call.ID, Success = success, ReturnValues = returnValues };
-			await messenger.Send(JsonConvert.SerializeObject(response));
+			try
+			{
+				string serialized = JsonConvert.SerializeObject(response);
+				await messenger.Send(serialized);
+			}
+			catch
+			{
+				if (connections.Contains(messenger))
+				{
+					messenger.Dispose();
+					connections.Remove(messenger);
+				}
+				return;
+			}
 		}
 
 		/// <summary>

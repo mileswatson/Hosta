@@ -15,7 +15,8 @@ namespace HostaTests.Net
 		public SocketMessenger a;
 		public SocketMessenger b;
 
-		public ConnectionTester()
+		[TestInitialize]
+		public async Task ConnectionSucceeded()
 		{
 			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
@@ -23,14 +24,10 @@ namespace HostaTests.Net
 
 			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
-			a = server.Accept().Result;
+			a = await server.Accept();
 
-			b = connected.Result;
-		}
+			b = await connected;
 
-		[TestMethod]
-		public void ConnectionSucceeded()
-		{
 			Assert.IsNotNull(a);
 			Assert.IsNotNull(b);
 		}
@@ -46,6 +43,29 @@ namespace HostaTests.Net
 			var message = await b.Receive();
 			await sent;
 			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message));
+		}
+
+		[TestMethod]
+		public async Task TestLoad()
+		{
+			var iter = 1000;
+			Echo(iter);
+			for (int i = 0; i < iter; i++)
+			{
+				_ = a.Send(BitConverter.GetBytes(i));
+			}
+			for (int i = 0; i < iter; i++)
+			{
+				Assert.AreEqual(BitConverter.ToInt32(await a.Receive()), i);
+			}
+		}
+
+		public async void Echo(int iter)
+		{
+			for (int i = 0; i < iter; i++)
+			{
+				_ = b.Send(await b.Receive());
+			}
 		}
 
 		[DataTestMethod]
