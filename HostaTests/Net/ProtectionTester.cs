@@ -31,7 +31,6 @@ namespace HostaTests.Net
 		}
 
 		[TestInitialize]
-		[TestMethod]
 		public async Task TestProtectorExchange()
 		{
 			byte[] key = null;
@@ -80,6 +79,36 @@ namespace HostaTests.Net
 			var message = await protected2.Receive();
 			await sent;
 			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message));
+		}
+
+		[TestMethod]
+		public async Task TestLoad()
+		{
+			var iter = 100;
+			Echo(iter);
+			Volley(iter);
+			for (int i = 0; i < iter; i++)
+			{
+				Assert.AreEqual(BitConverter.ToInt32(await protected1.Receive()), i);
+			}
+		}
+
+		public async void Volley(int iter)
+		{
+			for (int i = 0; i < iter; i++)
+			{
+				await Task.Delay(7);
+				_ = protected1.Send(BitConverter.GetBytes(i));
+			}
+		}
+
+		public async void Echo(int iter)
+		{
+			for (int i = 0; i < iter; i++)
+			{
+				await Task.Delay(13);
+				_ = protected2.Send(await protected2.Receive());
+			}
 		}
 
 		[DataTestMethod]

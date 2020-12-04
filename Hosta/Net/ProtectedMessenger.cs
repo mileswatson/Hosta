@@ -1,4 +1,5 @@
 ﻿using Hosta.Crypto;
+using Hosta.Tools;
 using System;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -10,6 +11,10 @@ namespace Hosta.Net
 	/// </summary>
 	public class ProtectedMessenger : IDisposable
 	{
+		private readonly AccessQueue sendQueue = new();
+
+		private readonly AccessQueue receiveQueue = new();
+
 		/// <summary>
 		/// Underlying Socket Messenger.
 		/// </summary>
@@ -62,11 +67,19 @@ namespace Hosta.Net
 		/// <summary>
 		/// Asynchronously sends an encrypted message.
 		/// </summary>
-		public Task Send(byte[] message)
+		public async Task Send(byte[] message)
 		{
 			ThrowIfDisposed();
-			var package = crypter.Encrypt(message, sendRatchet.Turn(clicks));
-			return socketMessenger.Send(package);
+			await sendQueue.GetPass();
+			try
+			{
+				var package = crypter.Encrypt(message, sendRatchet.Turn(clicks));
+				await socketMessenger.Send(package);
+			}
+			finally
+			{
+				sendQueue.ReturnPass();
+			}
 		}
 
 		/// <summary>
@@ -75,8 +88,16 @@ namespace Hosta.Net
 		public async Task<byte[]> Receive()
 		{
 			ThrowIfDisposed();
-			var package = await socketMessenger.Receive();
-			return crypter.Decrypt(package, receiveRatchet.Turn(clicks));
+			await receiveQueue.GetPass();
+			try
+			{
+				var package = await socketMessenger.Receive();
+				return crypter.Decrypt(package, receiveRatchet.Turn(clicks));
+			}
+			finally
+			{
+				receiveQueue.ReturnPass();
+			}
 		}
 
 		//// Implements IDisposable

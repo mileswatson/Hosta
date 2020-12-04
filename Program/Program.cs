@@ -1,21 +1,21 @@
-﻿using Hosta.RPC;
-using Hosta.Crypto;
+﻿using Hosta.Crypto;
+using Hosta.RPC;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Program
 {
-	public class Class : ICallable
+	public class Program : ICallable
 	{
 		public static void Main()
 		{
 			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
 			var serverID = new PrivateIdentity();
-			var server = new RPServer(serverID, serverEndpoint, new Class());
+			var server = new RPServer(serverID, serverEndpoint, new Program());
 			var listening = server.ListenForClients();
 
 			var client = RPClient.CreateAndConnect(serverID.ID, serverEndpoint, new PrivateIdentity()).Result;
@@ -43,7 +43,7 @@ namespace Program
 
 		public Task<string> Call(string procedure, string args)
 		{
-			return Task<string>.FromResult(procedure + args);
+			return Task.FromResult(procedure + args);
 		}
 	}
 }

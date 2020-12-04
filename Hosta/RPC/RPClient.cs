@@ -78,11 +78,13 @@ namespace Hosta.RPC
 					HandleResponse(received);
 				}
 			}
-			catch { }
+			catch
+			{
+			}
 			finally
 			{
-				// Ensure the messenger is disposed of at the end.
-				messenger.Dispose();
+				// Clean-up at the end
+				Dispose();
 			}
 		}
 
