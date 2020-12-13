@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace Hosta.RPC
 {
+	public delegate Task<string> RPCallHandler(string procedure, string args);
+
 	/// <summary>
 	/// A server that handles API requests.
 	/// </summary>
@@ -17,7 +19,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Handles procedure calls.
 		/// </summary>
-		public readonly ICallable callHandler;
+		public readonly RPCallHandler callHandler;
 
 		/// <summary>
 		/// Underlying Socket Server to listen for incoming
@@ -48,7 +50,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Creates a new API server, and binds it to the given endpoint.
 		/// </summary>
-		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint, ICallable callHandler)
+		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint, RPCallHandler callHandler)
 		{
 			listener = new SocketServer(endPoint);
 			this.endPoint = endPoint;
@@ -180,7 +182,7 @@ namespace Hosta.RPC
 			bool success;
 			try
 			{
-				returnValues = await callHandler.Call(call.Procedure, call.ProcedureArgs);
+				returnValues = await callHandler(call.Procedure, call.ProcedureArgs);
 				success = true;
 			}
 			catch (Exception e)
@@ -205,23 +207,6 @@ namespace Hosta.RPC
 				}
 				return;
 			}
-		}
-
-		/// <summary>
-		/// Gets the local IP address.
-		/// </summary>
-		public static IPAddress GetLocal()
-		{
-			return Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
-		}
-
-		/// <summary>
-		/// Gets the external IP address.
-		/// </summary>
-		public static IPAddress GetExternal()
-		{
-			var externalip = new WebClient().DownloadString("http://icanhazip.com");
-			return IPAddress.Parse(externalip.Trim());
 		}
 
 		//// Implements IDisposable
