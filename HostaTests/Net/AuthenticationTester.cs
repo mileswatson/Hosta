@@ -1,6 +1,5 @@
 ﻿using Hosta.Crypto;
 using Hosta.Net;
-using Hosta.RPC;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace HostaTests.Net
 
 		public AuthenticationTester()
 		{
-			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
+			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
 
 			using var server = new SocketServer(serverEndpoint);
 

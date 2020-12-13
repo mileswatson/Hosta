@@ -14,8 +14,10 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Gets the public key encoded as bytes.
 		/// </summary>
-		public byte[] Token {
-			get {
+		public byte[] Token
+		{
+			get
+			{
 				ThrowIfDisposed();
 				return secret.ExportSubjectPublicKeyInfo();
 			}
