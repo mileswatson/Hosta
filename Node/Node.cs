@@ -1,5 +1,5 @@
 ﻿using Hosta.Crypto;
-using Hosta.RPC;
+using Hosta.API;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,14 +12,14 @@ namespace Node
 	internal class Node : IDisposable
 	{
 		/// <summary>
-		/// Underlying server which handles RP requests.
+		/// Gateway to forward API requests.
 		/// </summary>
-		private RPServer server;
+		private readonly LocalAPIGateway gateway;
 
 		/// <summary>
-		/// Triggered when the object is disposed.
+		/// Handles API requests.
 		/// </summary>
-		private TaskCompletionSource onDisposed = new();
+		private readonly DatabaseHandler databaseHandler;
 
 		/// <summary>
 		/// IP binding modes for the node.
@@ -41,73 +41,43 @@ namespace Node
 			switch (binding)
 			{
 				case Binding.Loopback:
+					// Probably 127.0.0.1
 					address = IPAddress.Loopback;
 					break;
 
 				case Binding.Local:
+					// The IP address of the device on the LAN
 					address = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
 					break;
 
 				case Binding.Public:
+					// Gets the public IP of the router
 					var externalip = new WebClient().DownloadString("http://icanhazip.com");
 					address = IPAddress.Parse(externalip.Trim());
 					break;
 
 				default:
-					address = IPAddress.None;
-					break;
+					throw new Exception("Invalid binding!");
 			}
 
 			var serverEndpoint = new IPEndPoint(address, 12000);
 
-			server = new RPServer(identity, serverEndpoint, Call);
+			databaseHandler = new DatabaseHandler();
+
+			gateway = new LocalAPIGateway(identity, serverEndpoint, databaseHandler);
 		}
 
 		/// <summary>
-		/// Starts the server.
+		/// Starts the gateway.
 		/// </summary>
-		public async Task Run()
+		public Task Run()
 		{
-			var listening = server.ListenForClients();
-
-			await listening;
-
-			await onDisposed.Task;
-		}
-
-		/// <summary>
-		/// Demo functionality.
-		/// </summary>
-		public async Task<string> Call(string proc, string args)
-		{
-			ThrowIfDisposed();
-			Random r = new();
-			await Task.Delay(r.Next(1000, 2000));
-			if (proc == "ValidProc")
-			{
-				if (args == "InvalidArgs")
-				{
-					throw new Exception("InvalidArgsException");
-				}
-				else
-				{
-					return "RETURNVAL" + args;
-				}
-			}
-			else
-			{
-				throw new Exception("InvalidProcedureException");
-			}
+			return gateway.Run();
 		}
 
 		//// Implements IDisposable
 
 		private bool disposed = false;
-
-		private void ThrowIfDisposed()
-		{
-			if (disposed) throw new ObjectDisposedException("Attempted post-disposal use!");
-		}
 
 		public void Dispose()
 		{
@@ -121,9 +91,9 @@ namespace Node
 
 			if (disposing)
 			{
-				// Disposes of server, and then signals the main thread.
-				server.Dispose();
-				onDisposed.SetResult();
+				// Disposes of gateway and closes database.
+				gateway.Dispose();
+				databaseHandler.Dispose();
 			}
 
 			disposed = true;

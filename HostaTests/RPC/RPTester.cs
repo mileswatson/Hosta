@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HostaTests.RPC
 {
 	[TestClass]
-	public class RPTester
+	public class RPTester : ICallable
 	{
 		private Task listening;
 
@@ -20,7 +20,7 @@ namespace HostaTests.RPC
 		{
 			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
 			var serverID = new PrivateIdentity();
-			server = new RPServer(serverID, serverEndpoint, Call);
+			server = new RPServer(serverID, serverEndpoint, this);
 			listening = server.ListenForClients();
 
 			var clientID = new PrivateIdentity();
@@ -98,7 +98,7 @@ namespace HostaTests.RPC
 			client.Dispose();
 		}
 
-		public async Task<string> Call(string proc, string args)
+		public async Task<string> Call(string proc, string args, PublicIdentity _ = null)
 		{
 			Random r = new();
 			await Task.Delay(r.Next(10, 500));

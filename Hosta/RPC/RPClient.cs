@@ -11,7 +11,7 @@ namespace Hosta.RPC
 	/// <summary>
 	/// Used to remotely call procedures on a server.
 	/// </summary>
-	public class RPClient : IDisposable
+	public class RPClient : ICallable, IDisposable
 	{
 		/// <summary>
 		/// Underlying messenger to use.
@@ -127,7 +127,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Remotely calls a function on the other end and receives a response.
 		/// </summary>
-		public async Task<string> Call(string procedure, string args)
+		public async Task<string> Call(string procedure, string args, PublicIdentity _ = null)
 		{
 			ThrowIfDisposed();
 

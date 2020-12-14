@@ -18,14 +18,14 @@ namespace Node
 
 			var running = node.Run();
 
-			Console.CancelKeyPress += new ConsoleCancelEventHandler(onCancel);
+			Console.CancelKeyPress += new ConsoleCancelEventHandler(OnCancel);
 
 			Console.WriteLine("Running...");
 			await running;
 			Console.WriteLine("Done.");
 		}
 
-		protected static void onCancel(object sender, ConsoleCancelEventArgs args)
+		protected static void OnCancel(object sender, ConsoleCancelEventArgs args)
 		{
 			Console.WriteLine("\nHalting server...");
 			node.Dispose();

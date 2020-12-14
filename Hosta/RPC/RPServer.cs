@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 
 namespace Hosta.RPC
 {
-	public delegate Task<string> RPCallHandler(string procedure, string args);
-
 	/// <summary>
 	/// A server that handles API requests.
 	/// </summary>
@@ -19,7 +17,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Handles procedure calls.
 		/// </summary>
-		public readonly RPCallHandler callHandler;
+		public readonly ICallable callHandler;
 
 		/// <summary>
 		/// Underlying Socket Server to listen for incoming
@@ -50,7 +48,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Creates a new API server, and binds it to the given endpoint.
 		/// </summary>
-		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint, RPCallHandler callHandler)
+		public RPServer(PrivateIdentity privateIdentity, IPEndPoint endPoint, ICallable callHandler)
 		{
 			listener = new SocketServer(endPoint);
 			this.endPoint = endPoint;
@@ -182,7 +180,7 @@ namespace Hosta.RPC
 			bool success;
 			try
 			{
-				returnValues = await callHandler(call.Procedure, call.ProcedureArgs);
+				returnValues = await callHandler.Call(call.Procedure, call.ProcedureArgs, messenger.otherIdentity);
 				success = true;
 			}
 			catch (Exception e)
