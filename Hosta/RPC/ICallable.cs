@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using Hosta.Crypto;
+using System.Threading.Tasks;
 
 namespace Hosta.RPC
 {
 	/// <summary>
-	/// Allows an RPServer to interface with external code.
+	/// An interface to facilitate handling of RP calls.
 	/// </summary>
 	public interface ICallable
 	{
-		public Task<string> Call(string procedure, string args);
+		public Task<string> Call(string procedure, string args, PublicIdentity client = null);
 	}
 }

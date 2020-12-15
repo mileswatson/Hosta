@@ -1,49 +1,49 @@
-﻿using Hosta.Crypto;
-using Hosta.RPC;
+﻿using Hosta.API;
+using Hosta.Crypto;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Program
 {
-	public class Program : ICallable
+	public class Program
 	{
-		public static void Main()
+		public static async Task Main()
 		{
-			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
+			var clientID = new PrivateIdentity();
 
-			var serverID = new PrivateIdentity();
-			var server = new RPServer(serverID, serverEndpoint, new Program());
-			var listening = server.ListenForClients();
+			Console.Write("Server ID: ");
+			var serverID = Console.ReadLine();
 
-			var client = RPClient.CreateAndConnect(serverID.ID, serverEndpoint, new PrivateIdentity()).Result;
-
-			var sw = new Stopwatch();
-			sw.Start();
-
-			var calls = new List<Task<string>>();
-			for (int i = 0; i < 1000; i++)
+			var client = await RemoteAPIGateway.CreateAndConnect(new RemoteAPIGateway.ConnectionArgs
 			{
-				calls.Add(client.Call("this is call #", i.ToString()));
+				Address = IPAddress.Loopback,
+				Port = 12000,
+				Self = clientID,
+				ServerID = serverID
+			});
+
+			const int numCalls = 1000;
+
+			Console.WriteLine("Calling...");
+			var responses = new List<Task<string>>();
+
+			for (int i = 0; i < numCalls; i++)
+			{
+				responses.Add(client.Name());
 			}
 
-			for (int i = 0; i < calls.Count; i++)
+			for (int i = 0; i < numCalls; i++)
 			{
-				Console.WriteLine(calls[i].Result);
+				Console.WriteLine(await responses[i]);
 			}
 
-			sw.Stop();
-			Console.WriteLine(sw.ElapsedMilliseconds);
+			Console.WriteLine("Done!");
 
-			server.Dispose();
-			listening.Wait();
-		}
+			client.Dispose();
 
-		public Task<string> Call(string procedure, string args)
-		{
-			return Task.FromResult(procedure + args);
+			Console.ReadKey();
 		}
 	}
 }

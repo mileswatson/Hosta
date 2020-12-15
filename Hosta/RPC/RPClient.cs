@@ -11,7 +11,7 @@ namespace Hosta.RPC
 	/// <summary>
 	/// Used to remotely call procedures on a server.
 	/// </summary>
-	public class RPClient : IDisposable, ICallable
+	public class RPClient : ICallable, IDisposable
 	{
 		/// <summary>
 		/// Underlying messenger to use.
@@ -109,23 +109,25 @@ namespace Hosta.RPC
 			// Checks to see whether the request is still valid.
 			if (!awaitedResponses.ContainsKey(response.ID)) return;
 
+			var awaitedResponse = awaitedResponses[response.ID];
+
+			awaitedResponses.Remove(response.ID);
+
 			// Check if an exception was thrown or not.
 			if (response.Success)
 			{
-				awaitedResponses[response.ID].SetResult(response.ReturnValues);
+				awaitedResponse.SetResult(response.ReturnValues);
 			}
 			else
 			{
-				awaitedResponses[response.ID].SetException(new Exception(response.ReturnValues));
+				awaitedResponse.SetException(new Exception(response.ReturnValues));
 			}
-
-			awaitedResponses.Remove(response.ID);
 		}
 
 		/// <summary>
 		/// Remotely calls a function on the other end and receives a response.
 		/// </summary>
-		public async Task<string> Call(string procedure, string args)
+		public async Task<string> Call(string procedure, string args, PublicIdentity _ = null)
 		{
 			ThrowIfDisposed();
 

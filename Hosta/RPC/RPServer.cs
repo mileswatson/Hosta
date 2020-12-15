@@ -180,7 +180,7 @@ namespace Hosta.RPC
 			bool success;
 			try
 			{
-				returnValues = await callHandler.Call(call.Procedure, call.ProcedureArgs);
+				returnValues = await callHandler.Call(call.Procedure, call.ProcedureArgs, messenger.otherIdentity);
 				success = true;
 			}
 			catch (Exception e)
@@ -205,23 +205,6 @@ namespace Hosta.RPC
 				}
 				return;
 			}
-		}
-
-		/// <summary>
-		/// Gets the local IP address.
-		/// </summary>
-		public static IPAddress GetLocal()
-		{
-			return Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
-		}
-
-		/// <summary>
-		/// Gets the external IP address.
-		/// </summary>
-		public static IPAddress GetExternal()
-		{
-			var externalip = new WebClient().DownloadString("http://icanhazip.com");
-			return IPAddress.Parse(externalip.Trim());
 		}
 
 		//// Implements IDisposable

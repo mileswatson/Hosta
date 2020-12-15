@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HostaTests.RPC
 {
 	[TestClass]
-	public class RPTester
+	public class RPTester : ICallable
 	{
 		private Task listening;
 
@@ -18,9 +18,9 @@ namespace HostaTests.RPC
 		[TestInitialize]
 		public async Task Connect()
 		{
-			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
+			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
 			var serverID = new PrivateIdentity();
-			server = new RPServer(serverID, serverEndpoint, new LocalGateway());
+			server = new RPServer(serverID, serverEndpoint, this);
 			listening = server.ListenForClients();
 
 			var clientID = new PrivateIdentity();
@@ -97,13 +97,11 @@ namespace HostaTests.RPC
 			await listening;
 			client.Dispose();
 		}
-	}
 
-	internal class LocalGateway : ICallable
-	{
-		public async Task<string> Call(string proc, string args)
+		public async Task<string> Call(string proc, string args, PublicIdentity _ = null)
 		{
-			await Task.Delay(100);
+			Random r = new();
+			await Task.Delay(r.Next(10, 500));
 			if (proc == "ValidProc")
 			{
 				if (args == "InvalidArgs")
