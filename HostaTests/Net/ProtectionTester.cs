@@ -2,6 +2,7 @@
 using Hosta.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -85,27 +86,25 @@ namespace HostaTests.Net
 		{
 			var iter = 100;
 			Echo(iter);
-			Volley(iter);
+			var awaited = new List<Task<byte[]>>();
 			for (int i = 0; i < iter; i++)
 			{
-				Assert.AreEqual(BitConverter.ToInt32(await protected1.Receive()), i);
+				await protected1.Send(BitConverter.GetBytes(i));
+				awaited.Add(protected1.Receive());
 			}
-		}
 
-		public async void Volley(int iter)
-		{
 			for (int i = 0; i < iter; i++)
 			{
-				await Task.Delay(7);
-				_ = protected1.Send(BitConverter.GetBytes(i));
+				Assert.AreEqual(BitConverter.ToInt32(await awaited[i]), i);
 			}
 		}
 
 		public async void Echo(int iter)
 		{
+			Random r = new Random();
 			for (int i = 0; i < iter; i++)
 			{
-				await Task.Delay(13);
+				await Task.Delay(r.Next(0, 10));
 				_ = protected2.Send(await protected2.Receive());
 			}
 		}

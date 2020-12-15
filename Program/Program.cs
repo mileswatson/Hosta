@@ -11,7 +11,7 @@ namespace Program
 	{
 		public static async Task Main()
 		{
-			var clientID = new PrivateIdentity();
+			var clientID = PrivateIdentity.Create();
 
 			Console.Write("Server ID: ");
 			var serverID = Console.ReadLine();

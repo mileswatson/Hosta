@@ -10,11 +10,17 @@ namespace HostaTests.Crypto
 		private PublicIdentity publicIdentity;
 
 		[TestInitialize]
-		[TestMethod]
-		public void ExportImport()
+		public void Create()
 		{
-			privateIdentity = new PrivateIdentity();
+			privateIdentity = PrivateIdentity.Create();
 			publicIdentity = new PublicIdentity(privateIdentity.PublicIdentityInfo);
+		}
+
+		[TestMethod]
+		public void TestImportExport()
+		{
+			var newIdentity = PrivateIdentity.Import(PrivateIdentity.Export(privateIdentity));
+			Assert.AreEqual(privateIdentity.ID, newIdentity.ID);
 		}
 
 		[TestMethod]
