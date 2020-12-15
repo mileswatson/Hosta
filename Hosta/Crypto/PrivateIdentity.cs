@@ -29,11 +29,11 @@ namespace Hosta.Crypto
 		public readonly string ID;
 
 		/// <summary>
-		/// Generates a new private identity using the nistP521 curve.
+		/// Generates a new private identity from a private key.
 		/// </summary>
-		public PrivateIdentity()
+		private PrivateIdentity(ECDsa privateKey)
 		{
-			privateKey = ECDsa.Create(ECCurve.NamedCurves.nistP521);
+			this.privateKey = privateKey;
 			ID = PublicIdentity.IDFromPublicInformation(PublicIdentityInfo);
 		}
 
@@ -43,6 +43,33 @@ namespace Hosta.Crypto
 		public byte[] Sign(byte[] data)
 		{
 			return privateKey.SignData(data, HashAlgorithmName.SHA256);
+		}
+
+		/// <summary>
+		/// Creates a new private identity from the nistP521 curve.
+		/// </summary>
+		public static PrivateIdentity Create()
+		{
+			var privateKey = ECDsa.Create(ECCurve.NamedCurves.nistP521);
+			return new PrivateIdentity(privateKey);
+		}
+
+		/// <summary>
+		/// Imports a private identity from a byte array.
+		/// </summary>
+		public static PrivateIdentity Import(byte[] source)
+		{
+			var privateKey = ECDsa.Create(ECCurve.NamedCurves.nistP521);
+			privateKey.ImportECPrivateKey(source, out int _);
+			return new PrivateIdentity(privateKey);
+		}
+
+		/// <summary>
+		/// Exports a private identity as a byte array.
+		/// </summary>
+		public static byte[] Export(PrivateIdentity identity)
+		{
+			return identity.privateKey.ExportECPrivateKey();
 		}
 	}
 }

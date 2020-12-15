@@ -15,22 +15,24 @@ namespace HostaTests.RPC
 		private RPServer server;
 		private RPClient client;
 
+		private const int iter = 1000;
+
 		[TestInitialize]
 		public async Task Connect()
 		{
 			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
-			var serverID = new PrivateIdentity();
+			var serverID = PrivateIdentity.Create();
 			server = new RPServer(serverID, serverEndpoint, this);
 			listening = server.ListenForClients();
 
-			var clientID = new PrivateIdentity();
+			var clientID = PrivateIdentity.Create();
 			client = await RPClient.CreateAndConnect(serverID.ID, serverEndpoint, clientID);
 		}
 
 		[TestMethod]
 		public async Task TestValid()
 		{
-			var tasks = new Task<string>[1000];
+			var tasks = new Task<string>[iter];
 			for (int i = 0; i < tasks.Length; i++)
 			{
 				tasks[i] = client.Call("ValidProc", i.ToString());
@@ -45,7 +47,7 @@ namespace HostaTests.RPC
 		[TestMethod]
 		public async Task TestInvalidArgs()
 		{
-			var tasks = new Task<string>[1000];
+			var tasks = new Task<string>[iter];
 			for (int i = 0; i < tasks.Length; i++)
 			{
 				tasks[i] = client.Call("ValidProc", "InvalidArgs");
@@ -69,7 +71,7 @@ namespace HostaTests.RPC
 		[TestMethod]
 		public async Task TestInvalidProc()
 		{
-			var tasks = new Task<string>[1000];
+			var tasks = new Task<string>[iter];
 			for (int i = 0; i < tasks.Length; i++)
 			{
 				tasks[i] = client.Call("InvalidProc", i.ToString());

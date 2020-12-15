@@ -1,6 +1,8 @@
-﻿using Hosta.Crypto;
-using Hosta.API;
+﻿using Hosta.API;
+using Hosta.Crypto;
+using Hosta.Tools;
 using System;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -34,37 +36,88 @@ namespace Node
 		/// <summary>
 		/// Creates a new instance of a Node.
 		/// </summary>
-		public Node(PrivateIdentity identity, Binding binding)
+		private Node(PrivateIdentity identity, IPEndPoint endpoint, DatabaseHandler dataBaseHandler)
 		{
-			IPAddress address;
+			databaseHandler = dataBaseHandler;
+			gateway = new LocalAPIGateway(identity, endpoint, databaseHandler);
+		}
 
+		/// <summary>
+		/// Creates a new node, loading the database and server identity
+		/// from the provided path.
+		/// </summary>
+		public static async Task<Node> Create(string folder, Binding binding)
+		{
+			if (!Directory.Exists(folder)) throw new Exception("Path is not a folder!");
+
+			var privateIdentity = await LoadIdentity(folder);
+
+			var address = await AddressFromBinding(binding);
+			var port = 12000;
+
+			var databaseHandler = new DatabaseHandler();
+
+			Console.WriteLine($"Creating node with location {privateIdentity.ID}:{address}:{port}");
+
+			return new Node(privateIdentity, new IPEndPoint(address, port), databaseHandler);
+		}
+
+		/// <summary>
+		/// Loads identity from folder.
+		/// </summary>
+		private static async Task<PrivateIdentity> LoadIdentity(string folder)
+		{
+			var file = Path.Combine(folder, "node.identity");
+			// If file doesn't exist, create and save a new identity.
+			if (!File.Exists(file))
+			{
+				var privateIdentity = PrivateIdentity.Create();
+				var bytes = Transcoder.HexFromBytes(PrivateIdentity.Export(privateIdentity));
+				await File.WriteAllTextAsync(file, bytes);
+				Console.WriteLine($"No identity found at {file}, so identity {privateIdentity.ID} was created.");
+				return privateIdentity;
+			}
+
+			// Otherwise, attempt to load the identity from the file.
+			try
+			{
+				var hex = await File.ReadAllTextAsync(file);
+				var privateIdentity = PrivateIdentity.Import(Transcoder.BytesFromHex(hex));
+				Console.WriteLine($"Found identity {privateIdentity.ID} at {file}, loaded successfully.");
+				return privateIdentity;
+			}
+			catch
+			{
+				Console.WriteLine($"Failed to load identity at {file}.");
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Gets the IP address for each binding.
+		/// </summary>
+		private static async Task<IPAddress> AddressFromBinding(Binding binding)
+		{
 			switch (binding)
 			{
 				case Binding.Loopback:
 					// Probably 127.0.0.1
-					address = IPAddress.Loopback;
-					break;
+					return IPAddress.Loopback;
 
 				case Binding.Local:
 					// The IP address of the device on the LAN
-					address = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
-					break;
+					var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
+					return hostEntry.AddressList[0];
 
 				case Binding.Public:
 					// Gets the public IP of the router
-					var externalip = new WebClient().DownloadString("http://icanhazip.com");
-					address = IPAddress.Parse(externalip.Trim());
-					break;
+					var webclient = new WebClient();
+					var externalip = await webclient.DownloadStringTaskAsync("http://icanhazip.com");
+					return IPAddress.Parse(externalip.Trim());
 
 				default:
 					throw new Exception("Invalid binding!");
 			}
-
-			var serverEndpoint = new IPEndPoint(address, 12000);
-
-			databaseHandler = new DatabaseHandler();
-
-			gateway = new LocalAPIGateway(identity, serverEndpoint, databaseHandler);
 		}
 
 		/// <summary>
@@ -91,7 +144,7 @@ namespace Node
 
 			if (disposing)
 			{
-				// Disposes of gateway and closes database.
+				// Disposes of gateway and database.
 				gateway.Dispose();
 				databaseHandler.Dispose();
 			}

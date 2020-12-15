@@ -38,9 +38,9 @@ namespace HostaTests.Net
 		[TestMethod]
 		public async Task AuthenticateValid()
 		{
-			var serverPrivID = new PrivateIdentity();
+			var serverPrivID = PrivateIdentity.Create();
 			var serverPubID = new PublicIdentity(serverPrivID.PublicIdentityInfo);
-			var clientPrivID = new PrivateIdentity();
+			var clientPrivID = PrivateIdentity.Create();
 
 			var serverAuthenticator = new Authenticator(serverPrivID);
 			var clientAuthenticator = new Authenticator(clientPrivID);
