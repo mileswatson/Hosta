@@ -1,30 +1,49 @@
 ﻿using Hosta.Crypto;
 using Hosta.RPC;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Program
 {
-	public class Program
+	public class Program : ICallable
 	{
-		public static async Task Main()
+		public static void Main()
 		{
-			var clientID = new PrivateIdentity();
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
-			Console.Write("Server ID: ");
-			var serverID = Console.ReadLine();
+			var serverID = new PrivateIdentity();
+			var server = new RPServer(serverID, serverEndpoint, new Program());
+			var listening = server.ListenForClients();
 
-			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
+			var client = RPClient.CreateAndConnect(serverID.ID, serverEndpoint, new PrivateIdentity()).Result;
 
-			var client = await RPClient.CreateAndConnect(serverID, serverEndpoint, clientID);
+			var sw = new Stopwatch();
+			sw.Start();
 
-			Console.WriteLine("Calling...");
-			Console.WriteLine(await client.Call("ValidProc", "tester"));
+			var calls = new List<Task<string>>();
+			for (int i = 0; i < 1000; i++)
+			{
+				calls.Add(client.Call("this is call #", i.ToString()));
+			}
 
-			client.Dispose();
+			for (int i = 0; i < calls.Count; i++)
+			{
+				Console.WriteLine(calls[i].Result);
+			}
 
-			Console.ReadKey();
+			sw.Stop();
+			Console.WriteLine(sw.ElapsedMilliseconds);
+
+			server.Dispose();
+			listening.Wait();
+		}
+
+		public Task<string> Call(string procedure, string args)
+		{
+			return Task.FromResult(procedure + args);
 		}
 	}
 }

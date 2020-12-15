@@ -18,10 +18,8 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Sets the key for the AesCrypter
 		/// </summary>
-		public byte[] Key
-		{
-			set
-			{
+		public byte[] Key {
+			set {
 				if (value.Length != KEY_SIZE) throw new Exception("Key is not the correct size!");
 				key = value;
 			}

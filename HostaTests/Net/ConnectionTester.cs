@@ -1,5 +1,6 @@
 ﻿using Hosta.Crypto;
 using Hosta.Net;
+using Hosta.RPC;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace HostaTests.Net
 		[TestInitialize]
 		public async Task ConnectionSucceeded()
 		{
-			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
 			using var server = new SocketServer(serverEndpoint);
 

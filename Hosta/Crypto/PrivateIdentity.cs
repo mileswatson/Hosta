@@ -15,10 +15,8 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Returns the PublicIdentityInfo
 		/// </summary>
-		public byte[] PublicIdentityInfo
-		{
-			get
-			{
+		public byte[] PublicIdentityInfo {
+			get {
 				return privateKey.ExportSubjectPublicKeyInfo();
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿using Hosta.Crypto;
 using Hosta.Net;
+using Hosta.RPC;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace HostaTests.Net
 
 		public ProtectionTester()
 		{
-			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
 			using var server = new SocketServer(serverEndpoint);
 
@@ -50,7 +51,7 @@ namespace HostaTests.Net
 		[DataRow(1000)]
 		public async Task TestProtectorStatic(int length)
 		{
-			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 
 			byte[] key = SecureRandomGenerator.GetBytes(length);
 

@@ -18,9 +18,9 @@ namespace HostaTests.RPC
 		[TestInitialize]
 		public async Task Connect()
 		{
-			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
+			var serverEndpoint = new IPEndPoint(RPServer.GetLocal(), 12000);
 			var serverID = new PrivateIdentity();
-			server = new RPServer(serverID, serverEndpoint, Call);
+			server = new RPServer(serverID, serverEndpoint, new LocalGateway());
 			listening = server.ListenForClients();
 
 			var clientID = new PrivateIdentity();
@@ -97,11 +97,13 @@ namespace HostaTests.RPC
 			await listening;
 			client.Dispose();
 		}
+	}
 
+	internal class LocalGateway : ICallable
+	{
 		public async Task<string> Call(string proc, string args)
 		{
-			Random r = new();
-			await Task.Delay(r.Next(10, 500));
+			await Task.Delay(100);
 			if (proc == "ValidProc")
 			{
 				if (args == "InvalidArgs")
