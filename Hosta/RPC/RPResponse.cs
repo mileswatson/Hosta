@@ -1,4 +1,5 @@
 ﻿using System;
+using Hosta.RPC;
 
 namespace Hosta.RPC
 {
@@ -9,6 +10,19 @@ namespace Hosta.RPC
 	{
 		public Guid ID { get; init; }
 		public bool Success { get; init; }
-		public string ReturnValues { get; init; }
+
+		private string returnValues = "";
+
+		public string ReturnValues
+		{
+			get
+			{
+				return returnValues;
+			}
+			init
+			{
+				returnValues = value;
+			}
+		}
 	}
 }

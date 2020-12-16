@@ -14,8 +14,7 @@ namespace HostaTests.Net
 		public SocketMessenger a;
 		public SocketMessenger b;
 
-		[TestInitialize]
-		public async Task ConnectionSucceeded()
+		public ConnectionTester()
 		{
 			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
 
@@ -23,12 +22,9 @@ namespace HostaTests.Net
 
 			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
-			a = await server.Accept();
+			a = server.Accept().Result;
 
-			b = await connected;
-
-			Assert.IsNotNull(a);
-			Assert.IsNotNull(b);
+			b = connected.Result;
 		}
 
 		[DataTestMethod]
@@ -38,8 +34,8 @@ namespace HostaTests.Net
 		public async Task TestValid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			var sent = a.Send(bytes);
-			var message = await b.Receive();
+			var sent = a!.Send(bytes);
+			var message = await b!.Receive();
 			await sent;
 			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message));
 		}
@@ -51,11 +47,11 @@ namespace HostaTests.Net
 			Echo(iter);
 			for (int i = 0; i < iter; i++)
 			{
-				_ = a.Send(BitConverter.GetBytes(i));
+				_ = a!.Send(BitConverter.GetBytes(i));
 			}
 			for (int i = 0; i < iter; i++)
 			{
-				Assert.AreEqual(BitConverter.ToInt32(await a.Receive()), i);
+				Assert.AreEqual(BitConverter.ToInt32(await a!.Receive()), i);
 			}
 		}
 
@@ -63,7 +59,7 @@ namespace HostaTests.Net
 		{
 			for (int i = 0; i < iter; i++)
 			{
-				_ = b.Send(await b.Receive());
+				_ = b!.Send(await b.Receive());
 			}
 		}
 
@@ -73,14 +69,14 @@ namespace HostaTests.Net
 		public void TestInvalid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a.Send(bytes));
+			Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a!.Send(bytes));
 		}
 
 		[TestCleanup]
 		public void CleanUp()
 		{
-			a.Dispose();
-			b.Dispose();
+			a!.Dispose();
+			b!.Dispose();
 		}
 	}
 }

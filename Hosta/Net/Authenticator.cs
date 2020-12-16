@@ -5,28 +5,23 @@ using System.Threading.Tasks;
 
 namespace Hosta.Net
 {
-	public class Authenticator : IDisposable
+	public class Authenticator
 	{
 		/// <summary>
 		/// Used to sign data.
 		/// </summary>
-		private PrivateIdentity self;
+		private readonly PrivateIdentity self;
 
 		/// <summary>
 		/// Creates a new Authenticator from a Private Identity.
 		/// </summary>
-		public Authenticator(PrivateIdentity self)
-		{
-			this.self = self;
-		}
+		public Authenticator(PrivateIdentity self) => this.self = self;
 
 		/// <summary>
 		/// Authenticates the connection with the client.
 		/// </summary>
 		public async Task<AuthenticatedMessenger> AuthenticateClient(ProtectedMessenger protectedMessenger)
 		{
-			ThrowIfDisposed();
-
 			// Throw if client has the wrong address.
 			var wantedID = Transcoder.TextFromBytes(await protectedMessenger.Receive());
 			if (wantedID != self.ID) throw new Exception("Wrong address!");
@@ -54,8 +49,6 @@ namespace Hosta.Net
 		/// </summary>
 		public async Task<AuthenticatedMessenger> AuthenticateServer(ProtectedMessenger protectedMessenger, string serverID)
 		{
-			ThrowIfDisposed();
-
 			// Initialise connection attempt.
 			await protectedMessenger.Send(Transcoder.BytesFromText(serverID));
 
@@ -78,34 +71,6 @@ namespace Hosta.Net
 			);
 
 			return new AuthenticatedMessenger(protectedMessenger, serverIdentity);
-		}
-
-		//// Implements IDisposable
-
-		private bool disposed = false;
-
-		private void ThrowIfDisposed()
-		{
-			if (disposed) throw new ObjectDisposedException("Attempted post-disposal use!");
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposed) return;
-
-			if (disposing)
-			{
-				// Nullify reference to private key
-				self = null;
-			}
-
-			disposed = true;
 		}
 	}
 }

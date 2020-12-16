@@ -26,11 +26,6 @@ namespace Hosta.RPC
 		private readonly SocketServer listener;
 
 		/// <summary>
-		/// Protects an established connection with encryption.
-		/// </summary>
-		private readonly Protector protector = new();
-
-		/// <summary>
 		/// Used for authenticating the client.
 		/// </summary>
 		private readonly Authenticator authenticator;
@@ -101,14 +96,14 @@ namespace Hosta.RPC
 		private async void Handshake(SocketMessenger socketMessenger)
 		{
 			// Begin process of connecting and upgrading
-			ProtectedMessenger protectedMessenger = null;
+			ProtectedMessenger? protectedMessenger = null;
 			AuthenticatedMessenger messenger;
 			try
 			{
 				// Add connections to the HashSet for easy disposal signalling
 				connections.Add(socketMessenger);
 
-				protectedMessenger = await protector.Protect(socketMessenger, false);
+				protectedMessenger = await Protector.Protect(socketMessenger, false);
 
 				// Ensure one of the connections is in the HashSet at all time
 				connections.Add(protectedMessenger);
@@ -165,7 +160,8 @@ namespace Hosta.RPC
 			RPCall call;
 			try
 			{
-				call = JsonConvert.DeserializeObject<RPCall>(message);
+				var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
+				call = JsonConvert.DeserializeObject<RPCall>(message, settings) ?? throw new Exception();
 			}
 			catch
 			{

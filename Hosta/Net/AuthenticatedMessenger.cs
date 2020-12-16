@@ -21,11 +21,6 @@ namespace Hosta.Net
 		public readonly PublicIdentity otherIdentity;
 
 		/// <summary>
-		/// Limits to one response at a time.
-		/// </summary>
-		public readonly AccessQueue accessQueue;
-
-		/// <summary>
 		/// Creates a new authenticated messenger, given a protected messenger and a public identity.
 		/// </summary>
 		public AuthenticatedMessenger(ProtectedMessenger secureMessenger, PublicIdentity otherIdentity)

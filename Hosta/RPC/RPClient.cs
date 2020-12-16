@@ -37,17 +37,16 @@ namespace Hosta.RPC
 		/// </summary>
 		public static async Task<RPClient> CreateAndConnect(string serverID, IPEndPoint serverEndpoint, PrivateIdentity self)
 		{
-			Protector protector = new Protector();
 			Authenticator authenticator = new Authenticator(self);
 
 			// Begin process of connecting and upgrading
-			SocketMessenger socketMessenger = null;
-			ProtectedMessenger protectedMessenger = null;
+			SocketMessenger? socketMessenger = null;
+			ProtectedMessenger? protectedMessenger = null;
 			AuthenticatedMessenger messenger;
 			try
 			{
 				socketMessenger = await SocketMessenger.CreateAndConnect(serverEndpoint);
-				protectedMessenger = await protector.Protect(socketMessenger, true);
+				protectedMessenger = await Protector.Protect(socketMessenger, true);
 				messenger = await authenticator.AuthenticateServer(protectedMessenger, serverID);
 			}
 			catch
@@ -98,7 +97,7 @@ namespace Hosta.RPC
 			try
 			{
 				var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
-				response = JsonConvert.DeserializeObject<RPResponse>(received, settings);
+				response = JsonConvert.DeserializeObject<RPResponse>(received, settings) ?? throw new Exception();
 			}
 			catch
 			{
@@ -127,7 +126,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Remotely calls a function on the other end and receives a response.
 		/// </summary>
-		public async Task<string> Call(string procedure, string args, PublicIdentity _ = null)
+		public async Task<string> Call(string procedure, string args, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
 

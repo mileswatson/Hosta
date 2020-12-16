@@ -8,37 +8,20 @@ namespace Hosta.Net
 	/// <summary>
 	/// Used to establish an encrypted connection over an insecure connection.
 	/// </summary>
-	public class Protector
+	public static class Protector
 	{
-		/// <summary>
-		/// Key to initialise ratchets to. If null, a key exchange is performed.
-		/// </summary>
-		private readonly byte[] authKey;
-
-		/// <summary>
-		/// Creates a new instance of the Protector class.
-		/// </summary>
-		public Protector(byte[] authKey = null)
-		{
-			this.authKey = authKey;
-		}
-
 		/// <summary>
 		/// Protects an insecure connection.
 		/// </summary>
 		/// <param name="initiator">Set to <see langword="true"/> if a client,
 		/// <see langword="false"/> if a server.</param>
-		public async Task<ProtectedMessenger> Protect(SocketMessenger socketMessenger, bool initiator)
+		public static async Task<ProtectedMessenger> Protect(SocketMessenger socketMessenger, bool initiator)
 		{
-			// If no static key is provided, perform a key exchange.
-			byte[] key = authKey;
-			if (key is null)
-			{
-				var exchanger = new KeyExchanger();
-				var sent = socketMessenger.Send(exchanger.Token);
-				key = exchanger.KeyFromToken(await socketMessenger.Receive());
-				await sent;
-			}
+			// Perform a key exchange.
+			var exchanger = new KeyExchanger();
+			var sent = socketMessenger.Send(exchanger.Token);
+			var key = exchanger.KeyFromToken(await socketMessenger.Receive());
+			await sent;
 
 			// Send test data.
 			var protectedMessenger = new ProtectedMessenger(socketMessenger, key, initiator);

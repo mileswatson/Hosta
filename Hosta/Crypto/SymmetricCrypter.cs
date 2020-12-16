@@ -31,7 +31,7 @@ namespace Hosta.Crypto
 		/// Creates a new SymmetricCrypter.
 		/// </summary>
 		/// <param name="key">Default is an array of 0 bytes.</param>
-		public SymmetricCrypter(byte[] key = null)
+		public SymmetricCrypter(byte[]? key = null)
 		{
 			this.key = key is null ? new byte[KEY_SIZE] : key;
 		}
@@ -42,12 +42,12 @@ namespace Hosta.Crypto
 		/// <param name="plainblob">The plainblob to encrypt.</param>
 		/// <param name="overrideKey">An optional key to override the default key.</param>
 		/// <returns>The secure package.</returns>
-		public byte[] Encrypt(byte[] plainblob, byte[] overrideKey = null)
+		public byte[] Encrypt(byte[] plainblob, byte[]? overrideKey = null)
 		{
 			var nonce = SecureRandomGenerator.GetBytes(NONCE_SIZE);
 			var cipherblob = new byte[plainblob.Length];
 			var tag = new byte[TAG_SIZE];
-			using var aes = new AesGcm(overrideKey is null ? key : overrideKey);
+			using var aes = new AesGcm(overrideKey ?? key);
 			aes.Encrypt(nonce, plainblob, cipherblob, tag);
 			return nonce.Concat(tag).Concat(cipherblob).ToArray();
 		}
@@ -58,7 +58,7 @@ namespace Hosta.Crypto
 		/// <param name="package">The secure package to open.</param>
 		/// <param name="overrideKey">An optional key to override the default key.</param>
 		/// <returns>The decrypted message.</returns>
-		public byte[] Decrypt(byte[] package, byte[] overrideKey = null)
+		public byte[] Decrypt(byte[] package, byte[]? overrideKey = null)
 		{
 			var messageLength = package.Length - NONCE_SIZE - TAG_SIZE;
 			if (messageLength < 0) throw new Exception("Package too small!");
@@ -71,7 +71,7 @@ namespace Hosta.Crypto
 
 			try
 			{
-				using var aes = new AesGcm(overrideKey is null ? key : overrideKey);
+				using var aes = new AesGcm(overrideKey ?? key);
 				aes.Decrypt(nonce, cipherblob, tag, plainblob);
 				return plainblob;
 			}

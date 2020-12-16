@@ -1,5 +1,7 @@
 ﻿using Hosta.API;
 using Hosta.Crypto;
+using Hosta.RPC;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -14,7 +16,7 @@ namespace Program
 			var clientID = PrivateIdentity.Create();
 
 			Console.Write("Server ID: ");
-			var serverID = Console.ReadLine();
+			var serverID = Console.ReadLine() ?? throw new NullReferenceException();
 
 			var client = await RemoteAPIGateway.CreateAndConnect(new RemoteAPIGateway.ConnectionArgs
 			{

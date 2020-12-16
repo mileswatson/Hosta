@@ -13,7 +13,7 @@ namespace Hosta.Tools
 		/// <summary>
 		/// Enforces order of the queue.
 		/// </summary>
-		private readonly LinkedList<TaskCompletionSource<object>> waitingTasks = new();
+		private readonly LinkedList<TaskCompletionSource> waitingTasks = new();
 
 		private int available = 1;
 
@@ -24,7 +24,7 @@ namespace Hosta.Tools
 		public Task GetPass()
 		{
 			ThrowIfDisposed();
-			var tcs = new TaskCompletionSource<object>();
+			var tcs = new TaskCompletionSource();
 			lock (waitingTasks)
 			{
 				waitingTasks.AddLast(tcs);
@@ -59,7 +59,7 @@ namespace Hosta.Tools
 					var tcs = currentNode.Value;
 					available--;
 					waitingTasks.Remove(currentNode);
-					tcs.SetResult(null);
+					tcs.SetResult();
 					currentNode = currentNode.Next;
 				}
 			}
