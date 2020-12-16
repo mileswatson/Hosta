@@ -70,11 +70,11 @@ namespace Hosta.Net
 		public async Task Send(byte[] message)
 		{
 			ThrowIfDisposed();
-			await sendQueue.GetPass();
+			await sendQueue.GetPass().ConfigureAwait(false);
 			try
 			{
 				var package = crypter.Encrypt(message, sendRatchet.Turn(clicks));
-				await socketMessenger.Send(package);
+				await socketMessenger.Send(package).ConfigureAwait(false);
 			}
 			finally
 			{
@@ -88,10 +88,10 @@ namespace Hosta.Net
 		public async Task<byte[]> Receive()
 		{
 			ThrowIfDisposed();
-			await receiveQueue.GetPass();
+			await receiveQueue.GetPass().ConfigureAwait(false);
 			try
 			{
-				var package = await socketMessenger.Receive();
+				var package = await socketMessenger.Receive().ConfigureAwait(false);
 				return crypter.Decrypt(package, receiveRatchet.Turn(clicks));
 			}
 			finally

@@ -20,7 +20,8 @@ namespace Hosta.Net
 			// Perform a key exchange.
 			var exchanger = new KeyExchanger();
 			var sent = socketMessenger.Send(exchanger.Token);
-			var key = exchanger.KeyFromToken(await socketMessenger.Receive());
+			var token = await socketMessenger.Receive().ConfigureAwait(false);
+			var key = exchanger.KeyFromToken(token);
 			await sent;
 
 			// Send test data.
@@ -29,11 +30,13 @@ namespace Hosta.Net
 			var a = protectedMessenger.Send(myValues);
 
 			// Echo bytes back.
-			var b = protectedMessenger.Send(await protectedMessenger.Receive());
-			await Task.WhenAll(a, b);
+			var integrityChallenge = await protectedMessenger.Receive().ConfigureAwait(false);
+			var b = protectedMessenger.Send(integrityChallenge);
+			await Task.WhenAll(a, b).ConfigureAwait(false);
 
 			// Check integrity of test data.
-			if (!Enumerable.SequenceEqual<byte>(myValues, await protectedMessenger.Receive()))
+			var integrityCheck = await protectedMessenger.Receive();
+			if (!Enumerable.SequenceEqual<byte>(myValues, integrityCheck))
 				throw new Exception("Could not verify connection!");
 
 			// Return protected messenger, as the connection has been validated.

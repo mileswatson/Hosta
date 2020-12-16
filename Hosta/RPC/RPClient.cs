@@ -45,9 +45,9 @@ namespace Hosta.RPC
 			AuthenticatedMessenger messenger;
 			try
 			{
-				socketMessenger = await SocketMessenger.CreateAndConnect(serverEndpoint);
-				protectedMessenger = await Protector.Protect(socketMessenger, true);
-				messenger = await authenticator.AuthenticateServer(protectedMessenger, serverID);
+				socketMessenger = await SocketMessenger.CreateAndConnect(serverEndpoint).ConfigureAwait(false);
+				protectedMessenger = await Protector.Protect(socketMessenger, true).ConfigureAwait(false);
+				messenger = await authenticator.AuthenticateServer(protectedMessenger, serverID).ConfigureAwait(false);
 			}
 			catch
 			{
@@ -73,7 +73,7 @@ namespace Hosta.RPC
 			{
 				while (true)
 				{
-					string received = await messenger.Receive();
+					string received = await messenger.Receive().ConfigureAwait(false);
 					HandleResponse(received);
 				}
 			}
@@ -138,10 +138,10 @@ namespace Hosta.RPC
 			awaitedResponses.Add(call.ID, tcs);
 
 			// Send the call object.
-			await messenger.Send(JsonConvert.SerializeObject(call));
+			await messenger.Send(JsonConvert.SerializeObject(call)).ConfigureAwait(false);
 
 			// Await the response.
-			return await tcs.Task;
+			return await tcs.Task.ConfigureAwait(false);
 		}
 
 		//// Implements IDisposable

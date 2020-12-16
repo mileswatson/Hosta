@@ -33,7 +33,7 @@ namespace Hosta.API
 				args.ServerID,
 				new IPEndPoint(args.Address, args.Port),
 				args.Self ?? throw new NullReferenceException("Self should not be null!")
-			);
+			).ConfigureAwait(false);
 			return new RemoteAPIGateway(client);
 		}
 

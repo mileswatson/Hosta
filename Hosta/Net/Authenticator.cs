@@ -24,25 +24,27 @@ namespace Hosta.Net
 		public async Task<AuthenticatedMessenger> AuthenticateClient(ProtectedMessenger protectedMessenger)
 		{
 			// Throw if client has the wrong address.
-			var wantedID = Transcoder.TextFromBytes(await protectedMessenger.Receive());
+			var wantedBytes = await protectedMessenger.Receive().ConfigureAwait(false);
+			var wantedID = Transcoder.TextFromBytes(wantedBytes);
 			if (wantedID != self.ID) throw new Exception("Wrong address!");
 
-			// Different HMACs ensures client cannot echo back signature.
+			// Using different HMACs ensures client cannot echo back signature.
 			var hmac = new HMACSHA256(protectedMessenger.ID);
 
 			// Send the public key and the signature.
 			await Task.WhenAll(
 				protectedMessenger.Send(self.PublicIdentityInfo),
 				protectedMessenger.Send(self.Sign(hmac.ComputeHash(new byte[] { 1 })))
-			);
+			).ConfigureAwait(false);
 
 			// Gets the client public key.
-			var pkInfo = await protectedMessenger.Receive();
+			var pkInfo = await protectedMessenger.Receive().ConfigureAwait(false);
 			var clientIdentity = new PublicIdentity(pkInfo);
 
 			// Verifies the client's signature.
-			if (!clientIdentity.Verify(hmac.ComputeHash(new byte[] { 2 }), await protectedMessenger.Receive()))
-				throw new Exception("Could not authenticate session!");
+			var clientSignature = await protectedMessenger.Receive().ConfigureAwait(false);
+			var verified = clientIdentity.Verify(hmac.ComputeHash(new byte[] { 2 }), clientSignature);
+			if (!verified) throw new Exception("Could not authenticate session!");
 
 			// Returns an authenticated messenger.
 			return new AuthenticatedMessenger(protectedMessenger, clientIdentity);
@@ -57,7 +59,7 @@ namespace Hosta.Net
 			await protectedMessenger.Send(Transcoder.BytesFromText(serverID));
 
 			// Receive the server's public key.
-			var pkInfo = await protectedMessenger.Receive();
+			var pkInfo = await protectedMessenger.Receive().ConfigureAwait(false);
 			PublicIdentity serverIdentity;
 			serverIdentity = new PublicIdentity(pkInfo);
 
@@ -68,14 +70,14 @@ namespace Hosta.Net
 			var hmac = new HMACSHA256(protectedMessenger.ID);
 
 			// Verifies the server's signature.
-			var signature = await protectedMessenger.Receive();
+			var signature = await protectedMessenger.Receive().ConfigureAwait(false);
 			if (!serverIdentity.Verify(hmac.ComputeHash(new byte[] { 1 }), signature)) throw new Exception("Could not authenticate session!");
 
 			// Send the public key and the signature.
 			await Task.WhenAll(
 				protectedMessenger.Send(self.PublicIdentityInfo),
 				protectedMessenger.Send(self.Sign(hmac.ComputeHash(new byte[] { 2 })))
-			);
+			).ConfigureAwait(false);
 
 			return new AuthenticatedMessenger(protectedMessenger, serverIdentity);
 		}

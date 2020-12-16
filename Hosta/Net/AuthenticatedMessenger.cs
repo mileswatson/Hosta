@@ -44,7 +44,7 @@ namespace Hosta.Net
 		public async Task<string> Receive()
 		{
 			ThrowIfDisposed();
-			var message = await protectedMessenger.Receive();
+			var message = await protectedMessenger.Receive().ConfigureAwait(false);
 			try
 			{
 				return Transcoder.TextFromBytes(message);

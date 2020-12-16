@@ -52,7 +52,7 @@ namespace Hosta.Net
 		{
 			ThrowIfDisposed();
 
-			await acceptQueue.GetPass();
+			await acceptQueue.GetPass().ConfigureAwait(false);
 			ThrowIfDisposed();
 
 			var tcs = new TaskCompletionSource<Socket>();
@@ -81,7 +81,7 @@ namespace Hosta.Net
 				do
 				{
 					var timeout = Task.Delay(1000);
-					await Task.WhenAny(tcs.Task, timeout);
+					await Task.WhenAny(tcs.Task, timeout).ConfigureAwait(false);
 					if (tcs.Task.IsCompleted)
 					{
 						break;
