@@ -5,7 +5,7 @@ namespace Node
 {
 	internal class Program
 	{
-		private static Node node;
+		private static Node? node;
 
 		/// <summary>
 		/// Program entrypoint.
@@ -36,10 +36,10 @@ namespace Node
 		}
 
 		// Dispose of node on cancel event.
-		protected static void OnCancel(object sender, ConsoleCancelEventArgs args)
+		protected static void OnCancel(object? _, ConsoleCancelEventArgs args)
 		{
 			Console.WriteLine("\nHalting server...");
-			node.Dispose();
+			node!.Dispose();
 			args.Cancel = true;
 		}
 	}

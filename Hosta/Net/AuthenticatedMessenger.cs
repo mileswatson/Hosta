@@ -21,11 +21,6 @@ namespace Hosta.Net
 		public readonly PublicIdentity otherIdentity;
 
 		/// <summary>
-		/// Limits to one response at a time.
-		/// </summary>
-		public readonly AccessQueue accessQueue;
-
-		/// <summary>
 		/// Creates a new authenticated messenger, given a protected messenger and a public identity.
 		/// </summary>
 		public AuthenticatedMessenger(ProtectedMessenger secureMessenger, PublicIdentity otherIdentity)
@@ -49,7 +44,7 @@ namespace Hosta.Net
 		public async Task<string> Receive()
 		{
 			ThrowIfDisposed();
-			var message = await protectedMessenger.Receive();
+			var message = await protectedMessenger.Receive().ConfigureAwait(false);
 			try
 			{
 				return Transcoder.TextFromBytes(message);

@@ -26,10 +26,8 @@ namespace HostaTests.Net
 			socket1 = server.Accept().Result;
 			socket2 = connected.Result;
 
-			var protector = new Protector();
-
-			var a = protector.Protect(socket1, false);
-			var b = protector.Protect(socket2, true);
+			var a = Protector.Protect(socket1, false);
+			var b = Protector.Protect(socket2, true);
 
 			protected1 = a.Result;
 			protected2 = b.Result;

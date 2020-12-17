@@ -10,15 +10,14 @@ namespace HostaTests.RPC
 	[TestClass]
 	public class RPTester : ICallable
 	{
-		private Task listening;
+		private readonly Task listening;
 
-		private RPServer server;
-		private RPClient client;
+		private readonly RPServer server;
+		private readonly RPClient client;
 
 		private const int iter = 1000;
 
-		[TestInitialize]
-		public async Task Connect()
+		public RPTester()
 		{
 			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
 			var serverID = PrivateIdentity.Create();
@@ -26,7 +25,7 @@ namespace HostaTests.RPC
 			listening = server.ListenForClients();
 
 			var clientID = PrivateIdentity.Create();
-			client = await RPClient.CreateAndConnect(serverID.ID, serverEndpoint, clientID);
+			client = RPClient.CreateAndConnect(serverID.ID, serverEndpoint, clientID).Result;
 		}
 
 		[TestMethod]
@@ -100,7 +99,7 @@ namespace HostaTests.RPC
 			client.Dispose();
 		}
 
-		public async Task<string> Call(string proc, string args, PublicIdentity _ = null)
+		public async Task<string> Call(string proc, string args, PublicIdentity? _ = null)
 		{
 			Random r = new();
 			await Task.Delay(r.Next(10, 500));

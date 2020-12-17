@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Hosta.RPC
 {
@@ -7,10 +8,38 @@ namespace Hosta.RPC
 	/// </summary>
 	public record RPCall
 	{
+		[JsonProperty(Required = Required.Always)]
 		public Guid ID { get; init; }
 
-		public string Procedure { get; init; }
+		private string procedure = "";
 
-		public string ProcedureArgs { get; init; }
+		[JsonProperty(Required = Required.Always)]
+		public string Procedure
+		{
+			get
+			{
+				return procedure;
+			}
+			init
+			{
+				procedure = value;
+			}
+		}
+
+		private string procedureArgs = "";
+
+		[JsonProperty(Required = Required.Always)]
+		public string ProcedureArgs
+		{
+			get
+			{
+				return procedureArgs;
+			}
+
+			init
+			{
+				procedureArgs = value;
+			}
+		}
 	}
 }

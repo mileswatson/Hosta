@@ -14,18 +14,17 @@ namespace Hosta.Crypto
 		/// Creates a new instance of a KDFRatchet.
 		/// </summary>
 		/// <param name="key">Key to start chain with.</param>
-		public KDFRatchet(byte[] key = null)
+		public KDFRatchet(byte[]? key = null)
 		{
-			this.key = key is null ? new byte[32] : key;
+			this.key = key ?? new byte[32];
 		}
 
 		/// <summary>
 		/// Turns the ratchet, and returns the output.
 		/// </summary>
-		/// <param name="input">Optional data to feed to ratchet.</param>
-		public byte[] Turn(byte[] input = null)
+		/// <param name="input">Data to feed to ratchet.</param>
+		public byte[] Turn(byte[] input)
 		{
-			input = input is null ? new byte[32] : input;
 			using var hmac = new HMACSHA512(key);
 			key = hmac.ComputeHash(input);
 			return (new ArraySegment<byte>(key, 32, 32)).ToArray();

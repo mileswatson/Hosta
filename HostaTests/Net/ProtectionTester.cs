@@ -12,9 +12,6 @@ namespace HostaTests.Net
 	[TestClass]
 	public class ProtectionTester
 	{
-		public SocketMessenger socket1;
-		public SocketMessenger socket2;
-
 		public ProtectedMessenger protected1;
 		public ProtectedMessenger protected2;
 
@@ -26,46 +23,14 @@ namespace HostaTests.Net
 
 			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
-			socket1 = server.Accept().Result;
-			socket2 = connected.Result;
-		}
+			var socket1 = server.Accept().Result;
+			var socket2 = connected.Result;
 
-		[TestInitialize]
-		public async Task TestProtectorExchange()
-		{
-			byte[] key = null;
-			var protector1 = new Protector(key);
-			var protector2 = new Protector(key);
+			var a = Protector.Protect(socket1, false);
+			var b = Protector.Protect(socket2, true);
 
-			var a = protector1.Protect(socket1, false);
-			var b = protector2.Protect(socket2, true);
-
-			protected1 = await a;
-			protected2 = await b;
-		}
-
-		[TestMethod]
-		[DataRow(0)]
-		[DataRow(1)]
-		[DataRow(100)]
-		[DataRow(1000)]
-		public async Task TestProtectorStatic(int length)
-		{
-			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
-
-			byte[] key = SecureRandomGenerator.GetBytes(length);
-
-			using var server = new SocketServer(serverEndpoint);
-
-			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
-
-			var p1 = new Protector(key);
-			var p2 = new Protector(key);
-
-			var a = p1.Protect(await server.Accept(), false);
-			var b = p1.Protect(await connected, true);
-
-			await Task.WhenAll(a, b);
+			protected1 = a.Result;
+			protected2 = b.Result;
 		}
 
 		[DataTestMethod]

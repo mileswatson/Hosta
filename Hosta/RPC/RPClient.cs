@@ -37,18 +37,17 @@ namespace Hosta.RPC
 		/// </summary>
 		public static async Task<RPClient> CreateAndConnect(string serverID, IPEndPoint serverEndpoint, PrivateIdentity self)
 		{
-			Protector protector = new Protector();
 			Authenticator authenticator = new Authenticator(self);
 
 			// Begin process of connecting and upgrading
-			SocketMessenger socketMessenger = null;
-			ProtectedMessenger protectedMessenger = null;
+			SocketMessenger? socketMessenger = null;
+			ProtectedMessenger? protectedMessenger = null;
 			AuthenticatedMessenger messenger;
 			try
 			{
-				socketMessenger = await SocketMessenger.CreateAndConnect(serverEndpoint);
-				protectedMessenger = await protector.Protect(socketMessenger, true);
-				messenger = await authenticator.AuthenticateServer(protectedMessenger, serverID);
+				socketMessenger = await SocketMessenger.CreateAndConnect(serverEndpoint).ConfigureAwait(false);
+				protectedMessenger = await Protector.Protect(socketMessenger, true).ConfigureAwait(false);
+				messenger = await authenticator.AuthenticateServer(protectedMessenger, serverID).ConfigureAwait(false);
 			}
 			catch
 			{
@@ -74,7 +73,7 @@ namespace Hosta.RPC
 			{
 				while (true)
 				{
-					string received = await messenger.Receive();
+					string received = await messenger.Receive().ConfigureAwait(false);
 					HandleResponse(received);
 				}
 			}
@@ -98,7 +97,7 @@ namespace Hosta.RPC
 			try
 			{
 				var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
-				response = JsonConvert.DeserializeObject<RPResponse>(received, settings);
+				response = JsonConvert.DeserializeObject<RPResponse>(received, settings) ?? throw new Exception();
 			}
 			catch
 			{
@@ -127,7 +126,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Remotely calls a function on the other end and receives a response.
 		/// </summary>
-		public async Task<string> Call(string procedure, string args, PublicIdentity _ = null)
+		public async Task<string> Call(string procedure, string args, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
 
@@ -139,10 +138,10 @@ namespace Hosta.RPC
 			awaitedResponses.Add(call.ID, tcs);
 
 			// Send the call object.
-			await messenger.Send(JsonConvert.SerializeObject(call));
+			await messenger.Send(JsonConvert.SerializeObject(call)).ConfigureAwait(false);
 
 			// Await the response.
-			return await tcs.Task;
+			return await tcs.Task.ConfigureAwait(false);
 		}
 
 		//// Implements IDisposable

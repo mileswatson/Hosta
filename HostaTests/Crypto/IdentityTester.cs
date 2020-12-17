@@ -6,11 +6,10 @@ namespace HostaTests.Crypto
 	[TestClass]
 	public class IdentityTester
 	{
-		private PrivateIdentity privateIdentity;
-		private PublicIdentity publicIdentity;
+		private readonly PrivateIdentity privateIdentity;
+		private readonly PublicIdentity publicIdentity;
 
-		[TestInitialize]
-		public void Create()
+		public IdentityTester()
 		{
 			privateIdentity = PrivateIdentity.Create();
 			publicIdentity = new PublicIdentity(privateIdentity.PublicIdentityInfo);

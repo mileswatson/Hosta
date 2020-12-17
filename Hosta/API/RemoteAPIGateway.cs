@@ -32,12 +32,12 @@ namespace Hosta.API
 			var client = await RPClient.CreateAndConnect(
 				args.ServerID,
 				new IPEndPoint(args.Address, args.Port),
-				args.Self
-			);
+				args.Self ?? throw new NullReferenceException("Self should not be null!")
+			).ConfigureAwait(false);
 			return new RemoteAPIGateway(client);
 		}
 
-		public override Task<string> Name(PublicIdentity _ = null)
+		public override Task<string> Name(PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
 			return client.Call("Name", "");
@@ -45,13 +45,37 @@ namespace Hosta.API
 
 		public record ConnectionArgs
 		{
-			public string ServerID { get; init; }
+			private string serverID = "";
 
-			public IPAddress Address { get; init; }
+			public string ServerID
+			{
+				get
+				{
+					return serverID; ;
+				}
+				init
+				{
+					serverID = value;
+				}
+			}
+
+			private IPAddress address = IPAddress.None;
+
+			public IPAddress Address
+			{
+				get
+				{
+					return address;
+				}
+				init
+				{
+					address = value;
+				}
+			}
 
 			public int Port { get; init; }
 
-			public PrivateIdentity Self { get; init; }
+			public PrivateIdentity? Self { get; init; }
 		}
 
 		//// Implements IDisposable

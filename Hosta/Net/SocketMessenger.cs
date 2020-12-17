@@ -48,20 +48,20 @@ namespace Hosta.Net
 			ThrowIfDisposed();
 
 			// Enforce order.
-			await readQueue.GetPass();
+			await readQueue.GetPass().ConfigureAwait(false);
 
 			ThrowIfDisposed();
 			try
 			{
 				// Read the length from the stream
-				var lengthBytes = await ReadFixedLength(4);
+				var lengthBytes = await ReadFixedLength(4).ConfigureAwait(false);
 
 				// Convert the length to an integer and check that it's valid.
 				int length = BitConverter.ToInt32(lengthBytes, 0);
 				if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
 
 				// Read the message from the stream
-				return await ReadFixedLength(length);
+				return await ReadFixedLength(length).ConfigureAwait(false);
 			}
 			catch
 			{
@@ -110,11 +110,11 @@ namespace Hosta.Net
 			// Checks length before attempting to send.
 			if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException(nameof(message));
 
-			await writeQueue.GetPass();
+			await writeQueue.GetPass().ConfigureAwait(false);
 
 			try
 			{
-				await WriteLengthAndMessage(message);
+				await WriteLengthAndMessage(message).ConfigureAwait(false);
 			}
 			catch
 			{
