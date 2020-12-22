@@ -55,7 +55,7 @@ namespace Node
 			var address = await AddressFromBinding(binding);
 			var port = 12000;
 
-			var databaseHandler = new DatabaseHandler();
+			var databaseHandler = await DatabaseHandler.Create(Path.Combine(folder, "hostanode.db"));
 
 			Console.WriteLine($"Creating node with location {privateIdentity.ID}:{address}:{port}");
 

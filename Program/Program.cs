@@ -33,7 +33,7 @@ namespace Program
 
 			for (int i = 0; i < numCalls; i++)
 			{
-				responses.Add(client.Name());
+				responses.Add(client.GetName());
 			}
 
 			for (int i = 0; i < numCalls; i++)

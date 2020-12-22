@@ -37,7 +37,7 @@ namespace Hosta.API
 			return new RemoteAPIGateway(client);
 		}
 
-		public override Task<string> Name(PublicIdentity? _ = null)
+		public override Task<string> GetName(PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
 			return client.Call("Name", "");

@@ -8,6 +8,6 @@ namespace Hosta.API
 		/// <summary>
 		/// Returns the readable name of the client.
 		/// </summary>
-		public abstract Task<string> Name(PublicIdentity client = null);
+		public abstract Task<string> GetName(PublicIdentity client = null);
 	}
 }

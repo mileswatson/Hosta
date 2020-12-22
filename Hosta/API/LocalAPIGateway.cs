@@ -65,7 +65,7 @@ namespace Hosta.API
 		public Task<string> Name(string args, PublicIdentity client)
 		{
 			if (args != "") throw new Exception("Invalid Arguments!");
-			return gateway.Name(client);
+			return gateway.GetName(client);
 		}
 
 		//// Implements IDisposable

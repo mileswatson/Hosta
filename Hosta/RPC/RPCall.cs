@@ -8,38 +8,19 @@ namespace Hosta.RPC
 	/// </summary>
 	public record RPCall
 	{
+		public RPCall()
+		{
+			Procedure = "";
+			ProcedureArgs = "";
+		}
+
 		[JsonProperty(Required = Required.Always)]
 		public Guid ID { get; init; }
 
-		private string procedure = "";
+		[JsonProperty(Required = Required.Always)]
+		public string Procedure { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public string Procedure
-		{
-			get
-			{
-				return procedure;
-			}
-			init
-			{
-				procedure = value;
-			}
-		}
-
-		private string procedureArgs = "";
-
-		[JsonProperty(Required = Required.Always)]
-		public string ProcedureArgs
-		{
-			get
-			{
-				return procedureArgs;
-			}
-
-			init
-			{
-				procedureArgs = value;
-			}
-		}
+		public string ProcedureArgs { get; init; }
 	}
 }
