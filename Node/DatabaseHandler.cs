@@ -1,11 +1,13 @@
 ﻿using Hosta.API;
+using Hosta.API.Data;
 using Hosta.Crypto;
-using Hosta.Tools;
 using Node.Data;
 using System;
 using System.Threading.Tasks;
 using SQLite;
 using System.Diagnostics;
+using Hosta.Tools;
+using System.Collections.Generic;
 
 namespace Node
 {
@@ -14,59 +16,83 @@ namespace Node
 	/// </summary>
 	internal class DatabaseHandler : API, IDisposable
 	{
+		private readonly string self;
+
 		private readonly SQLiteAsyncConnection conn;
-		private readonly SQLiteAsyncConnection writeConn;
 
-		private DatabaseHandler(string path)
+		private DatabaseHandler(string path, string admin)
 		{
-			this.conn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.FullMutex);
-			this.writeConn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.FullMutex);
+			this.conn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
+			this.self = admin;
 		}
 
-		public static async Task<DatabaseHandler> Create(string path)
+		public static async Task<DatabaseHandler> Create(string path, string admin)
 		{
-			var initConn = new SQLiteAsyncConnection(
-				path,
-				SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex
-			);
+			var h = new DatabaseHandler(path, admin);
 
-			await InitProfile(initConn);
+			await h.InitProfile();
 
-			return new DatabaseHandler(path);
+			return new DatabaseHandler(path, admin);
 		}
 
-		private static async Task InitProfile(SQLiteAsyncConnection conn)
+		private async Task InitProfile()
 		{
-			await conn.CreateTableAsync<ProfileField>();
+			ThrowIfDisposed();
+			await conn.CreateTableAsync<Profile>();
 			try
 			{
-				var field = await conn.GetAsync<ProfileField>("Name");
-				Console.WriteLine($"Loaded {field.Key}:{field.Value}");
+				var profile = await conn.GetAsync<Profile>(self);
+				Console.WriteLine($"Loaded {profile}.");
 			}
 			catch
 			{
-				await conn.InsertAsync(new ProfileField("Name", "Firstname Lastname"));
-				Console.WriteLine("Created profile field: Name");
+				var profile = new Profile(self, "olddisplayname", "oldtagline", "oldbio", "oldavatar", DateTime.UtcNow);
+				await conn.InsertAsync(profile);
+				Console.WriteLine($"Created new profile {profile}.");
 			}
 		}
 
 		//// Functionality
 
 		/// <summary>
-		/// Demo functionality.
+		/// Get the profile name.
 		/// </summary>
-		public override async Task<string> GetName(PublicIdentity _)
+		public override async Task<GetProfileResponse> GetProfile(PublicIdentity _)
 		{
 			ThrowIfDisposed();
 			try
 			{
-				var r = await conn.GetAsync<ProfileField>("Name");
-				return r.Value;
+				var p = await conn.GetAsync<Profile>(self);
+				return p.ToResponse();
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
-				throw new Exception("Invalid profile field!");
+				throw new Exception("Database error!");
+			}
+		}
+
+		/// <summary>
+		/// Set the profile name.
+		/// </summary>
+		public override async Task<string> SetProfile(SetProfileRequest r, PublicIdentity client)
+		{
+			ThrowIfDisposed();
+			// TODO: Change this to what it should actually be (!=)
+			if (client.ID == self)
+			{
+				throw new Exception("Access denied!");
+			}
+
+			try
+			{
+				var s = await conn.InsertOrReplaceAsync(new Profile(self, r));
+				return "";
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw new Exception("Database error!");
 			}
 		}
 

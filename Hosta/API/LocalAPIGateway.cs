@@ -1,4 +1,5 @@
-﻿using Hosta.Crypto;
+﻿using Hosta.API.Data;
+using Hosta.Crypto;
 using Hosta.RPC;
 using System;
 using System.Net;
@@ -14,7 +15,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Underlying API to call.
 		/// </summary>
-		private readonly API gateway;
+		private readonly API api;
 
 		/// <summary>
 		/// Underlying RPServer to receive calls from.
@@ -27,7 +28,7 @@ namespace Hosta.API
 		public LocalAPIGateway(PrivateIdentity self, IPEndPoint endPoint, API gateway)
 		{
 			server = new RPServer(self, endPoint, this);
-			this.gateway = gateway;
+			this.api = gateway;
 		}
 
 		/// <summary>
@@ -40,7 +41,8 @@ namespace Hosta.API
 			// Decides which handler to use.
 			ProcedureHandler handler = proc switch
 			{
-				"Name" => Name,
+				"GetProfile" => GetProfile,
+				"SetProfile" => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
 			};
 
@@ -62,10 +64,17 @@ namespace Hosta.API
 
 		//// Translators
 
-		public Task<string> Name(string args, PublicIdentity client)
+		public async Task<string> GetProfile(string args, PublicIdentity client)
 		{
 			if (args != "") throw new Exception("Invalid Arguments!");
-			return gateway.GetName(client);
+			var gpr = await api.GetProfile(client);
+			return GetProfileResponse.Export(gpr);
+		}
+
+		public async Task<string> SetProfile(string args, PublicIdentity client)
+		{
+			await api.SetProfile(SetProfileRequest.Import(args), client);
+			return "";
 		}
 
 		//// Implements IDisposable
