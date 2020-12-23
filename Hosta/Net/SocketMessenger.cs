@@ -212,7 +212,7 @@ namespace Hosta.Net
 				if (readQueue != null) readQueue.Dispose();
 				if (writeQueue != null) writeQueue.Dispose();
 
-				socket.Close();
+				socket.Dispose();
 			}
 
 			disposed = true;

@@ -1,4 +1,5 @@
 ﻿using Hosta.API;
+using Hosta.API.Data;
 using Hosta.Crypto;
 using Hosta.RPC;
 using Newtonsoft.Json;
@@ -26,20 +27,13 @@ namespace Program
 				ServerID = serverID
 			});
 
-			const int numCalls = 1000;
-
 			Console.WriteLine("Calling...");
-			var responses = new List<Task<string>>();
 
-			for (int i = 0; i < numCalls; i++)
-			{
-				responses.Add(client.Name());
-			}
+			Console.WriteLine(await client.GetProfile());
 
-			for (int i = 0; i < numCalls; i++)
-			{
-				Console.WriteLine(await responses[i]);
-			}
+			await client.SetProfile(new("newdisplayname", "newtagline", "newbio", ""));
+
+			Console.WriteLine(await client.GetProfile());
 
 			Console.WriteLine("Done!");
 

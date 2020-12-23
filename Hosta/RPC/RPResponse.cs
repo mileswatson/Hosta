@@ -1,5 +1,6 @@
 ﻿using System;
 using Hosta.RPC;
+using Newtonsoft.Json;
 
 namespace Hosta.RPC
 {
@@ -8,21 +9,18 @@ namespace Hosta.RPC
 	/// </summary>
 	public record RPResponse
 	{
+		public RPResponse()
+		{
+			ReturnValues = "";
+		}
+
+		[JsonProperty(Required = Required.Always)]
 		public Guid ID { get; init; }
+
+		[JsonProperty(Required = Required.Always)]
 		public bool Success { get; init; }
 
-		private string returnValues = "";
-
-		public string ReturnValues
-		{
-			get
-			{
-				return returnValues;
-			}
-			init
-			{
-				returnValues = value;
-			}
-		}
+		[JsonProperty(Required = Required.Always)]
+		public string ReturnValues { get; init; }
 	}
 }

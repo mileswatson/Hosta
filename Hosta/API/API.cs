@@ -1,4 +1,5 @@
-﻿using Hosta.Crypto;
+﻿using Hosta.API.Data;
+using Hosta.Crypto;
 using System.Threading.Tasks;
 
 namespace Hosta.API
@@ -6,8 +7,13 @@ namespace Hosta.API
 	public abstract class API
 	{
 		/// <summary>
-		/// Returns the readable name of the client.
+		/// Gets the readable name of the client.
 		/// </summary>
-		public abstract Task<string> Name(PublicIdentity client = null);
+		public abstract Task<GetProfileResponse> GetProfile(PublicIdentity client = null);
+
+		/// <summary>
+		/// Sets the readable name of the client.
+		/// </summary>
+		public abstract Task SetProfile(SetProfileRequest profile, PublicIdentity client = null);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Hosta.Crypto;
+﻿using Hosta.API.Data;
+using Hosta.Crypto;
 using Hosta.RPC;
 using System;
 using System.Net;
@@ -37,12 +38,6 @@ namespace Hosta.API
 			return new RemoteAPIGateway(client);
 		}
 
-		public override Task<string> Name(PublicIdentity? _ = null)
-		{
-			ThrowIfDisposed();
-			return client.Call("Name", "");
-		}
-
 		public record ConnectionArgs
 		{
 			private string serverID = "";
@@ -76,6 +71,21 @@ namespace Hosta.API
 			public int Port { get; init; }
 
 			public PrivateIdentity? Self { get; init; }
+		}
+
+		//// Translators
+
+		public override async Task<GetProfileResponse> GetProfile(PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			var str = await client.Call("GetProfile", "");
+			return GetProfileResponse.Import(str);
+		}
+
+		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			return client.Call("SetProfile", SetProfileRequest.Export(request));
 		}
 
 		//// Implements IDisposable
