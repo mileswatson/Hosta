@@ -74,10 +74,10 @@ This sections explains the inner workings of the project.
 
 ### Contents
 
- - [Technologies](#technologies)
- - [Network Architecture](#network-architecture)
- - [Solution Structure](#solution-structure)
- - [Hosta (Core Library)](#hosta-core-library)
+ - [Technologies](#technologies-)
+ - [Network Architecture](#network-architecture-)
+ - [Solution Structure](#solution-structure-)
+ - [Hosta (Core Library)](#hosta-core-library-)
    - [Crypto](#crypto)
    - [Tools](#tools)
    - [Net](#net)
