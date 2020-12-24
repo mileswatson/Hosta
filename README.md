@@ -15,7 +15,7 @@
  📝 🔒 👪
 </p>
 
-<h1></h1>
+<h1></h1><br/>
 
 <p align="center">
   <a href="https://github.com/mileswatson/Hosta/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/mileswatson/Hosta?color=blue"></a>
@@ -39,7 +39,7 @@
   <a href="https://github.com/mileswatson/Hosta/discussions/20">Support</a>
 </h3>
 
-<br/><h1></h1><br/>
+<h1></h1><br/>
 
 ### What's the problem?
 
