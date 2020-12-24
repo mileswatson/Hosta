@@ -1,12 +1,11 @@
 
-<div align="center">
+<h3 align="center">
   <img alt="Hosta" src="img/project-banner.png" width=75%/>
-</div>
+</h3>
 
-
-<h2 align="center">
+<p align="center" style="font-size:150%">
   Take back control of your data
-</h2>
+</P>
 
 <div align="center" margin="50px">
   Hosta is an open source, PoC decentralized social media that focuses on privacy, security, and real-world relationships.
@@ -14,11 +13,11 @@
 
 <br/>
 
-<p align="center" style="font-size:150%">
+<p align="center" style="font-size:125%">
  📝 🔒 👪
 </p>
 
-<br/><hr/><br/>
+<br/><h1></h1><br/>
 
 <p align="center">
   <a href="https://github.com/mileswatson/Hosta/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/mileswatson/Hosta?color=blue"></a>
@@ -42,7 +41,7 @@
   <a href="https://github.com/mileswatson/Hosta/discussions/20">Support</a>
 </h3>
 
-<br/><hr/><br/>
+<br/><h1></h1><br/>
 
 <h3 style="font-size:150%">What's the problem?</h3>
 
