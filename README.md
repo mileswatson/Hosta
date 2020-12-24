@@ -1,6 +1,6 @@
 
 <h3 align="center">
-  <img alt="Hosta" src="img/project-banner.png" width=75%/>
+  <img alt="Hosta" src="img/project-banner.png" style="max-width:600px;width:75%"/>
 </h3>
 
 <h3 align="center">
