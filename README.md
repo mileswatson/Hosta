@@ -43,7 +43,7 @@
 
 ### What's the problem?
 
-Modern social media platforms rely on personalised advertising. They are designed with two purposes:
+Modern social media platforms rely on *personalised advertising*. They are designed with two purposes:
 
 1. 📋 Collect and analyse as much user-data as possible
 2. ⌚ Keep the user engaged as long as possible
@@ -60,13 +60,19 @@ Hosta is a different type of social media to the ones you usually install on you
 
 All of this makes Hosta ideal for private, secure, and censorship resistant communications.
 
+Furthermore, Hosta is not incentivised to maximise user attention - there are no intrusive advertisements, no greedy shareholders, and no creepy trackers.
+
 ### What do I need to get started?
 
-To get started, you need an always-on device to host your content on. You can use a desktop, but the recommendation is to use a Raspberry Pi running Ubuntu or similar.
+Each user should have an always-on-device (called a *node*) to host their content on. The node controls all of the user's data - it stores posts and comments, and controls who can see them.
 
-You will also need a device that supports the Hosta application. At the moment, this is limited to a desktop running the latest version of Windows - however, more platforms may be available in the future.
+They can use a *client* program to access the network - clients allow the user to view the posts, comments, and profiles of users on the network.
 
-## DNS
+To get started, it is recommended to use a Raspberry Pi + Ubuntu to run the node, and a desktop computer + Windows to run the client.
+
+# The Technical Section
+
+### DNS
 
 Will try to make it as far as possible:
 1. Manual IP entry
@@ -74,7 +80,7 @@ Will try to make it as far as possible:
 3. Recursive lookup via adjacent nodes
 4. a) DHT, perhaps similar to Kademlia's implementation; b) blockchain
 
-## Architecture
+### Architecture
 
 This is the proposed structure of the network. Each client has a corresponding node, which hosts their content and contains the public key. The nodes update each other of their location, which means that the client only has to know the location of one node on the network to be able to connect.
 
