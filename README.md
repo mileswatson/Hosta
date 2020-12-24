@@ -8,7 +8,7 @@
 </h3>
 
 <div align="center" margin="50px">
-  Hosta is an open source, PoC decentralized social media that focuses on privacy, security, and real-world relationships.
+  Hosta is an open source, decentralized social media which focuses on privacy, security, and real-world relationships.
 </div>
 
 <p align="center" style="font-size:125%">
@@ -32,9 +32,9 @@
   <span> · </span>
   <a href="https://github.com/mileswatson/Hosta/wiki">Docs</a>
   <span> · </span>
-  <a href="https://github.com/mileswatson/Hosta/discussions/21">Feature request</a>
+  <a href="!https://github.com/mileswatson/Hosta/discussions/21">Feature Requests</a>
   <span> · </span>
-  <a href="https://github.com/mileswatson/Hosta/issues">Report a bug</a>
+  <a href="!https://github.com/mileswatson/Hosta/issues">Bug Reports</a>
   <span> · </span>
   <a href="https://github.com/mileswatson/Hosta/discussions/20">Support</a>
 </h3>
@@ -52,7 +52,7 @@ This leads to a *time-consuming* and *stressful* user experience that is fraught
 
 ### How is Hosta different?
 
-Hosta is a different type of social media to the ones you usually install on your phone. By using the Hosta network:
+Hosta is a different type of social media to the ones you usually install on your phone. Defining features of the Hosta network:
 
  - Users are in **direct control** of their data
  - All communications are **end-to-end encrypted**
@@ -60,17 +60,17 @@ Hosta is a different type of social media to the ones you usually install on you
 
 All of this makes Hosta ideal for private, secure, and censorship resistant communications.
 
-Furthermore, Hosta is not incentivised to maximise user attention - there are no intrusive advertisements, no greedy shareholders, and no creepy trackers.
+Furthermore, Hosta is not incentivised to maximise user attention - there are no intrusive advertisements, greedy shareholders, or creepy trackers.
 
 ### What do I need to get started?
 
-Each user should have an always-on-device (called a *node*) to host their content on. The node controls all of the user's data - it stores posts and comments, and controls who can see them. For beginners, a **Raspberry Pi + Ubuntu** is recommended.
+Each user should have an always-on device (called a *node*) to host their content on. The node controls all of the user's data - it stores posts and comments, and controls who can see them. For beginners, a **Raspberry Pi + Ubuntu** is recommended.
 
-They can use a *client* program to view the posts, comments, and profiles of users on the network. At the moment, only a **Windows 32/64 bit** client is in the works - however, more platforms may be supported in the future.
+They can use a *client* program to view the posts, comments, and profiles of users on the network. At the moment, only a **Windows 10** client is in the works - however, more platforms may be supported in the future.
 
-# The Technical Bit
+# Documentation 📃
 
-In this section, I will do my best to explain the inner workings of the project.
+This sections explains the inner workings of the project.
 
 ### Contents
 
@@ -85,12 +85,12 @@ In this section, I will do my best to explain the inner workings of the project.
    - [API](#api)
 
 
-## Technologies
+## Technologies 🚀
 
 This project using the following languages / frameworks:
  - [**C# 9**](https://docs.microsoft.com/en-us/dotnet/csharp/)
  - [**.NET 5**](https://devblogs.microsoft.com/dotnet/introducing-net-5/)
- - [**WPF**](https://docs.microsoft.com/en-us/visualstudio/designers/getting-started-with-wpf?view=vs-2019) (desktop)
+ - [**WPF**](https://docs.microsoft.com/en-us/visualstudio/designers/getting-started-with-wpf?view=vs-2019) (desktop client)
  - [**SQLite**](https://sqlite.org/index.html) (node)
 
 It also uses the following NuGet packages:
@@ -99,7 +99,7 @@ It also uses the following NuGet packages:
 
 Many thanks to the library maintainers for making this project possible!
 
-## Network Architecture
+## Network Architecture 🏰
 
 As mentioned earlier, there are two classes of device on the Hosta network.
 
@@ -112,7 +112,7 @@ A sample architecture is shown below, with each user having a node and a single 
 
 ### User IDs
 
-Each user is identified by a unique hex ID.
+Each user is identified by a unique hex ID, generated from the hash of their public key.
 
 ### IDAR
 
@@ -131,7 +131,7 @@ There are five main mechanisms that IDAR could use, in order of increasing compl
 
 The ones that have been implemented have been ticked off.
 
-## Solution Structure
+## Solution Structure 🔧
 
 The solution is divided into 3 main projects - a client application, a node program, and a core library (used by both the client and the node).
 
@@ -141,13 +141,15 @@ The solution is divided into 3 main projects - a client application, a node prog
 > 
 > "x->y->z" => "x->z"
 
-## Hosta (Core Library)
+## Hosta (Core Library) 🍀
 
-Here is a diagram of the library so far:
+The core library is responsible for definining the communication between devices on the network. Using it, anyone can create their own node or client!
+
+Below is a diagram that outlines the structure:
 
 ![](img/hosta-structure.jpg)
 
-I will now go through each of the parts of the namespace, from the ground up.
+> Note: The diagram has simplifications to prevent visual clutter - the actual workings are a little less nice to look at!
 
 ### Crypto
 
@@ -185,7 +187,7 @@ It uses a "layer" structure:
 
 This layer structure allows resilient and reliable communications, without relying on tradional methods (such as certificate authorities or 2WSSL).
 
-> Disclaimer: Don't use the Protected or Authenticated classes for anything serious, as I understand enough about cryptography to realise I know nothing :)
+> Disclaimer: Don't use the Protected or Authenticated classes for anything serious. I understand enough about cryptography to realise I know nothing :)
 
 ### RPC
 
@@ -207,10 +209,10 @@ There are three main classes:
  - `API`
    - an abstract class which acts specifies the remote procedures which can be called on the node
  - `RemoteAPIGateway`
-   - translates `RPCall`s into actual `API` function calls
-   - translates the result into an `RPResponse`
+   - translates any incoming `RPCall` into an `API` function call
+   - returns the result to the `RPServer`
  - `LocalAPIGateway`
-   - translates `API` function calls into `RPCall`s
-   - translates any `RPResponse`s into actual results
+   - translates `API` function calls into `RPClient` calls
+   - translates the response from the `RPClient` into meaningful data
 
 There is also a `Hosta.API.Data` sub-namespace which specifies the data structures for API requests and responses.
