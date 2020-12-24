@@ -3,9 +3,9 @@
   <img alt="Hosta" src="img/project-banner.png" width=75%/>
 </h3>
 
-<p align="center" style="font-size:150%">
+<h3 align="center">
   Take back control of your data
-</P>
+</h3>
 
 <div align="center" margin="50px">
   Hosta is an open source, PoC decentralized social media that focuses on privacy, security, and real-world relationships.
@@ -43,7 +43,7 @@
 
 <br/><h1></h1><br/>
 
-<h3 style="font-size:150%">What's the problem?</h3>
+### What's the problem?
 
 Modern social media platforms rely on personalised advertising. They are designed with two purposes:
 
@@ -52,7 +52,7 @@ Modern social media platforms rely on personalised advertising. They are designe
 
 This leads to a time-consuming and stressful user experience that is fraught with relentless notifications, addictive recommendation algorithms, dangerous echo-chambers, and harmful fixations on numbers (likes, followers etc).
 
-<h3 style="font-size:150%"> How is Hosta different? </h3>
+### How is Hosta different?
 
 Hosta is a different type of social media to the ones you usually install on your phone. By using the Hosta network:
 
@@ -62,7 +62,7 @@ Hosta is a different type of social media to the ones you usually install on you
 
 All of this makes Hosta ideal for private, secure, and censorship resistant communications.
 
-<h3 style="font-size:150%"> What do I need to get started? </h3>
+### What do I need to get started?
 
 To get started, you need an always-on device to host your content on. You can use a desktop, but the recommendation is to use a Raspberry Pi running Ubuntu or similar.
 
