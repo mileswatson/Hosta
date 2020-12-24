@@ -30,7 +30,7 @@
 <h3 align="center">
   <a href="https://github.com/mileswatson/Hosta/tree/master/src">Source</a>
   <span> · </span>
-  <a href="https://github.com/mileswatson/Hosta/wiki">Docs</a>
+  <a href="#documentation-">Docs</a>
   <span> · </span>
   <a href="!https://github.com/mileswatson/Hosta/discussions/21">Feature Requests</a>
   <span> · </span>
