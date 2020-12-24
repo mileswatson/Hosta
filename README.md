@@ -1,23 +1,26 @@
 
-<h4 align="center">
-  <img alt="hosta banner" src="img/project-banner.png" width=65%/>
-</h4>
+<div align="center">
+  <img alt="Hosta" src="img/project-banner.png" width=75%/>
+</div>
 
 
-<h3 align="center">
+<h2 align="center">
   Take back control of your data
-</h3>
-<p align="center">
+</h2>
+
+<div align="center" margin="50px">
   Hosta is an open source, PoC decentralized social media that focuses on privacy, security, and real-world relationships.
+</div>
+
+<br/>
+
+<p align="center" style="font-size:150%">
+ 📝 🔒 👪
 </p>
 
-<h3 align="center">
- 📝 🔒 👪
-</h3>
+<br/><hr/><br/>
 
-<h1/>
-
-<h4 align="center">
+<p align="center">
   <a href="https://github.com/mileswatson/Hosta/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/mileswatson/Hosta?color=blue"></a>
   <a href="https://github.com/mileswatson/Hosta/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/mileswatson/Hosta?color=gold"></a>
   <a href="https://github.com/mileswatson/Hosta/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/mileswatson/Hosta"></a>
@@ -25,7 +28,7 @@
   <img alt="SQLite" src="https://img.shields.io/static/v1?label=&message=SQLite&color=003B57&logo=SQLite">
   <img alt="Windows" src="https://img.shields.io/static/v1?label=&message=Windows&color=0078D6&logo=Windows">
   <img alt="Linux" src="https://img.shields.io/static/v1?label=&message=linux&color=FCC624&logo=Linux&logoColor=black">
-</h4>
+</p>
 
 <h3 align="center">
   <a href="https://github.com/mileswatson/Hosta/tree/master/src">Source</a>
@@ -39,9 +42,9 @@
   <a href="https://github.com/mileswatson/Hosta/discussions/20">Support</a>
 </h3>
 
-<h1/>
+<br/><hr/><br/>
 
-## What's the problem?
+<h3 style="font-size:150%">What's the problem?</h3>
 
 Modern social media platforms rely on personalised advertising. They are designed with two purposes:
 
@@ -50,7 +53,7 @@ Modern social media platforms rely on personalised advertising. They are designe
 
 This leads to a time-consuming and stressful user experience that is fraught with relentless notifications, addictive recommendation algorithms, dangerous echo-chambers, and harmful fixations on numbers (likes, followers etc).
 
-## How is Hosta different?
+<h3 style="font-size:150%"> How is Hosta different? </h3>
 
 Hosta is a different type of social media to the ones you usually install on your phone. By using the Hosta network:
 
@@ -60,7 +63,7 @@ Hosta is a different type of social media to the ones you usually install on you
 
 All of this makes Hosta ideal for private, secure, and censorship resistant communications.
 
-## What do I need to get started?
+<h3 style="font-size:150%"> What do I need to get started? </h3>
 
 To get started, you need an always-on device to host your content on. You can use a desktop, but the recommendation is to use a Raspberry Pi running Ubuntu or similar.
 
