@@ -21,7 +21,7 @@
   <a href="https://github.com/mileswatson/Hosta/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/mileswatson/Hosta?color=blue"></a>
   <a href="https://github.com/mileswatson/Hosta/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/mileswatson/Hosta?color=gold"></a>
   <a href="https://github.com/mileswatson/Hosta/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/mileswatson/Hosta"></a>
-  <img alt=".NET 5" src="https://img.shields.io/static/v1?label=&message=%2ENET 5&color=5C2D91">
+  <img alt=".NET 5" src="https://img.shields.io/static/v1?label=&message=%2ENET%205&color=5C2D91">
   <img alt="SQLite" src="https://img.shields.io/static/v1?label=&message=SQLite&color=003B57&logo=SQLite">
   <img alt="Windows" src="https://img.shields.io/static/v1?label=&message=Windows&color=0078D6&logo=Windows">
   <img alt="Linux" src="https://img.shields.io/static/v1?label=&message=linux&color=FCC624&logo=Linux&logoColor=black">
