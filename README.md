@@ -11,13 +11,11 @@
   Hosta is an open source, PoC decentralized social media that focuses on privacy, security, and real-world relationships.
 </div>
 
-<br/>
-
 <p align="center" style="font-size:125%">
  📝 🔒 👪
 </p>
 
-<br/><h1></h1><br/>
+<h1></h1>
 
 <p align="center">
   <a href="https://github.com/mileswatson/Hosta/blob/master/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/mileswatson/Hosta?color=blue"></a>
