@@ -107,7 +107,7 @@ namespace HostaTests.RPC
 			{
 				if (args == "InvalidArgs")
 				{
-					throw new Exception("InvalidArgsException");
+					throw new RPException("InvalidArgsException");
 				}
 				else
 				{
@@ -116,7 +116,7 @@ namespace HostaTests.RPC
 			}
 			else
 			{
-				throw new Exception("InvalidProcedureException");
+				throw new RPException("InvalidProcedureException");
 			}
 		}
 	}
