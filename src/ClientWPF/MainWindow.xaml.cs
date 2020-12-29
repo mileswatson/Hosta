@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClientWPF.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,35 @@ namespace ClientWPF
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private HomeTabViewModel homeTab = new HomeTabViewModel();
+		private PostTabViewModel postTab = new PostTabViewModel();
+		private ProfileTabViewModel profileTab = new ProfileTabViewModel();
+		private SettingsTabViewModel settingsTab = new SettingsTabViewModel();
+
 		public MainWindow()
 		{
 			InitializeComponent();
+			DataContext = homeTab;
+		}
+
+		private void HomeTab_Clicked(object sender, RoutedEventArgs e)
+		{
+			DataContext = homeTab;
+		}
+
+		private void PostTab_Clicked(object sender, RoutedEventArgs e)
+		{
+			DataContext = postTab;
+		}
+
+		private void ProfileTab_Clicked(object sender, RoutedEventArgs e)
+		{
+			DataContext = profileTab;
+		}
+
+		private void SettingsTab_Clicked(object sender, RoutedEventArgs e)
+		{
+			DataContext = settingsTab;
 		}
 	}
 }
