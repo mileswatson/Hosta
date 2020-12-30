@@ -36,7 +36,7 @@
   <span> · </span>
   <a href="!https://github.com/mileswatson/Hosta/issues">Bug Reports</a>
   <span> · </span>
-  <a href="https://github.com/mileswatson/Hosta/discussions/20">Support</a>
+  <a href="!https://github.com/mileswatson/Hosta/discussions/20">Support</a>
 </h3>
 
 <h1></h1>
