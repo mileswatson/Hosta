@@ -66,14 +66,23 @@ namespace Hosta.API
 
 		public async Task<string> GetProfile(string args, PublicIdentity client)
 		{
-			if (args != "") throw new Exception("Invalid Arguments!");
+			if (args != "") throw new RPException("Arguments were formatted incorrectly!");
 			var gpr = await api.GetProfile(client);
 			return GetProfileResponse.Export(gpr);
 		}
 
 		public async Task<string> SetProfile(string args, PublicIdentity client)
 		{
-			await api.SetProfile(SetProfileRequest.Import(args), client);
+			SetProfileRequest r;
+			try
+			{
+				r = SetProfileRequest.Import(args);
+			}
+			catch
+			{
+				throw new RPException("Arguments were formatted incorrectly!");
+			}
+			await api.SetProfile(r, client);
 			return "";
 		}
 

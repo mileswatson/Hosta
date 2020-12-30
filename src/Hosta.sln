@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Program", "Program\Program.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HostaTests", "HostaTests\HostaTests.csproj", "{9856F930-01C0-425E-8BEF-68A9076E16F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Node", "Node\Node.csproj", "{DC72D040-46AC-419D-9531-39EF8B68AEFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Node", "Node\Node.csproj", "{DC72D040-46AC-419D-9531-39EF8B68AEFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientWPF", "ClientWPF\ClientWPF.csproj", "{533209CA-2CA2-4EFF-B104-C91754AAC47B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{DC72D040-46AC-419D-9531-39EF8B68AEFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC72D040-46AC-419D-9531-39EF8B68AEFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC72D040-46AC-419D-9531-39EF8B68AEFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{533209CA-2CA2-4EFF-B104-C91754AAC47B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{533209CA-2CA2-4EFF-B104-C91754AAC47B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{533209CA-2CA2-4EFF-B104-C91754AAC47B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{533209CA-2CA2-4EFF-B104-C91754AAC47B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

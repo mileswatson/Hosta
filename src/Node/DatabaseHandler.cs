@@ -8,6 +8,7 @@ using SQLite;
 using System.Diagnostics;
 using Hosta.Tools;
 using System.Collections.Generic;
+using Hosta.RPC;
 
 namespace Node
 {
@@ -52,7 +53,7 @@ namespace Node
 			}
 		}
 
-		//// Functionality
+		//// Implementations
 
 		/// <summary>
 		/// Get the profile name.
@@ -68,7 +69,7 @@ namespace Node
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
-				throw new Exception("Database error!");
+				throw new RPException("Database error!");
 			}
 		}
 
@@ -81,7 +82,7 @@ namespace Node
 			// TODO: Change this to what it should actually be (!=)
 			if (client.ID == self)
 			{
-				throw new Exception("Access denied!");
+				throw new RPException("Access denied!");
 			}
 
 			try
@@ -92,7 +93,7 @@ namespace Node
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
-				throw new Exception("Database error!");
+				throw new RPException("Database error!");
 			}
 		}
 

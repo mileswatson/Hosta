@@ -179,9 +179,14 @@ namespace Hosta.RPC
 				returnValues = await callHandler.Call(call.Procedure, call.ProcedureArgs, messenger.otherIdentity).ConfigureAwait(false);
 				success = true;
 			}
-			catch (Exception e)
+			catch (RPException e)
 			{
 				returnValues = e.Message;
+				success = false;
+			}
+			catch
+			{
+				returnValues = "Something went wrong!";
 				success = false;
 			}
 
