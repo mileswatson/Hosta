@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClientWPF.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ClientWPF.Views
+namespace ClientWPF.Views.ProfileTab
 {
 	/// <summary>
-	/// Interaction logic for HomeView.xaml
+	/// Interaction logic for InfoView.xaml
 	/// </summary>
-	public partial class HomeTabView : UserControl
+	public partial class InfoView : UserControl
 	{
-		public HomeTabView()
+		public InfoView()
 		{
 			InitializeComponent();
 		}

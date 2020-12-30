@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ClientWPF.Views
+namespace ClientWPF.Views.SettingsTab
 {
 	/// <summary>
-	/// Interaction logic for ProfileEditView.xaml
+	/// Interaction logic for SettingsTabView.xaml
 	/// </summary>
-	public partial class ProfileEditView : UserControl
+	public partial class View : UserControl
 	{
-		public ProfileEditView()
+		public View()
 		{
 			InitializeComponent();
 		}

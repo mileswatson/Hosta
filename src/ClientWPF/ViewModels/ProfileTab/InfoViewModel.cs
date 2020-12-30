@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ClientWPF.ViewModels
+namespace ClientWPF.ViewModels.ProfileTab
 {
-	public class ProfileInfoViewModel
+	public class InfoViewModel
 	{
-		private ProfileTabViewModel parent;
+		private ViewModel parent;
 
 		public ICommand EditButtonClicked { get; private set; }
 
-		public ProfileInfoViewModel(ProfileTabViewModel parent)
+		public InfoViewModel(ViewModel parent)
 		{
 			this.parent = parent;
 			EditButtonClicked = new RelayCommand((object _) => { parent.Switch(); });

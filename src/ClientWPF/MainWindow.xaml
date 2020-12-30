@@ -3,84 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClientWPF"
 		xmlns:views="clr-namespace:ClientWPF.Views"
-		xmlns:viewmodels="clr-namespace:ClientWPF.ViewModels"
+        xmlns:viewmodels="clr-namespace:ClientWPF.ViewModels"
+
         mc:Ignorable="d"
         Title="" Height="450" Width="800" MinHeight="450" MinWidth="800">
 
 	<Window.Resources>
-		<DataTemplate x:Name="homeViewTemplate" DataType="{x:Type viewmodels:HomeTabViewModel}">
-			<views:HomeTabView DataContext="{Binding}" />
-		</DataTemplate>
-		<DataTemplate x:Name="postViewTemplate" DataType="{x:Type viewmodels:PostTabViewModel}">
-			<views:PostTabView DataContext="{Binding}" />
-		</DataTemplate>
-		<DataTemplate x:Name="profileViewTemplate" DataType="{x:Type viewmodels:ProfileTabViewModel}">
-			<views:ProfileTabView DataContext="{Binding}" />
-		</DataTemplate>
-		<DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type viewmodels:SettingsTabViewModel}">
-			<views:SettingsTabView DataContext="{Binding}" />
+		<DataTemplate DataType="{x:Type viewmodels:ViewModel}">
+			<views:View DataContext="{Binding}" />
 		</DataTemplate>
 	</Window.Resources>
 
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="10" />
-			<ColumnDefinition Width="100" />
-			<ColumnDefinition Width="10" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="10" />
-		</Grid.ColumnDefinitions>
+	<Window.DataContext>
+		<viewmodels:ViewModel />
+	</Window.DataContext>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="10" />
-			<RowDefinition Height="50" />
-			<RowDefinition Height="10" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="10" />
-		</Grid.RowDefinitions>
-
-		<Label Grid.Column="1" Grid.Row="1"
-			   FontFamily="Roboto" FontWeight="Bold" FontSize="32px">
-			HOSTA
-		</Label>
-
-		<StackPanel Grid.Column="1" Grid.Row="3">
-			<StackPanel.Resources>
-				<Style TargetType="Button" x:Key="SidebarButton">
-					<Style.Resources>
-						<Style TargetType="Border">
-							<Setter Property="CornerRadius" Value="5" />
-						</Style>
-					</Style.Resources>
-					<Setter Property="Foreground" Value="White" />
-					<Setter Property="Background" Value="ForestGreen" />
-					<Setter Property="FontSize" Value="16px" />
-					<Setter Property="Margin" Value="0px,5px" />
-					<Setter Property="Template">
-						<Setter.Value>
-							<ControlTemplate TargetType="{x:Type Button}">
-								<Border Background="{TemplateBinding Background}">
-									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-								</Border>
-								<ControlTemplate.Triggers>
-									<Trigger Property="IsMouseOver" Value="True">
-										<Setter Property="Background" Value="DarkGreen" />
-									</Trigger>
-								</ControlTemplate.Triggers>
-							</ControlTemplate>
-						</Setter.Value>
-					</Setter>
-				</Style>
-			</StackPanel.Resources>
-
-			<Button Content="Home" Style="{DynamicResource SidebarButton}" Click="HomeTab_Clicked" />
-			<Button Content="Post" Style="{DynamicResource SidebarButton}" Click="PostTab_Clicked" />
-			<Button Content="Profile" Style="{DynamicResource SidebarButton}" Click="ProfileTab_Clicked" />
-			<Button Content="Settings" Style="{DynamicResource SidebarButton}" Click="SettingsTab_Clicked" />
-		</StackPanel>
-
-		<ContentControl Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Content="{Binding}" />
-	</Grid>
+	<ContentPresenter Content="{Binding}" />
 </Window>

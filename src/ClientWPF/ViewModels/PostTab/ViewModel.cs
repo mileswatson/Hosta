@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientWPF.ViewModels
+namespace ClientWPF.ViewModels.PostTab
 {
-	public class HomeTabViewModel
+	internal class ViewModel
 	{
 	}
 }

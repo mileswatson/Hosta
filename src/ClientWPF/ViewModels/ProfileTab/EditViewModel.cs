@@ -6,15 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ClientWPF.ViewModels
+namespace ClientWPF.ViewModels.ProfileTab
 {
-	public class ProfileEditViewModel
+	public class EditViewModel
 	{
-		private ProfileTabViewModel parent;
+		private ViewModel parent;
 
 		public ICommand CancelButtonClicked { get; private set; }
 
-		public ProfileEditViewModel(ProfileTabViewModel parent)
+		public EditViewModel(ViewModel parent)
 		{
 			this.parent = parent;
 			CancelButtonClicked = new RelayCommand((object _) => { parent.Switch(); });

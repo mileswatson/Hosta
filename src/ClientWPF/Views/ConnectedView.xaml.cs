@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ClientWPF.Views
 {
 	/// <summary>
-	/// Interaction logic for PostView.xaml
+	/// Interaction logic for MainView.xaml
 	/// </summary>
-	public partial class PostTabView : UserControl
+	public partial class ConnectedView : UserControl
 	{
-		public PostTabView()
+		public ConnectedView()
 		{
 			InitializeComponent();
 		}

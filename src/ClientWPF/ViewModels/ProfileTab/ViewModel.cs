@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientWPF.ViewModels
+namespace ClientWPF.ViewModels.ProfileTab
 {
-	public class ProfileTabViewModel : INotifyPropertyChanged
+	public class ViewModel : INotifyPropertyChanged
 	{
 		private object _vm;
 
@@ -24,11 +24,11 @@ namespace ClientWPF.ViewModels
 			}
 		}
 
-		private ProfileInfoViewModel profileInfo;
+		private InfoViewModel profileInfo;
 
-		private ProfileEditViewModel profileEdit;
+		private EditViewModel profileEdit;
 
-		public ProfileTabViewModel()
+		public ViewModel()
 		{
 			profileInfo = new(this);
 			profileEdit = new(this);

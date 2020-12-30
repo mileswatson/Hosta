@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="ClientWPF.Views.ConnectedView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:ClientWPF.Views"
+			 xmlns:homeviews="clr-namespace:ClientWPF.Views.HomeTab"
+			 xmlns:homeviewmodels="clr-namespace:ClientWPF.ViewModels.HomeTab"
+			 xmlns:postviews="clr-namespace:ClientWPF.Views.PostTab"
+			 xmlns:postviewmodels="clr-namespace:ClientWPF.ViewModels.PostTab"
+			 xmlns:profileviews="clr-namespace:ClientWPF.Views.ProfileTab"
+			 xmlns:profileviewmodels="clr-namespace:ClientWPF.ViewModels.ProfileTab"
+			 xmlns:settingsviews="clr-namespace:ClientWPF.Views.SettingsTab"
+			 xmlns:settingsviewmodels="clr-namespace:ClientWPF.ViewModels.SettingsTab"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+	<UserControl.Resources>
+		<DataTemplate x:Name="homeViewTemplate" DataType="{x:Type homeviewmodels:ViewModel}">
+			<homeviews:View DataContext="{Binding}" />
+		</DataTemplate>
+		<DataTemplate x:Name="postViewTemplate" DataType="{x:Type postviewmodels:ViewModel}">
+			<postviews:View DataContext="{Binding}" />
+		</DataTemplate>
+		<DataTemplate x:Name="profileViewTemplate" DataType="{x:Type profileviewmodels:ViewModel}">
+			<profileviews:View DataContext="{Binding}" />
+		</DataTemplate>
+		<DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type settingsviewmodels:ViewModel}">
+			<settingsviews:View DataContext="{Binding}" />
+		</DataTemplate>
+	</UserControl.Resources>
+
+	<Grid Background="White">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10" />
+			<ColumnDefinition Width="100" />
+			<ColumnDefinition Width="10" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="10" />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="10" />
+			<RowDefinition Height="50" />
+			<RowDefinition Height="10" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="10" />
+		</Grid.RowDefinitions>
+
+		<Label Grid.Column="1" Grid.Row="1"
+			   FontFamily="Roboto" FontWeight="Bold" FontSize="32px">
+			HOSTA
+		</Label>
+
+		<StackPanel Grid.Column="1" Grid.Row="3">
+			<StackPanel.Resources>
+				<Style TargetType="Button" x:Key="SidebarButton">
+					<Style.Resources>
+						<Style TargetType="Border">
+							<Setter Property="CornerRadius" Value="5" />
+						</Style>
+					</Style.Resources>
+					<Setter Property="Foreground" Value="White" />
+					<Setter Property="Background" Value="ForestGreen" />
+					<Setter Property="FontSize" Value="16px" />
+					<Setter Property="Margin" Value="0px,5px" />
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="{x:Type Button}">
+								<Border Background="{TemplateBinding Background}">
+									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger Property="IsMouseOver" Value="True">
+										<Setter Property="Background" Value="DarkGreen" />
+									</Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</StackPanel.Resources>
+
+			<Button Content="Home" Style="{DynamicResource SidebarButton}" Command="{Binding HomeButtonClicked}" />
+			<Button Content="Post" Style="{DynamicResource SidebarButton}" Command="{Binding PostButtonClicked}" />
+			<Button Content="Profile" Style="{DynamicResource SidebarButton}" Command="{Binding ProfileButtonClicked}" />
+			<Button Content="Settings" Style="{DynamicResource SidebarButton}" Command="{Binding SettingsButtonClicked}" />
+		</StackPanel>
+
+		<ContentControl Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Content="{Binding VM}" />
+	</Grid>
+</UserControl>

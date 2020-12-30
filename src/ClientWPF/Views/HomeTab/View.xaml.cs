@@ -1,9 +1,4 @@
-﻿using ClientWPF.ViewModels;
-using ClientWPF.ViewModels.HomeTab;
-using ClientWPF.ViewModels.PostTab;
-using ClientWPF.ViewModels.ProfileTab;
-using ClientWPF.ViewModels.SettingsTab;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ClientWPF
+namespace ClientWPF.Views.HomeTab
 {
 	/// <summary>
-	/// Interaction logic for MainWindow.xaml
+	/// Interaction logic for View.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class View : UserControl
 	{
-		public MainWindow()
+		public View()
 		{
 			InitializeComponent();
 		}

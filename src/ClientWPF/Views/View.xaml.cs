@@ -1,5 +1,4 @@
-﻿using ClientWPF.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,11 +16,11 @@ using System.Windows.Shapes;
 namespace ClientWPF.Views
 {
 	/// <summary>
-	/// Interaction logic for ProfileInfoView.xaml
+	/// Interaction logic for View.xaml
 	/// </summary>
-	public partial class ProfileInfoView : UserControl
+	public partial class View : UserControl
 	{
-		public ProfileInfoView()
+		public View()
 		{
 			InitializeComponent();
 		}
