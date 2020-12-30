@@ -13,6 +13,8 @@
 			<RowDefinition Height="100" />
 			<RowDefinition Height="10" />
 			<RowDefinition Height="25" />
+			<RowDefinition Height="10" />
+			<RowDefinition Height="25" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
@@ -25,7 +27,16 @@
 			   Content=" SETTINGS" />
 
 		<TextBox Grid.Row="2" Grid.Column="0" Text="Config" TextWrapping="Wrap" />
+		<StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+			<Button HorizontalAlignment="Left" Content=" Save "
+					Margin="10px,0px,0px,0px" Padding="10px,0px" />
+			<Button HorizontalAlignment="Left" Content=" Cancel "
+					Margin="10px,0px,0px,0px" Padding="10px,0px" />
+		</StackPanel>
 
-		<Button Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" Content=" Save " />
+		<Button Grid.Row="6" Grid.Column="0"
+				HorizontalAlignment="Left" Content="Disconnect"
+				Background="DarkRed" Foreground="White"
+				Margin="10px,0px,0px,0px" Padding="10px,0px" Click="DisconnectButton_Clicked" />
 	</Grid>
 </UserControl>

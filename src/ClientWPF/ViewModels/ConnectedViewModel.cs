@@ -10,10 +10,10 @@ namespace ClientWPF.ViewModels
 {
 	public class ConnectedViewModel : INotifyPropertyChanged
 	{
-		private ViewModels.HomeTab.ViewModel homeTab = new();
-		private ViewModels.PostTab.ViewModel postTab = new();
-		private ViewModels.ProfileTab.ViewModel profileTab = new();
-		private ViewModels.SettingsTab.ViewModel settingsTab = new();
+		private ViewModels.HomeTab.ViewModel homeTab;
+		private ViewModels.PostTab.ViewModel postTab;
+		private ViewModels.ProfileTab.ViewModel profileTab;
+		private ViewModels.SettingsTab.ViewModel settingsTab;
 
 		private object _vm;
 
@@ -30,18 +30,23 @@ namespace ClientWPF.ViewModels
 			}
 		}
 
-		public ICommand HomeButtonClicked { get; private set; }
-		public ICommand PostButtonClicked { get; private set; }
-		public ICommand ProfileButtonClicked { get; private set; }
-		public ICommand SettingsButtonClicked { get; private set; }
+		public ICommand HomeTab { get; private set; }
+		public ICommand PostTab { get; private set; }
+		public ICommand ProfileTab { get; private set; }
+		public ICommand SettingsTab { get; private set; }
 
-		public ConnectedViewModel()
+		public ConnectedViewModel(Action OnDisconnect)
 		{
+			homeTab = new();
+			postTab = new();
+			profileTab = new();
+			settingsTab = new(() => OnDisconnect());
+
 			VM = homeTab;
-			HomeButtonClicked = new RelayCommand((object _) => { VM = homeTab; });
-			PostButtonClicked = new RelayCommand((object _) => { VM = postTab; });
-			ProfileButtonClicked = new RelayCommand((object _) => { VM = profileTab; });
-			SettingsButtonClicked = new RelayCommand((object _) => { VM = settingsTab; });
+			HomeTab = new RelayCommand((object _) => { VM = homeTab; });
+			PostTab = new RelayCommand((object _) => { VM = postTab; });
+			ProfileTab = new RelayCommand((object _) => { VM = profileTab; });
+			SettingsTab = new RelayCommand((object _) => { VM = settingsTab; });
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

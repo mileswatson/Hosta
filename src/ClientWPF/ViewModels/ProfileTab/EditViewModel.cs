@@ -10,14 +10,11 @@ namespace ClientWPF.ViewModels.ProfileTab
 {
 	public class EditViewModel
 	{
-		private ViewModel parent;
+		public ICommand CancelEditing { get; private set; }
 
-		public ICommand CancelButtonClicked { get; private set; }
-
-		public EditViewModel(ViewModel parent)
+		public EditViewModel(Action OnCancel)
 		{
-			this.parent = parent;
-			CancelButtonClicked = new RelayCommand((object _) => { parent.Switch(); });
+			CancelEditing = new RelayCommand((object _) => OnCancel());
 		}
 	}
 }

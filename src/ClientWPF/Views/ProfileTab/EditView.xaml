@@ -22,7 +22,7 @@
 		<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
 			<Button Content="Save"
 				HorizontalAlignment="Left" Margin="10px,0px,0px,0px" Padding="10px,0px" />
-			<Button Content="Cancel" Command="{Binding CancelButtonClicked}"
+			<Button Content="Cancel" Command="{Binding CancelEditing}"
 				HorizontalAlignment="Left" Margin="10px,0px,0px,0px" Padding="10px,0px" />
 		</StackPanel>
 	</Grid>

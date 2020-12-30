@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,18 +31,19 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public ViewModel()
 		{
-			profileInfo = new(this);
-			profileEdit = new(this);
+			profileInfo = new(StartEditing);
+			profileEdit = new(StopEditing);
 			VM = profileInfo;
 		}
 
-		/// <summary>
-		/// Switches between info and edit views.
-		/// </summary>
-		public void Switch()
+		public void StartEditing()
 		{
-			if (VM == profileInfo) VM = profileEdit;
-			else if (VM == profileEdit) VM = profileInfo;
+			VM = profileEdit;
+		}
+
+		public void StopEditing()
+		{
+			VM = profileInfo;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

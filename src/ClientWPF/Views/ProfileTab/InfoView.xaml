@@ -22,7 +22,7 @@
 		<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
 			<Button Content="Refresh"
 				HorizontalAlignment="Left" Margin="10px,0px,0px,0px" Padding="10px,0px" />
-			<Button Content="Edit" Command="{Binding EditButtonClicked}"
+			<Button Content="Edit" Command="{Binding StartEditing}"
 				HorizontalAlignment="Left" Margin="10px,0px,0px,0px" Padding="10px,0px" />
 		</StackPanel>
 	</Grid>

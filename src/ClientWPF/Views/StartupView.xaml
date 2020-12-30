@@ -9,6 +9,6 @@
 	<StackPanel Background="White">
 		<TextBox Text="Connection string" />
 		<Label />
-		<Button Grid.Column="0" Grid.Row="0" Content="Connect" Command="{Binding ConnectButtonClicked}" />
+		<Button Grid.Column="0" Grid.Row="0" Content="Connect" Command="{Binding Connect}" />
 	</StackPanel>
 </UserControl>

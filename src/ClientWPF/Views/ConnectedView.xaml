@@ -80,10 +80,10 @@
 				</Style>
 			</StackPanel.Resources>
 
-			<Button Content="Home" Style="{DynamicResource SidebarButton}" Command="{Binding HomeButtonClicked}" />
-			<Button Content="Post" Style="{DynamicResource SidebarButton}" Command="{Binding PostButtonClicked}" />
-			<Button Content="Profile" Style="{DynamicResource SidebarButton}" Command="{Binding ProfileButtonClicked}" />
-			<Button Content="Settings" Style="{DynamicResource SidebarButton}" Command="{Binding SettingsButtonClicked}" />
+			<Button Content="Home" Style="{DynamicResource SidebarButton}" Command="{Binding HomeTab}" />
+			<Button Content="Post" Style="{DynamicResource SidebarButton}" Command="{Binding PostTab}" />
+			<Button Content="Profile" Style="{DynamicResource SidebarButton}" Command="{Binding ProfileTab}" />
+			<Button Content="Settings" Style="{DynamicResource SidebarButton}" Command="{Binding SettingsTab}" />
 		</StackPanel>
 
 		<ContentControl Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Content="{Binding VM}" />

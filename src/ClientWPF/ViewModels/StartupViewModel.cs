@@ -10,14 +10,11 @@ namespace ClientWPF.ViewModels
 {
 	public class StartupViewModel : INotifyPropertyChanged
 	{
-		private ViewModel parent;
+		public ICommand Connect { get; private set; }
 
-		public ICommand ConnectButtonClicked { get; private set; }
-
-		public StartupViewModel(ViewModel parent)
+		public StartupViewModel(Action OnConnect)
 		{
-			this.parent = parent;
-			ConnectButtonClicked = new RelayCommand((object _) => { parent.Connected(); });
+			Connect = new RelayCommand((object _) => OnConnect());
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

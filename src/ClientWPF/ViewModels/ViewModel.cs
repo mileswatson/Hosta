@@ -11,6 +11,8 @@ namespace ClientWPF.ViewModels
 	{
 		private object _vm;
 
+		private StartupViewModel startup;
+
 		public object VM
 		{
 			get
@@ -26,12 +28,17 @@ namespace ClientWPF.ViewModels
 
 		public ViewModel()
 		{
-			VM = new StartupViewModel(this);
+			VM = startup = new StartupViewModel(OnConnect);
 		}
 
-		public void Connected()
+		public void OnConnect()
 		{
-			VM = new ConnectedViewModel();
+			VM = new ConnectedViewModel(OnDisconnect);
+		}
+
+		public void OnDisconnect()
+		{
+			VM = startup;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

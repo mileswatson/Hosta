@@ -9,14 +9,11 @@ namespace ClientWPF.ViewModels.ProfileTab
 {
 	public class InfoViewModel
 	{
-		private ViewModel parent;
+		public ICommand StartEditing { get; private set; }
 
-		public ICommand EditButtonClicked { get; private set; }
-
-		public InfoViewModel(ViewModel parent)
+		public InfoViewModel(Action OnEdit)
 		{
-			this.parent = parent;
-			EditButtonClicked = new RelayCommand((object _) => { parent.Switch(); });
+			StartEditing = new RelayCommand((object _) => OnEdit());
 		}
 	}
 }
