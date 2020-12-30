@@ -85,7 +85,6 @@
 			<Button Content="Profile" Style="{DynamicResource SidebarButton}" Command="{Binding ProfileTab}" />
 			<Button Content="Settings" Style="{DynamicResource SidebarButton}" Command="{Binding SettingsTab}" />
 		</StackPanel>
-
-		<ContentControl Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Content="{Binding VM}" />
+		<ContentPresenter Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Content="{Binding VM}" />
 	</Grid>
 </UserControl>

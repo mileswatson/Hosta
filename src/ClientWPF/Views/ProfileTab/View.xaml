@@ -32,6 +32,6 @@
 			   FontFamily="Roboto" FontWeight="Bold" FontSize="32"
 			   Content=" PROFILE" />
 
-		<ContentControl Grid.Column="0" Grid.Row="2" Content="{Binding VM}" />
+		<ContentPresenter Grid.Column="0" Grid.Row="2" Content="{Binding VM}" />
 	</Grid>
 </UserControl>
