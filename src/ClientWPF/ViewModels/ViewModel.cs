@@ -11,7 +11,7 @@ namespace ClientWPF.ViewModels
 	{
 		private object _vm;
 
-		private StartupViewModel startup;
+		private readonly StartupViewModel startup;
 
 		public object VM
 		{
@@ -28,7 +28,7 @@ namespace ClientWPF.ViewModels
 
 		public ViewModel()
 		{
-			VM = startup = new StartupViewModel(OnConnect);
+			_vm = startup = new StartupViewModel(OnConnect);
 		}
 
 		public void OnConnect()
@@ -41,7 +41,7 @@ namespace ClientWPF.ViewModels
 			VM = startup;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public void NotifyPropertyChanged(string propertyName)
 		{

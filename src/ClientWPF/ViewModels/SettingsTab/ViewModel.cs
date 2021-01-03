@@ -13,7 +13,7 @@ namespace ClientWPF.ViewModels.SettingsTab
 
 		public ViewModel(Action OnDisconnect)
 		{
-			Disconnect = new RelayCommand((object _) => OnDisconnect());
+			Disconnect = new RelayCommand((object? _) => OnDisconnect());
 		}
 	}
 }

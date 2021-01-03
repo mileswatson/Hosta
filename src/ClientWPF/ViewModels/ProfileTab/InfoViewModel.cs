@@ -13,7 +13,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public InfoViewModel(Action OnEdit)
 		{
-			StartEditing = new RelayCommand((object _) => OnEdit());
+			StartEditing = new RelayCommand((object? _) => OnEdit());
 		}
 	}
 }

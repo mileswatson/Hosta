@@ -14,10 +14,10 @@ namespace ClientWPF.ViewModels
 
 		public StartupViewModel(Action OnConnect)
 		{
-			Connect = new RelayCommand((object _) => OnConnect());
+			Connect = new RelayCommand((object? _) => OnConnect());
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public void NotifyPropertyChanged(string propertyName)
 		{

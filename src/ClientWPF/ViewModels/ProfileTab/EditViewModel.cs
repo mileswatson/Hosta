@@ -14,7 +14,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public EditViewModel(Action OnCancel)
 		{
-			CancelEditing = new RelayCommand((object _) => OnCancel());
+			CancelEditing = new RelayCommand((object? _) => OnCancel());
 		}
 	}
 }

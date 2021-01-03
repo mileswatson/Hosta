@@ -25,15 +25,15 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		private InfoViewModel profileInfo;
+		private readonly InfoViewModel profileInfo;
 
-		private EditViewModel profileEdit;
+		private readonly EditViewModel profileEdit;
 
 		public ViewModel()
 		{
 			profileInfo = new(StartEditing);
 			profileEdit = new(StopEditing);
-			VM = profileInfo;
+			_vm = profileInfo;
 		}
 
 		public void StartEditing()
@@ -46,7 +46,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			VM = profileInfo;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public void NotifyPropertyChanged(string propertyName)
 		{
