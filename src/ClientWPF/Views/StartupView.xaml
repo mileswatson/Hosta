@@ -28,12 +28,12 @@
 
 		<StackPanel Grid.Row="3" Grid.Column="1">
 			<DockPanel HorizontalAlignment="Stretch">
-				<Button Content="Select folder" Click="SelectFolderButton_Clicked"
+				<Button Content="Select Folder" Click="SelectFolderButton_Clicked"
 						Style="{StaticResource Button}"  DockPanel.Dock="Right" />
-				<TextBox x:Name="FolderPathTextbox" Text="Folder"
+				<TextBox Text="{Binding Folder, Mode=TwoWay}"
 						 Style="{StaticResource TextBox}" DockPanel.Dock="Left" />
 			</DockPanel>
-			<Button Content="Continue" Command="{Binding Continue}"
+			<Button Content="Continue" Command="{Binding FolderSelected}"
 					Style="{StaticResource Button}" />
 		</StackPanel>
 

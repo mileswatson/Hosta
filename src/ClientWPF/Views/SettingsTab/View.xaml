@@ -29,7 +29,7 @@
 				<Button HorizontalAlignment="Left" Content=" Cancel "
 					Style="{StaticResource Button}" />
 			</StackPanel>
-			<Button Content="Disconnect" Click="DisconnectButton_Clicked"
+			<Button Content="Disconnect" Command="{Binding Disconnect}"
 					Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left"
 					Style="{StaticResource WarningButton}" />
 		</StackPanel>

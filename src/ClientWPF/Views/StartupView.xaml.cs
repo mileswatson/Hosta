@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using ClientWPF.ViewModels;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -23,7 +24,8 @@ namespace ClientWPF.Views
 			CommonFileDialogResult result = dialog.ShowDialog();
 			if (result == CommonFileDialogResult.Ok)
 			{
-				FolderPathTextbox.Text = dialog.FileName;
+				var vm = (StartupViewModel)DataContext;
+				vm.Folder = dialog.FileName;
 			}
 		}
 	}

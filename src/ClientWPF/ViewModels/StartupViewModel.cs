@@ -6,12 +6,24 @@ namespace ClientWPF.ViewModels
 {
 	public class StartupViewModel : INotifyPropertyChanged
 	{
-		public ICommand Continue { get; private set; }
+		public ICommand FolderSelected { get; private set; }
 		public ICommand Quit { get; private set; }
 
-		public StartupViewModel(Action OnContinue, Action OnQuit)
+		private string folder = "folder path";
+
+		public string Folder
 		{
-			Continue = new RelayCommand((object? _) => OnContinue());
+			get { return folder; }
+			set
+			{
+				folder = value;
+				NotifyPropertyChanged(nameof(Folder));
+			}
+		}
+
+		public StartupViewModel(Action<string> OnFolderSelected, Action OnQuit)
+		{
+			FolderSelected = new RelayCommand((object? _) => OnFolderSelected(Folder));
 			Quit = new RelayCommand((object? _) => OnQuit());
 		}
 

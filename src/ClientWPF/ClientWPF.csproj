@@ -9,14 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-		<Folder Include="ViewModels\" />
-		<Folder Include="Views\" />
-		<Folder Include="Styles\" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
+    <ProjectReference Include="..\Hosta\Hosta.csproj" />
   </ItemGroup>
 
 </Project>
