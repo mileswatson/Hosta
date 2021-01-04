@@ -4,6 +4,16 @@
 		<Setter Property="Margin" Value="10px,5px" />
 	</Style>
 
+	<Style TargetType="Label" x:Key="SubHeadingLabel">
+		<Setter Property="FontSize" Value="16px" />
+		<Setter Property="FontWeight" Value="Bold" />
+		<Setter Property="Margin" Value="10px,5px" />
+	</Style>
+
+	<Style TargetType="Label" x:Key="FieldLabel">
+		<Setter Property="Margin" Value="10px,5px,0px,5px" />
+	</Style>
+
 	<Style TargetType="Label" x:Key="TabHeadingLabel">
 		<Setter Property="FontFamily" Value="Roboto" />
 		<Setter Property="FontWeight" Value="Bold" />

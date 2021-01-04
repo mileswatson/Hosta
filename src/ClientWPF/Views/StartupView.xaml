@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:ClientWPF.Views"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid Background="White">
@@ -27,13 +26,32 @@
 			   Style="{StaticResource TabHeadingLabel}" />
 
 		<StackPanel Grid.Row="3" Grid.Column="1">
+			<Label Content="Folder" Style="{StaticResource SubHeadingLabel}" />
+
 			<DockPanel HorizontalAlignment="Stretch">
-				<Button Content="Select Folder" Click="SelectFolderButton_Clicked"
+				<Button Content="📁" Click="SelectFolderButton_Clicked"
 						Style="{StaticResource Button}"  DockPanel.Dock="Right" />
 				<TextBox Text="{Binding Folder, Mode=TwoWay}"
 						 Style="{StaticResource TextBox}" DockPanel.Dock="Left" />
 			</DockPanel>
-			<Button Content="Continue" Command="{Binding FolderSelected}"
+
+			<Label Content="Your Node" Style="{StaticResource SubHeadingLabel}" />
+
+			<DockPanel>
+				<Label Content="IP Address" Style="{StaticResource FieldLabel}" Width="70" />
+				<TextBox Text="{Binding IP, Mode=TwoWay}"
+					 Style="{StaticResource TextBox}" />
+			</DockPanel>
+
+			<DockPanel>
+				<Label Content="Port " Style="{StaticResource FieldLabel}" Width="70" />
+				<TextBox Text="{Binding Port, Mode=TwoWay}"
+					 Style="{StaticResource TextBox}" />
+			</DockPanel>
+
+			<Label Style="{StaticResource Label}" />
+
+			<Button Content="Continue" Command="{Binding Continue}"
 					Style="{StaticResource Button}" />
 		</StackPanel>
 
