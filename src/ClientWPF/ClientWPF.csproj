@@ -9,14 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\Images\hosta-logo.png" />
+    <Folder Include="Models\" />
+		<Folder Include="ViewModels\" />
+		<Folder Include="Views\" />
+		<Folder Include="Styles\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\Images\" />
-    <Folder Include="Models\" />
-		<Folder Include="Views\" />
-		<Folder Include="ViewModels\" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
   </ItemGroup>
 
 </Project>

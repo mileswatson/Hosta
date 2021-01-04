@@ -12,6 +12,9 @@
 		<DataTemplate DataType="{x:Type viewmodels:StartupViewModel}">
 			<views:StartupView DataContext="{Binding}" />
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewmodels:ConnectViewModel}">
+			<views:ConnectView DataContext="{Binding}" />
+		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewmodels:ConnectedViewModel}">
 			<views:ConnectedView DataContext="{Binding}" />
 		</DataTemplate>

@@ -3,10 +3,7 @@ using Hosta.API.Data;
 using Hosta.Crypto;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HostaTests.API

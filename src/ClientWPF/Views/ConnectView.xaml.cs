@@ -3,11 +3,11 @@
 namespace ClientWPF.Views
 {
 	/// <summary>
-	/// Interaction logic for MainView.xaml
+	/// Interaction logic for ConnectView.xaml
 	/// </summary>
-	public partial class ConnectedView : UserControl
+	public partial class ConnectView : UserControl
 	{
-		public ConnectedView()
+		public ConnectView()
 		{
 			InitializeComponent();
 		}

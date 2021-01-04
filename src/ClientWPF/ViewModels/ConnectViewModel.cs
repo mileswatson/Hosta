@@ -4,15 +4,15 @@ using System.Windows.Input;
 
 namespace ClientWPF.ViewModels
 {
-	public class StartupViewModel : INotifyPropertyChanged
+	public class ConnectViewModel : INotifyPropertyChanged
 	{
-		public ICommand Continue { get; private set; }
-		public ICommand Quit { get; private set; }
+		public ICommand Connect { get; private set; }
+		public ICommand ChangeProfile { get; private set; }
 
-		public StartupViewModel(Action OnContinue, Action OnQuit)
+		public ConnectViewModel(Action OnConnect, Action OnChangeProfile)
 		{
-			Continue = new RelayCommand((object? _) => OnContinue());
-			Quit = new RelayCommand((object? _) => OnQuit());
+			Connect = new RelayCommand((object? _) => OnConnect());
+			ChangeProfile = new RelayCommand((object? _) => OnChangeProfile());
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;

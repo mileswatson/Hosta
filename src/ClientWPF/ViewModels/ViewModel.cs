@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels
 {
@@ -11,6 +7,7 @@ namespace ClientWPF.ViewModels
 	{
 		private object _vm;
 
+		private readonly ConnectViewModel connect;
 		private readonly StartupViewModel startup;
 
 		public object VM
@@ -28,18 +25,19 @@ namespace ClientWPF.ViewModels
 
 		public ViewModel()
 		{
-			_vm = startup = new StartupViewModel(OnConnect);
+			connect = new ConnectViewModel(OnConnect, OnChangeProfile);
+			_vm = startup = new StartupViewModel(OnContinue, OnQuit);
 		}
 
-		public void OnConnect()
-		{
-			VM = new ConnectedViewModel(OnDisconnect);
-		}
+		public void OnQuit() => Environment.Exit(0);
 
-		public void OnDisconnect()
-		{
-			VM = startup;
-		}
+		public void OnContinue() => VM = connect;
+
+		public void OnChangeProfile() => VM = startup;
+
+		public void OnConnect() => VM = new ConnectedViewModel(OnDisconnect);
+
+		public void OnDisconnect() => VM = connect;
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
