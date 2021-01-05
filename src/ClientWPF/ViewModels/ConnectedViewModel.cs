@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ClientWPF.ViewModels
 {
 	public class ConnectedViewModel : INotifyPropertyChanged
 	{
-		private ViewModels.HomeTab.ViewModel homeTab;
-		private ViewModels.PostTab.ViewModel postTab;
-		private ViewModels.ProfileTab.ViewModel profileTab;
-		private ViewModels.SettingsTab.ViewModel settingsTab;
+		private readonly HomeTab.ViewModel homeTab;
+		private readonly PostTab.ViewModel postTab;
+		private readonly ProfileTab.ViewModel profileTab;
+		private readonly SettingsTab.ViewModel settingsTab;
 
 		private object _vm;
 
@@ -42,14 +38,14 @@ namespace ClientWPF.ViewModels
 			profileTab = new();
 			settingsTab = new(() => OnDisconnect());
 
-			VM = homeTab;
-			HomeTab = new RelayCommand((object _) => { VM = homeTab; });
-			PostTab = new RelayCommand((object _) => { VM = postTab; });
-			ProfileTab = new RelayCommand((object _) => { VM = profileTab; });
-			SettingsTab = new RelayCommand((object _) => { VM = settingsTab; });
+			_vm = homeTab;
+			HomeTab = new RelayCommand((object? _) => { VM = homeTab; });
+			PostTab = new RelayCommand((object? _) => { VM = postTab; });
+			ProfileTab = new RelayCommand((object? _) => { VM = profileTab; });
+			SettingsTab = new RelayCommand((object? _) => { VM = settingsTab; });
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public void NotifyPropertyChanged(string propertyName)
 		{

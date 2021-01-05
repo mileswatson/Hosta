@@ -17,15 +17,13 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<Label Grid.Row="0" Grid.Column="0"
-			   Foreground="White" Background="Green"
-			   FontFamily="Roboto" FontWeight="Bold" FontSize="32"
-			   Content=" HOME" />
+		<Label Content="HOME"
+			   Grid.Row="0" Grid.Column="0"
+			   Style="{StaticResource TabHeadingLabel}" />
 
-		<Label Grid.Row="0" Grid.Column="2"
-			   Foreground="White" Background="Green"
-			   FontFamily="Roboto" FontWeight="Bold" FontSize="32"
-			   Content=" LEADERS " />
+		<Label Content="LEADERS "
+			   Grid.Row="0" Grid.Column="2"
+			   Style="{StaticResource TabHeadingLabel}" />
 
 		<ScrollViewer Grid.Row="2" Grid.Column="0">
 			<StackPanel>

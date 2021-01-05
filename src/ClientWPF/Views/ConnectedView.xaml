@@ -47,43 +47,18 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="1" Grid.Row="1"
-			   FontFamily="Roboto" FontWeight="Bold" FontSize="32px">
-			HOSTA
-		</Label>
+			   FontFamily="Roboto" FontWeight="Bold" FontSize="32px"
+			   Content="HOSTA" />
 
 		<StackPanel Grid.Column="1" Grid.Row="3">
-			<StackPanel.Resources>
-				<Style TargetType="Button" x:Key="SidebarButton">
-					<Style.Resources>
-						<Style TargetType="Border">
-							<Setter Property="CornerRadius" Value="5" />
-						</Style>
-					</Style.Resources>
-					<Setter Property="Foreground" Value="White" />
-					<Setter Property="Background" Value="ForestGreen" />
-					<Setter Property="FontSize" Value="16px" />
-					<Setter Property="Margin" Value="0px,5px" />
-					<Setter Property="Template">
-						<Setter.Value>
-							<ControlTemplate TargetType="{x:Type Button}">
-								<Border Background="{TemplateBinding Background}">
-									<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-								</Border>
-								<ControlTemplate.Triggers>
-									<Trigger Property="IsMouseOver" Value="True">
-										<Setter Property="Background" Value="DarkGreen" />
-									</Trigger>
-								</ControlTemplate.Triggers>
-							</ControlTemplate>
-						</Setter.Value>
-					</Setter>
-				</Style>
-			</StackPanel.Resources>
-
-			<Button Content="Home" Style="{DynamicResource SidebarButton}" Command="{Binding HomeTab}" />
-			<Button Content="Post" Style="{DynamicResource SidebarButton}" Command="{Binding PostTab}" />
-			<Button Content="Profile" Style="{DynamicResource SidebarButton}" Command="{Binding ProfileTab}" />
-			<Button Content="Settings" Style="{DynamicResource SidebarButton}" Command="{Binding SettingsTab}" />
+			<Button Content="Home" Command="{Binding HomeTab}"
+					Style="{StaticResource SidebarButton}" />
+			<Button Content="Post" Command="{Binding PostTab}"
+					Style="{StaticResource SidebarButton}" />
+			<Button Content="Profile" Command="{Binding ProfileTab}"
+					Style="{StaticResource SidebarButton}" />
+			<Button Content="Settings" Command="{Binding SettingsTab}"
+					Style="{StaticResource SidebarButton}" />
 		</StackPanel>
 		<ContentPresenter Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Content="{Binding VM}" />
 	</Grid>

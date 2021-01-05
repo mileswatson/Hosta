@@ -5,17 +5,15 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\Icons\hosta-icon.ico</ApplicationIcon>
+		<Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\Images\hosta-logo.png" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\Images\" />
-    <Folder Include="Models\" />
-		<Folder Include="Views\" />
-		<Folder Include="ViewModels\" />
+    <ProjectReference Include="..\Hosta\Hosta.csproj" />
   </ItemGroup>
 
 </Project>

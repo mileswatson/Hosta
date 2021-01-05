@@ -10,33 +10,28 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="50" />
 			<RowDefinition Height="10" />
-			<RowDefinition Height="100" />
-			<RowDefinition Height="10" />
-			<RowDefinition Height="25" />
-			<RowDefinition Height="10" />
-			<RowDefinition Height="25" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<Label Grid.Row="0" Grid.Column="0"
-			   Foreground="White" Background="Green"
-			   FontFamily="Roboto" FontWeight="Bold" FontSize="32"
-			   Content=" SETTINGS" />
+		<Label Content="SETTINGS"
+			   Grid.Row="0" Grid.Column="0"
+			   Style="{StaticResource TabHeadingLabel}" />
 
-		<TextBox Grid.Row="2" Grid.Column="0" Text="Config" TextWrapping="Wrap" />
-		<StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
-			<Button HorizontalAlignment="Left" Content=" Save "
-					Margin="10px,0px,0px,0px" Padding="10px,0px" />
-			<Button HorizontalAlignment="Left" Content=" Cancel "
-					Margin="10px,0px,0px,0px" Padding="10px,0px" />
+		<StackPanel Grid.Row="2" Grid.Column="0">
+			<TextBox Text="Config" TextWrapping="Wrap" MinHeight="50px"
+					 Style="{StaticResource TextBox}"  Grid.Row="2" Grid.Column="0" />
+			<StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal">
+				<Button HorizontalAlignment="Left" Content=" Save "
+					Style="{StaticResource Button}" />
+				<Button HorizontalAlignment="Left" Content=" Cancel "
+					Style="{StaticResource Button}" />
+			</StackPanel>
+			<Button Content="Disconnect" Command="{Binding Disconnect}"
+					Grid.Row="6" Grid.Column="0" HorizontalAlignment="Left"
+					Style="{StaticResource WarningButton}" />
 		</StackPanel>
-
-		<Button Grid.Row="6" Grid.Column="0"
-				HorizontalAlignment="Left" Content="Disconnect"
-				Background="DarkRed" Foreground="White"
-				Margin="10px,0px,0px,0px" Padding="10px,0px" Click="DisconnectButton_Clicked" />
 	</Grid>
 </UserControl>

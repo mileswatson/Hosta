@@ -7,23 +7,16 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid Background="White">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="10" />
-			<RowDefinition Height="20" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
-
-		<Label Grid.Column="0" Grid.Row="0" Content="Profile" />
-		<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-			<Button Content="Refresh"
-				HorizontalAlignment="Left" Margin="10px,0px,0px,0px" Padding="10px,0px" />
-			<Button Content="Edit" Command="{Binding StartEditing}"
-				HorizontalAlignment="Left" Margin="10px,0px,0px,0px" Padding="10px,0px" />
+		<StackPanel Orientation="Vertical">
+			<Label Content="Profile"
+				   Style="{StaticResource Label}" />
+			<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+				<Button Content="Refresh"
+						Style="{StaticResource Button}" />
+				<Button Content="Edit" Command="{Binding StartEditing}"
+						Style="{StaticResource Button}" />
+			</StackPanel>
 		</StackPanel>
 	</Grid>
 </UserControl>

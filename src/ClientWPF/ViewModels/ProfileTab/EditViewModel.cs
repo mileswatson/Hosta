@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ClientWPF.ViewModels.ProfileTab
@@ -14,7 +9,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public EditViewModel(Action OnCancel)
 		{
-			CancelEditing = new RelayCommand((object _) => OnCancel());
+			CancelEditing = new RelayCommand((object? _) => OnCancel());
 		}
 	}
 }

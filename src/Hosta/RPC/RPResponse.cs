@@ -1,6 +1,5 @@
-﻿using System;
-using Hosta.RPC;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Hosta.RPC
 {

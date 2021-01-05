@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClientWPF.ViewModels.PostTab
+﻿namespace ClientWPF.ViewModels.PostTab
 {
-	internal class ViewModel
+	public class ViewModel
 	{
 	}
 }

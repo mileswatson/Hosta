@@ -27,10 +27,9 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<Label Grid.Row="0" Grid.Column="0"
-			   Foreground="White" Background="Green"
-			   FontFamily="Roboto" FontWeight="Bold" FontSize="32"
-			   Content=" PROFILE" />
+		<Label Content="PROFILE"
+			   Grid.Row="0" Grid.Column="0"
+			   Style="{StaticResource TabHeadingLabel}" />
 
 		<ContentPresenter Grid.Column="0" Grid.Row="2" Content="{Binding VM}" />
 	</Grid>

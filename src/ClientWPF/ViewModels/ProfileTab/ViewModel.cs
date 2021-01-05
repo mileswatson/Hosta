@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {
@@ -25,15 +19,15 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		private InfoViewModel profileInfo;
+		private readonly InfoViewModel profileInfo;
 
-		private EditViewModel profileEdit;
+		private readonly EditViewModel profileEdit;
 
 		public ViewModel()
 		{
 			profileInfo = new(StartEditing);
 			profileEdit = new(StopEditing);
-			VM = profileInfo;
+			_vm = profileInfo;
 		}
 
 		public void StartEditing()
@@ -46,7 +40,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			VM = profileInfo;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public void NotifyPropertyChanged(string propertyName)
 		{
