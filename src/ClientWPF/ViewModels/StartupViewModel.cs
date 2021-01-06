@@ -1,8 +1,8 @@
-﻿using static ClientWPF.ApplicationEnvironment;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Net;
 using System.Windows.Input;
+using static ClientWPF.ApplicationEnvironment;
 
 namespace ClientWPF.ViewModels
 {
@@ -23,7 +23,7 @@ namespace ClientWPF.ViewModels
 			}
 		}
 
-		private string ip = "";
+		private string ip = "127.0.0.1";
 
 		public string IP
 		{
@@ -35,7 +35,7 @@ namespace ClientWPF.ViewModels
 			}
 		}
 
-		private string port = "";
+		private string port = "12000";
 
 		public string Port
 		{
@@ -54,9 +54,9 @@ namespace ClientWPF.ViewModels
 				string folder = Folder;
 
 				// Ensure that directory exists
-				if (!CheckDirectory(folder))
+				if (!Env.CheckDirectory(folder))
 				{
-					Alert("Folder does not exist!");
+					Env.Alert("Folder does not exist!");
 					return;
 				}
 
@@ -68,7 +68,7 @@ namespace ClientWPF.ViewModels
 				}
 				catch
 				{
-					Alert("The IP field was in an invalid format!");
+					Env.Alert("The IP field was in an invalid format!");
 					return;
 				}
 
@@ -82,7 +82,7 @@ namespace ClientWPF.ViewModels
 				}
 				catch
 				{
-					Alert("The port field was in an invalid format!");
+					Env.Alert("The port field was in an invalid format!");
 					return;
 				}
 

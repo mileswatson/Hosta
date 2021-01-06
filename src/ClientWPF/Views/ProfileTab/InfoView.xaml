@@ -4,15 +4,26 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ClientWPF.Views"
+			 xmlns:hosta="clr-namespace:Hosta.API.Data;assembly=Hosta"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
+	<UserControl.Resources>
+		<DataTemplate DataType="{x:Type hosta:GetProfileResponse}">
+			<StackPanel>
+				<Label Content="{Binding DisplayName}" Style="{StaticResource Label}" />
+				<Label Content="{Binding ID}" Style="{StaticResource Label}" />
+				<Label Content="{Binding Bio}" Style="{StaticResource Label}" />
+				<Label Content="{Binding LastUpdated}" Style="{StaticResource Label}" />
+			</StackPanel>
+		</DataTemplate>
+	</UserControl.Resources>
+
 	<Grid Background="White">
 
 		<StackPanel Orientation="Vertical">
-			<Label Content="Profile"
-				   Style="{StaticResource Label}" />
+			<ContentPresenter Content="{Binding Profile}" />
 			<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-				<Button Content="Refresh"
+				<Button Content="Refresh" Command="{Binding Refresh}"
 						Style="{StaticResource Button}" />
 				<Button Content="Edit" Command="{Binding StartEditing}"
 						Style="{StaticResource Button}" />

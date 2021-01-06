@@ -119,7 +119,7 @@ namespace Hosta.RPC
 			}
 			else
 			{
-				awaitedResponse.SetException(new Exception(response.ReturnValues));
+				awaitedResponse.SetException(new RPException(response.ReturnValues));
 			}
 		}
 
