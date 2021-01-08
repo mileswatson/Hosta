@@ -58,7 +58,7 @@ namespace HostaTests.RPC
 				{
 					var val = await tasks[i];
 				}
-				catch (Exception e)
+				catch (RPException e)
 				{
 					thrown = true;
 					Assert.IsTrue(e.Message == "InvalidArgsException");
@@ -82,7 +82,7 @@ namespace HostaTests.RPC
 				{
 					var val = await tasks[i];
 				}
-				catch (Exception e)
+				catch (RPException e)
 				{
 					thrown = true;
 					Assert.IsTrue(e.Message == "InvalidProcedureException");

@@ -78,19 +78,40 @@ namespace Hosta.API
 		public override async Task<GetProfileResponse> GetProfile(PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
-			var str = await client.Call("GetProfile", "");
+			var str = await Call("GetProfile", "");
 			return GetProfileResponse.Import(str);
 		}
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
-			return client.Call("SetProfile", SetProfileRequest.Export(request));
+			return Call("SetProfile", SetProfileRequest.Export(request));
+		}
+
+		/// <summary>
+		/// Disposes if any critical exceptions are thrown.
+		/// </summary>
+		private async Task<string> Call(string procedure, string args)
+		{
+			try
+			{
+				return await client.Call(procedure, args);
+			}
+			catch (Exception e) when (e is not RPException)
+			{
+				Dispose();
+				throw;
+			}
 		}
 
 		//// Implements IDisposable
 
 		private bool disposed = false;
+
+		public bool Disposed
+		{
+			get => disposed;
+		}
 
 		private void ThrowIfDisposed()
 		{
