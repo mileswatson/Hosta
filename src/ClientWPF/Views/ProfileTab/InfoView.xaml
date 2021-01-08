@@ -3,18 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:ClientWPF.Views"
-			 xmlns:hosta="clr-namespace:Hosta.API.Data;assembly=Hosta"
+             xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
+			 xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<UserControl.Resources>
-		<DataTemplate DataType="{x:Type hosta:GetProfileResponse}">
-			<StackPanel>
-				<Label Content="{Binding DisplayName}" Style="{StaticResource Label}" />
-				<Label Content="{Binding ID}" Style="{StaticResource Label}" />
-				<Label Content="{Binding Bio}" Style="{StaticResource Label}" />
-				<Label Content="{Binding LastUpdated}" Style="{StaticResource Label}" />
-			</StackPanel>
+		<DataTemplate DataType="{x:Type componentviewmodels:ProfileViewModel}">
+			<componentviews:Profile DataContext="{Binding}" />
 		</DataTemplate>
 	</UserControl.Resources>
 

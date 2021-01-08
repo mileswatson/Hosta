@@ -1,6 +1,8 @@
-﻿using Hosta.API.Data;
+﻿using ClientWPF.ViewModels.Components;
+using Hosta.API.Data;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using static ClientWPF.Models.ResourceManager;
 
@@ -12,14 +14,14 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public ICommand StartEditing { get; private set; }
 
-		private GetProfileResponse profile = new GetProfileResponse();
+		private ProfileViewModel _profile = new ProfileViewModel(Resources!.Self);
 
-		public GetProfileResponse Profile
+		public ProfileViewModel Profile
 		{
-			get => profile;
+			get => _profile;
 			set
 			{
-				profile = value;
+				_profile = value;
 				NotifyPropertyChanged(nameof(Profile));
 			}
 		}
@@ -28,18 +30,12 @@ namespace ClientWPF.ViewModels.ProfileTab
 		{
 			Refresh = new RelayCommand((object? _) => Update());
 			StartEditing = new RelayCommand((object? _) => OnEdit());
+			Update();
 		}
 
 		public async void Update()
 		{
-			try
-			{
-				Profile = await Resources!.GetProfile(Resources!.Self);
-			}
-			catch
-			{
-				Profile = new();
-			}
+			await Profile.Refresh();
 		}
 
 		//// Implement INotifyPropertyChanged

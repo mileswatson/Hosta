@@ -38,7 +38,6 @@ namespace ClientWPF.ViewModels.ProfileTab
 		public void StopEditing()
 		{
 			VM = profileInfo;
-			//profileInfo.Update();
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;

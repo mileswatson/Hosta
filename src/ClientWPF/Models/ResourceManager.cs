@@ -1,5 +1,5 @@
-﻿using Hosta.API;
-using Hosta.API.Data;
+﻿using ClientWPF.Models.Components;
+using Hosta.API;
 using Hosta.Crypto;
 using System;
 using System.Threading.Tasks;
@@ -15,6 +15,11 @@ namespace ClientWPF.Models
 
 		private readonly ConnectionManager connections;
 
+		private readonly AsyncCache<Profile> Profiles = new AsyncCache<Profile>(
+			(Task<Profile> t) => true,
+			(Task<Profile> t) => { }
+		);
+
 		/// <summary>
 		/// Creates a new instance of a ResourceManager.
 		/// </summary>
@@ -28,11 +33,15 @@ namespace ClientWPF.Models
 			});
 		}
 
-		public async Task<GetProfileResponse> GetProfile(string user)
+		public Task<Profile> GetProfile(string user)
 		{
 			ThrowIfDisposed();
-			var conn = await connections.GetConnection(user);
-			return await conn.GetProfile();
+			return Profiles.LazyGet(user, async () =>
+			{
+				var conn = await connections.GetConnection(user);
+				var response = await conn.GetProfile();
+				return new Profile(response);
+			}, TimeSpan.FromSeconds(10));
 		}
 
 		//// Singleton
