@@ -10,7 +10,7 @@
 
 	<Grid Background="White">
 		<StackPanel Orientation="Vertical">
-			<componentviews:Profile DataContext="{Binding}" />
+			<componentviews:Profile DataContext="{Binding Profile}" />
 			<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
 				<Button Content="Refresh" Command="{Binding Refresh}"
 						Style="{StaticResource Button}" />
