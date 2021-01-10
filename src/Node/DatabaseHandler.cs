@@ -76,8 +76,7 @@ namespace Node
 		public override async Task<string> SetProfile(SetProfileRequest r, PublicIdentity client)
 		{
 			ThrowIfDisposed();
-			// TODO: Change this to what it should actually be (!=)
-			if (client.ID == self)
+			if (client.ID != self)
 			{
 				throw new RPException("Access denied!");
 			}

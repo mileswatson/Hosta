@@ -8,14 +8,14 @@ using System.Windows.Media.Imaging;
 
 namespace ClientWPF.ViewModels.Components
 {
-	public class ProfileViewModel : INotifyPropertyChanged
+	public class ProfileViewModel : ObservableObject
 	{
 		private Profile _profile = new();
 
-		private Profile Profile
+		public Profile Profile
 		{
 			get => _profile;
-			set
+			private set
 			{
 				_profile = value;
 				NotifyPropertyChanged(nameof(Profile));
@@ -85,16 +85,6 @@ namespace ClientWPF.ViewModels.Components
 		{
 			var newProfile = await Resources!.GetProfile(id);
 			if (Profile != newProfile) Profile = newProfile;
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }

@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace ClientWPF.ViewModels
 {
-	public class ConnectedViewModel : INotifyPropertyChanged
+	public class ConnectedViewModel : ObservableObject
 	{
 		private readonly HomeTab.ViewModel homeTab;
 		private readonly PostTab.ViewModel postTab;
@@ -43,16 +43,6 @@ namespace ClientWPF.ViewModels
 			PostTab = new RelayCommand((object? _) => { VM = postTab; });
 			ProfileTab = new RelayCommand((object? _) => { VM = profileTab; });
 			SettingsTab = new RelayCommand((object? _) => { VM = settingsTab; });
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }

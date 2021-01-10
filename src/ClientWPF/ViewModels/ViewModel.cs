@@ -11,7 +11,7 @@ using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels
 {
-	public class ViewModel : INotifyPropertyChanged
+	public class ViewModel : ObservableObject
 	{
 		private readonly StartupViewModel startup;
 
@@ -81,16 +81,6 @@ namespace ClientWPF.ViewModels
 		{
 			VM = startup;
 			Resources?.Dispose();
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }

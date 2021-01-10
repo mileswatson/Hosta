@@ -1,4 +1,5 @@
-﻿using ClientWPF.ViewModels.Components;
+﻿using ClientWPF.Models.Components;
+using ClientWPF.ViewModels.Components;
 using Hosta.API.Data;
 using System;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {
-	public class InfoViewModel : INotifyPropertyChanged
+	public class InfoViewModel : ObservableObject
 	{
 		public ICommand Refresh { get; private set; }
 
@@ -26,28 +27,16 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		public InfoViewModel(Action OnEdit)
+		public InfoViewModel(Action<Profile> OnEdit)
 		{
 			Refresh = new RelayCommand((object? _) => Update());
-			StartEditing = new RelayCommand((object? _) => OnEdit());
+			StartEditing = new RelayCommand((object? _) => OnEdit(Profile.Profile));
 			Update();
 		}
 
 		public async void Update()
 		{
 			await Profile.Refresh();
-		}
-
-		//// Implement INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }

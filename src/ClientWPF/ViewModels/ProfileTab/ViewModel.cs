@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
+﻿using ClientWPF.Models.Components;
+using System.ComponentModel;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {
-	public class ViewModel : INotifyPropertyChanged
+	public class ViewModel : ObservableObject
 	{
 		private object _vm;
 
@@ -21,33 +22,20 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		private readonly InfoViewModel profileInfo;
 
-		private readonly EditViewModel profileEdit;
-
 		public ViewModel()
 		{
 			profileInfo = new(StartEditing);
-			profileEdit = new(StopEditing);
 			_vm = profileInfo;
 		}
 
-		public void StartEditing()
+		public void StartEditing(Profile profile)
 		{
-			VM = profileEdit;
+			VM = new EditViewModel(StopEditing, profile);
 		}
 
 		public void StopEditing()
 		{
 			VM = profileInfo;
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }

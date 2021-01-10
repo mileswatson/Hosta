@@ -7,14 +7,28 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid Background="White">
-		<StackPanel Orientation="Vertical">
-			<TextBox Text="Profile"
-					 Style="{StaticResource TextBox}" />
+		<StackPanel>
+			<DockPanel>
+				<Label Content="Name" Style="{StaticResource FieldLabel}" />
+				<TextBox Text="{Binding Name, Mode=TwoWay}"
+					Style="{StaticResource TextBox}" />
+			</DockPanel>
+			<DockPanel>
+				<Label Content="Tagline" Style="{StaticResource FieldLabel}" />
+				<TextBox Text="{Binding Tagline, Mode=TwoWay}"
+					Style="{StaticResource TextBox}" />
+			</DockPanel>
+			<DockPanel>
+				<Label Content="Bio" Style="{StaticResource FieldLabel}" />
+				<TextBox Text="{Binding Bio, Mode=TwoWay}" TextWrapping="Wrap"
+					Style="{StaticResource TextBox}" />
+			</DockPanel>
+
 			<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-				<Button Content="Save"
-						Style="{StaticResource Button}" />
+				<Button Content="Save" Command="{Binding Save}"
+					Style="{StaticResource Button}" />
 				<Button Content="Cancel" Command="{Binding CancelEditing}"
-						Style="{StaticResource Button}" />
+					Style="{StaticResource Button}" />
 			</StackPanel>
 		</StackPanel>
 	</Grid>

@@ -1,6 +1,8 @@
 ﻿using ClientWPF.Models.Components;
 using Hosta.API;
+using Hosta.API.Data;
 using Hosta.Crypto;
+using Hosta.Tools;
 using System;
 using System.Threading.Tasks;
 
@@ -33,6 +35,8 @@ namespace ClientWPF.Models
 			});
 		}
 
+		//// Implementation
+
 		public Task<Profile> GetProfile(string user)
 		{
 			ThrowIfDisposed();
@@ -42,6 +46,14 @@ namespace ClientWPF.Models
 				var response = await conn.GetProfile();
 				return new Profile(response);
 			}, TimeSpan.FromSeconds(10));
+		}
+
+		public async Task SetProfile(string displayName, string tagline, string bio, byte[] avatar)
+		{
+			ThrowIfDisposed();
+			var request = new SetProfileRequest(displayName, tagline, bio, Transcoder.HexFromBytes(avatar));
+			var conn = await connections.GetConnection(Self);
+			await conn.SetProfile(request);
 		}
 
 		//// Singleton
