@@ -78,8 +78,15 @@ namespace Node
 			ThrowIfDisposed();
 			if (client.ID != self)
 			{
-				throw new RPException("Access denied!");
+				throw new RPException("Access denied.");
 			}
+
+			if (r.DisplayName.Length > 18)
+				throw new RPException($"Name used {r.DisplayName.Length}/18 characters.");
+			if (r.Tagline.Length > 30)
+				throw new RPException($"Tagline used {r.Tagline.Length}/30 characters.");
+			if (r.Bio.Length > 200)
+				throw new RPException($"Bio used {r.Bio.Length}/200 characters.");
 
 			try
 			{
@@ -89,7 +96,7 @@ namespace Node
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
-				throw new RPException("Database error!");
+				throw new RPException("Database error.");
 			}
 		}
 

@@ -70,7 +70,6 @@ namespace ClientWPF.ViewModels.ProfileTab
 					Env.Alert("Could not update profile!");
 					return;
 				}
-				Env.Alert("Updated profile!");
 				OnDone(true);
 			});
 		}

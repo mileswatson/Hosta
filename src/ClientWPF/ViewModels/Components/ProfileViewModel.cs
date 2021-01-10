@@ -50,30 +50,9 @@ namespace ClientWPF.ViewModels.Components
 			get
 			{
 				if (!changed) return _avatarImage;
-				var image = new BitmapImage();
-				try
-				{
-					using (var stream = new MemoryStream(Profile.Avatar, 0, Profile.Avatar.Length))
-					{
-						image.BeginInit();
-						image.DecodePixelWidth = 160;
-						image.CacheOption = BitmapCacheOption.None;
-						image.StreamSource = stream;
-						image.EndInit();
-					}
-				}
-				catch
-				{
-					image = new BitmapImage();
-					image.BeginInit();
-					image.DecodePixelWidth = 160;
-					image.CacheOption = BitmapCacheOption.OnLoad;
-					image.UriSource = new Uri("Assets/Images/default-avatar.png", UriKind.Relative);
-					image.EndInit();
-				}
-				_avatarImage = image;
+				_avatarImage = Tools.GetImage(Profile.Avatar);
 				changed = false;
-				return image;
+				return _avatarImage;
 			}
 		}
 
