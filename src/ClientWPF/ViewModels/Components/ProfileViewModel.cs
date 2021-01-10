@@ -50,7 +50,7 @@ namespace ClientWPF.ViewModels.Components
 			get
 			{
 				if (!changed) return _avatarImage;
-				_avatarImage = Tools.GetImage(Profile.Avatar);
+				_avatarImage = Tools.TryGetImage(Profile.Avatar);
 				changed = false;
 				return _avatarImage;
 			}

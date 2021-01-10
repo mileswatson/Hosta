@@ -30,7 +30,7 @@ namespace HostaTests.Net
 		[DataTestMethod]
 		[DataRow(1)]
 		[DataRow(563)]
-		[DataRow(1 << 15)]
+		[DataRow(1 << 16)]
 		public async Task TestValid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
@@ -65,11 +65,11 @@ namespace HostaTests.Net
 
 		[DataTestMethod]
 		[DataRow(0)]
-		[DataRow((1 << 15) + 1)]
-		public void TestInvalid(int length)
+		[DataRow((1 << 16) + 1)]
+		public async Task TestInvalid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a!.Send(bytes));
+			await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a!.Send(bytes));
 		}
 
 		[TestCleanup]

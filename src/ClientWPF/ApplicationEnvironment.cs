@@ -31,5 +31,9 @@ namespace ClientWPF
 		public virtual Task<string> ReadFile(string path) => File.ReadAllTextAsync(path);
 
 		public virtual Task WriteFile(string path, string data) => File.WriteAllTextAsync(path, data);
+
+		public virtual Task<byte[]> ReadFileRaw(string path) => File.ReadAllBytesAsync(path);
+
+		public virtual Task WriteFileRaw(string path, byte[] data) => File.WriteAllBytesAsync(path, data);
 	}
 }
