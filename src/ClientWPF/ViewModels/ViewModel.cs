@@ -15,9 +15,9 @@ namespace ClientWPF.ViewModels
 	{
 		private readonly StartupViewModel startup;
 
-		private object _vm;
+		private ObservableObject _vm;
 
-		public object VM
+		public ObservableObject VM
 		{
 			get
 			{
@@ -27,6 +27,7 @@ namespace ClientWPF.ViewModels
 			{
 				_vm = value;
 				NotifyPropertyChanged(nameof(VM));
+				_vm.Update(false);
 			}
 		}
 
@@ -81,6 +82,11 @@ namespace ClientWPF.ViewModels
 		{
 			VM = startup;
 			Resources?.Dispose();
+		}
+
+		public override void Update(bool force)
+		{
+			VM.Update(force);
 		}
 	}
 }

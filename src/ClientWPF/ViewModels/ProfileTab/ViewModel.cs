@@ -1,13 +1,12 @@
 ﻿using ClientWPF.Models.Components;
-using System.ComponentModel;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {
 	public class ViewModel : ObservableObject
 	{
-		private object _vm;
+		private ObservableObject _vm = new InfoViewModel((Profile _) => { });
 
-		public object VM
+		public ObservableObject VM
 		{
 			get
 			{
@@ -17,6 +16,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			{
 				_vm = value;
 				NotifyPropertyChanged(nameof(VM));
+				_vm.Update(false);
 			}
 		}
 
@@ -25,7 +25,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 		public ViewModel()
 		{
 			profileInfo = new(StartEditing);
-			_vm = profileInfo;
+			VM = profileInfo;
 		}
 
 		public void StartEditing(Profile profile)
@@ -33,9 +33,15 @@ namespace ClientWPF.ViewModels.ProfileTab
 			VM = new EditViewModel(StopEditing, profile);
 		}
 
-		public void StopEditing()
+		public void StopEditing(bool changed)
 		{
 			VM = profileInfo;
+			VM.Update(changed);
+		}
+
+		public override void Update(bool force)
+		{
+			VM.Update(force);
 		}
 	}
 }

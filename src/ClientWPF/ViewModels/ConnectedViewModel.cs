@@ -11,18 +11,19 @@ namespace ClientWPF.ViewModels
 		private readonly ProfileTab.ViewModel profileTab;
 		private readonly SettingsTab.ViewModel settingsTab;
 
-		private object _vm;
+		private ObservableObject _vm;
 
-		public object VM
+		public ObservableObject VM
 		{
 			get
 			{
 				return _vm;
 			}
-			set
+			private set
 			{
 				_vm = value;
 				NotifyPropertyChanged(nameof(VM));
+				_vm.Update(false);
 			}
 		}
 
@@ -43,6 +44,11 @@ namespace ClientWPF.ViewModels
 			PostTab = new RelayCommand((object? _) => { VM = postTab; });
 			ProfileTab = new RelayCommand((object? _) => { VM = profileTab; });
 			SettingsTab = new RelayCommand((object? _) => { VM = settingsTab; });
+		}
+
+		public override void Update(bool force)
+		{
+			VM.Update(force);
 		}
 	}
 }

@@ -48,9 +48,9 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		public EditViewModel(Action OnDone, Profile profile)
+		public EditViewModel(Action<bool> OnDone, Profile profile)
 		{
-			CancelEditing = new RelayCommand((object? _) => OnDone());
+			CancelEditing = new RelayCommand((object? _) => OnDone(false));
 			Name = profile.DisplayName;
 			Tagline = profile.Tagline;
 			Bio = profile.Bio;
@@ -63,18 +63,20 @@ namespace ClientWPF.ViewModels.ProfileTab
 				catch (RPException e)
 				{
 					Env.Alert($"Could not update profile! {e.Message}");
-					OnDone();
 					return;
 				}
 				catch
 				{
 					Env.Alert("Could not update profile!");
-					OnDone();
 					return;
 				}
 				Env.Alert("Updated profile!");
-				OnDone();
+				OnDone(true);
 			});
+		}
+
+		public override void Update(bool force)
+		{
 		}
 	}
 }

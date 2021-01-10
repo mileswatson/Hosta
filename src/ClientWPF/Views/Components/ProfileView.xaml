@@ -5,38 +5,46 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
              mc:Ignorable="d"
-             d:DesignHeight="180" d:DesignWidth="800">
-	<Grid Background="White">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="10" />
-			<ColumnDefinition Width="160" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="10" />
-		</Grid.ColumnDefinitions>
+			 Height="180" MinWidth="490"
+             d:DesignHeight="180" d:DesignWidth="500">
+	<UserControl.DataContext>
+		<componentviewmodels:ProfileViewModel />
+	</UserControl.DataContext>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="10" />
-			<RowDefinition Height="160" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="10" />
-		</Grid.RowDefinitions>
+	<Border CornerRadius="5"
+                BorderBrush="Black"
+                BorderThickness="5"
+				Background="White"
+                Padding="5">
 
-		<Image Source="{Binding AvatarImage}"
-			   Grid.Row="1" Grid.Column="1" />
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="160" />
+				<ColumnDefinition Width="*" MinWidth="320" />
+			</Grid.ColumnDefinitions>
 
-		<StackPanel Grid.Row="1" Grid.Column="2">
-			<DockPanel>
-				<Label Content="{Binding ID}"
-					   DockPanel.Dock="Right"
-					   Style="{StaticResource FieldLabel}" HorizontalContentAlignment="Right" />
+			<Grid.RowDefinitions>
+				<RowDefinition Height="160" />
+			</Grid.RowDefinitions>
+
+			<Ellipse Width="160" Height="160" Grid.Column="0">
+				<Ellipse.Fill>
+					<ImageBrush ImageSource="{Binding AvatarImage}" />
+				</Ellipse.Fill>
+			</Ellipse>
+
+			<DockPanel Grid.Column="1">
 				<Label Content="{Binding Name}"
-					DockPanel.Dock="Left"
-					Style="{StaticResource TabHeadingLabel}" />
+					   DockPanel.Dock="Top"
+					   ToolTip="{Binding ID}"
+					   Style="{StaticResource TabHeadingLabel}" />
+				<Label Content="{Binding Tagline}"
+					   DockPanel.Dock="Top" Margin="5,0"
+					   Style="{StaticResource SubHeadingLabel}" />
+				<TextBlock Text="{Binding Bio}" TextWrapping="Wrap"
+						   DockPanel.Dock="Top" Margin="5, 0" Padding="5,0"
+						   Style="{StaticResource TextBlock}" />
 			</DockPanel>
-			<Label Content="{Binding Tagline}"
-				   Style="{StaticResource SubHeadingLabel}" />
-			<TextBlock Text="{Binding Bio}" TextWrapping="Wrap"
-					   Style="{StaticResource TextBlock}" />
-		</StackPanel>
-	</Grid>
+		</Grid>
+	</Border>
 </UserControl>

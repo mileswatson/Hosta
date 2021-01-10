@@ -11,5 +11,7 @@ namespace ClientWPF.ViewModels
 			if (PropertyChanged is null) return;
 			PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		public abstract void Update(bool force);
 	}
 }

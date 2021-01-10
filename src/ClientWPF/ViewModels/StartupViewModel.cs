@@ -90,5 +90,9 @@ namespace ClientWPF.ViewModels
 			});
 			Quit = new RelayCommand((object? _) => OnQuit());
 		}
+
+		public override void Update(bool force)
+		{
+		}
 	}
 }

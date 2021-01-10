@@ -1,11 +1,6 @@
 ﻿using Hosta.API.Data;
 using Hosta.Tools;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClientWPF.Models.Components
 {
@@ -25,12 +20,12 @@ namespace ClientWPF.Models.Components
 
 		public Profile()
 		{
-			DisplayName = "[]";
-			ID = "[]";
-			Tagline = "[]";
-			Bio = "[]";
+			DisplayName = "[Name]";
+			ID = "[ID]";
+			Tagline = "[Tagline]";
+			Bio = "[Bio]";
 			Avatar = Array.Empty<byte>();
-			LastUpdated = "[]";
+			LastUpdated = "[LastUpdated]";
 		}
 
 		public Profile(GetProfileResponse response)

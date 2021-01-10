@@ -37,7 +37,7 @@ namespace ClientWPF.Models
 
 		//// Implementation
 
-		public Task<Profile> GetProfile(string user)
+		public Task<Profile> GetProfile(string user, bool force = false)
 		{
 			ThrowIfDisposed();
 			return Profiles.LazyGet(user, async () =>
@@ -45,7 +45,7 @@ namespace ClientWPF.Models
 				var conn = await connections.GetConnection(user);
 				var response = await conn.GetProfile();
 				return new Profile(response);
-			}, TimeSpan.FromSeconds(10));
+			}, TimeSpan.FromSeconds(10), force);
 		}
 
 		public async Task SetProfile(string displayName, string tagline, string bio, byte[] avatar)

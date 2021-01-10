@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using System.Diagnostics;
 
 namespace ClientWPF.ViewModels.Components
 {
@@ -30,7 +31,7 @@ namespace ClientWPF.ViewModels.Components
 
 		public string Name { get => Profile.DisplayName; }
 
-		public string ID { get => Profile.ID.Length < 12 ? Profile.ID : Profile.ID.Substring(0, 12) + "..."; }
+		public string ID { get => Profile.ID; }
 
 		public string Tagline { get => Profile.Tagline; }
 
@@ -38,7 +39,7 @@ namespace ClientWPF.ViewModels.Components
 
 		public string LastUpdated { get => Profile.LastUpdated; }
 
-		private string id;
+		private string id = "";
 
 		private bool changed = true;
 
@@ -76,14 +77,18 @@ namespace ClientWPF.ViewModels.Components
 			}
 		}
 
+		public ProfileViewModel()
+		{
+		}
+
 		public ProfileViewModel(string id)
 		{
 			this.id = id;
 		}
 
-		public async Task Refresh()
+		public override async void Update(bool force)
 		{
-			var newProfile = await Resources!.GetProfile(id);
+			var newProfile = await Resources!.GetProfile(id, force);
 			if (Profile != newProfile) Profile = newProfile;
 		}
 	}
