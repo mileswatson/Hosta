@@ -51,7 +51,7 @@ namespace ClientWPF.Models
 		public async Task SetProfile(string displayName, string tagline, string bio, byte[] avatar)
 		{
 			ThrowIfDisposed();
-			var request = new SetProfileRequest(displayName, tagline, bio, Transcoder.HexFromBytes(avatar));
+			var request = new SetProfileRequest(displayName, tagline, bio, avatar);
 			var conn = await connections.GetConnection(Self);
 			await conn.SetProfile(request);
 		}

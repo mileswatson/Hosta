@@ -40,7 +40,7 @@ namespace ClientWPF.Models.Components
 			Tagline = response.Tagline;
 			Bio = response.Bio;
 			LastUpdated = response.LastUpdated.ToShortDateString();
-			AvatarBytes = Transcoder.BytesFromHex(response.Avatar);
+			AvatarBytes = response.Avatar;
 			Avatar = TryImageFromBytes(AvatarBytes);
 		}
 
@@ -50,7 +50,7 @@ namespace ClientWPF.Models.Components
 			{
 				return ImageFromBytes(data);
 			}
-			catch (Exception e)
+			catch
 			{
 				return DefaultImage;
 			}

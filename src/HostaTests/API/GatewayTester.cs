@@ -34,11 +34,13 @@ namespace HostaTests.API
 		public async Task TestGetSetProfile()
 		{
 			var p = await remoteGateway.GetProfile();
-			Assert.IsTrue((p.ID, p.DisplayName, p.Tagline, p.Bio, p.Avatar) == ("id", "displayname", "tagline", "bio", "avatar"));
-			var n = new SetProfileRequest("newdisplayname", "newtagline", "newbio", "newavatar");
+			Assert.IsTrue((p.ID, p.DisplayName, p.Tagline, p.Bio) == ("id", "displayname", "tagline", "bio"));
+			CollectionAssert.AreEqual(p.Avatar, new byte[] { 0, 255, 0, 5, 0 });
+			var n = new SetProfileRequest("newdisplayname", "newtagline", "newbio", new byte[] { 5, 0, 255, 0, 3 });
 			await remoteGateway.SetProfile(n);
 			p = await remoteGateway.GetProfile();
-			Assert.IsTrue(new SetProfileRequest(p.DisplayName, p.Tagline, p.Bio, p.Avatar) == n);
+			Assert.IsTrue((p.DisplayName, p.Tagline, p.Bio) == (n.DisplayName, n.Tagline, n.Bio));
+			CollectionAssert.AreEqual(p.Avatar, n.Avatar);
 		}
 
 		[TestCleanup]
@@ -52,7 +54,7 @@ namespace HostaTests.API
 
 	public class MockAPI : Hosta.API.API
 	{
-		public GetProfileResponse storedProfile = new GetProfileResponse("id", "displayname", "tagline", "bio", "avatar", DateTime.Now);
+		public GetProfileResponse storedProfile = new GetProfileResponse("id", "displayname", "tagline", "bio", new byte[] { 0, 255, 0, 5, 0 }, DateTime.Now);
 
 		public override Task<GetProfileResponse> GetProfile(PublicIdentity _)
 		{

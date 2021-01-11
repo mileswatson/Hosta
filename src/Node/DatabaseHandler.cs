@@ -44,7 +44,7 @@ namespace Node
 			}
 			catch
 			{
-				var profile = new Profile(self, "olddisplayname", "oldtagline", "oldbio", "oldavatar", DateTime.UtcNow);
+				var profile = new Profile(self, "olddisplayname", "oldtagline", "oldbio", Array.Empty<byte>(), DateTime.UtcNow);
 				await conn.InsertAsync(profile);
 				Console.WriteLine($"Created new profile {profile}.");
 			}
