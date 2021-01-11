@@ -1,6 +1,6 @@
 ﻿using static ClientWPF.Models.ResourceManager;
 using static ClientWPF.ApplicationEnvironment;
-using ClientWPF.Models.Components;
+using ClientWPF.Models.Data;
 using System;
 using System.Windows.Input;
 using Hosta.RPC;

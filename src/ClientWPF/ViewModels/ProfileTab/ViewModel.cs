@@ -1,4 +1,4 @@
-﻿using ClientWPF.Models.Components;
+﻿using ClientWPF.Models.Data;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {

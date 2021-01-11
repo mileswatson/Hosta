@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace ClientWPF.Models.Components
+namespace ClientWPF.Models.Data
 {
 	public record Profile
 	{

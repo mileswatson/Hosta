@@ -1,4 +1,4 @@
-﻿using ClientWPF.Models.Components;
+﻿using ClientWPF.Models.Data;
 using Hosta.API;
 using Hosta.API.Data;
 using Hosta.Crypto;

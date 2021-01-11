@@ -1,4 +1,4 @@
-﻿using ClientWPF.Models.Components;
+﻿using ClientWPF.Models.Data;
 using ClientWPF.ViewModels.Components;
 using System;
 using System.Windows.Input;
