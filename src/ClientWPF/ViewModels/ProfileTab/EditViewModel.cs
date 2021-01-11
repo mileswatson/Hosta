@@ -1,10 +1,10 @@
-﻿using static ClientWPF.Models.ResourceManager;
-using static ClientWPF.ApplicationEnvironment;
-using ClientWPF.Models.Data;
+﻿using ClientWPF.Models.Data;
+using Hosta.RPC;
 using System;
 using System.Windows.Input;
-using Hosta.RPC;
 using System.Windows.Media.Imaging;
+using static ClientWPF.ApplicationEnvironment;
+using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {

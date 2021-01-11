@@ -1,6 +1,6 @@
-﻿using static ClientWPF.Models.ResourceManager;
-using ClientWPF.Models.Data;
+﻿using ClientWPF.Models.Data;
 using System.Windows.Media.Imaging;
+using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components
 {

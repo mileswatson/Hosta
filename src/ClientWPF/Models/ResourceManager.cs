@@ -2,7 +2,6 @@
 using Hosta.API;
 using Hosta.API.Data;
 using Hosta.Crypto;
-using Hosta.Tools;
 using System;
 using System.Threading.Tasks;
 
@@ -45,7 +44,7 @@ namespace ClientWPF.Models
 				var conn = await connections.GetConnection(user);
 				var response = await conn.GetProfile();
 				return new Profile(response);
-			}, TimeSpan.FromSeconds(10), force);
+			}, TimeSpan.FromMinutes(5), force);
 		}
 
 		public async Task SetProfile(string displayName, string tagline, string bio, byte[] avatar)
