@@ -1,6 +1,8 @@
 ﻿using Hosta.API.Data;
 using Hosta.Tools;
 using System;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace ClientWPF.Models.Components
 {
@@ -14,7 +16,9 @@ namespace ClientWPF.Models.Components
 
 		public string Bio { get; init; }
 
-		public byte[] Avatar { get; init; }
+		public byte[] AvatarBytes { get; init; }
+
+		public BitmapImage Avatar { get; init; }
 
 		public string LastUpdated { get; init; }
 
@@ -24,7 +28,8 @@ namespace ClientWPF.Models.Components
 			ID = "[ID]";
 			Tagline = "[Tagline]";
 			Bio = "[Bio]";
-			Avatar = Array.Empty<byte>();
+			AvatarBytes = Array.Empty<byte>();
+			Avatar = DefaultImage;
 			LastUpdated = "[LastUpdated]";
 		}
 
@@ -35,13 +40,47 @@ namespace ClientWPF.Models.Components
 			Tagline = response.Tagline;
 			Bio = response.Bio;
 			LastUpdated = response.LastUpdated.ToShortDateString();
+			AvatarBytes = Transcoder.BytesFromHex(response.Avatar);
+			Avatar = TryImageFromBytes(AvatarBytes);
+		}
+
+		private static BitmapImage TryImageFromBytes(byte[] data)
+		{
 			try
 			{
-				Avatar = Transcoder.BytesFromHex(response.Avatar);
+				return ImageFromBytes(data);
 			}
-			catch
+			catch (Exception e)
 			{
-				Avatar = Array.Empty<byte>();
+				return DefaultImage;
+			}
+		}
+
+		public static BitmapImage ImageFromBytes(byte[] data)
+		{
+			var image = new BitmapImage();
+			using (var stream = new MemoryStream(data, 0, data.Length))
+			{
+				image.BeginInit();
+				image.DecodePixelWidth = 160;
+				image.CacheOption = BitmapCacheOption.OnLoad;
+				image.StreamSource = stream;
+				image.EndInit();
+			}
+			return image;
+		}
+
+		public static BitmapImage DefaultImage
+		{
+			get
+			{
+				var image = new BitmapImage();
+				image.BeginInit();
+				image.DecodePixelWidth = 160;
+				image.CacheOption = BitmapCacheOption.OnLoad;
+				image.UriSource = new Uri("Assets/Images/default-avatar.png", UriKind.Relative);
+				image.EndInit();
+				return image;
 			}
 		}
 	}

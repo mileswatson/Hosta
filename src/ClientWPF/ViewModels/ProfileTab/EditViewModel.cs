@@ -49,13 +49,17 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		private byte[] avatarBytes = Array.Empty<byte>();
+		public BitmapImage Avatar { get; private set; }
 
-		private void SetAvatarBytes(byte[] bytes, bool checkValid = true)
+		public ICommand RemoveAvatar { get; init; }
+
+		private byte[] avatarBytes;
+
+		private void SetAvatarBytes(byte[] bytes)
 		{
 			try
 			{
-				Tools.GetImage(bytes);
+				Avatar = Profile.ImageFromBytes(bytes);
 				avatarBytes = bytes;
 				NotifyPropertyChanged(nameof(Avatar));
 			}
@@ -68,15 +72,9 @@ namespace ClientWPF.ViewModels.ProfileTab
 		private void ClearAvatarBytes()
 		{
 			avatarBytes = Array.Empty<byte>();
+			Avatar = Profile.DefaultImage;
 			NotifyPropertyChanged(nameof(Avatar));
 		}
-
-		public BitmapImage Avatar
-		{
-			get => Tools.TryGetImage(avatarBytes);
-		}
-
-		public ICommand RemoveAvatar { get; init; }
 
 		public async void SetAvatarFile(string path)
 		{
@@ -95,25 +93,24 @@ namespace ClientWPF.ViewModels.ProfileTab
 			Name = profile.DisplayName;
 			Tagline = profile.Tagline;
 			Bio = profile.Bio;
-			avatarBytes = profile.Avatar;
+			Avatar = profile.Avatar;
+			avatarBytes = profile.AvatarBytes;
 			RemoveAvatar = new RelayCommand((object? _) => ClearAvatarBytes());
 			Save = new RelayCommand(async (object? _) =>
 			{
 				try
 				{
 					await Resources!.SetProfile(Name, Tagline, Bio, avatarBytes);
+					OnDone(true);
 				}
 				catch (RPException e)
 				{
 					Env.Alert($"Could not update profile! {e.Message}");
-					return;
 				}
 				catch
 				{
 					Env.Alert("Could not update profile!");
-					return;
 				}
-				OnDone(true);
 			});
 			CancelEditing = new RelayCommand((object? _) => OnDone(false));
 		}

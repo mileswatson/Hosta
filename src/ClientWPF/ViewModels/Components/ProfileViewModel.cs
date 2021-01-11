@@ -1,11 +1,6 @@
 ﻿using static ClientWPF.Models.ResourceManager;
 using ClientWPF.Models.Components;
-using System;
-using System.ComponentModel;
-using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using System.Diagnostics;
 
 namespace ClientWPF.ViewModels.Components
 {
@@ -24,8 +19,7 @@ namespace ClientWPF.ViewModels.Components
 				NotifyPropertyChanged(nameof(ID));
 				NotifyPropertyChanged(nameof(Tagline));
 				NotifyPropertyChanged(nameof(Bio));
-				NotifyPropertyChanged(nameof(AvatarImage));
-				changed = true;
+				NotifyPropertyChanged(nameof(Avatar));
 			}
 		}
 
@@ -39,25 +33,13 @@ namespace ClientWPF.ViewModels.Components
 
 		public string LastUpdated { get => Profile.LastUpdated; }
 
-		private string id = "";
+		public BitmapImage Avatar { get => Profile.Avatar; }
 
-		private bool changed = true;
-
-		private BitmapImage _avatarImage = new BitmapImage();
-
-		public BitmapImage AvatarImage
-		{
-			get
-			{
-				if (!changed) return _avatarImage;
-				_avatarImage = Tools.TryGetImage(Profile.Avatar);
-				changed = false;
-				return _avatarImage;
-			}
-		}
+		private readonly string id;
 
 		public ProfileViewModel()
 		{
+			id = "";
 		}
 
 		public ProfileViewModel(string id)
