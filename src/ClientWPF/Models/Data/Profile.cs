@@ -1,5 +1,4 @@
 ﻿using Hosta.API.Data;
-using Hosta.Tools;
 using System;
 using System.IO;
 using System.Windows.Media.Imaging;
@@ -70,18 +69,20 @@ namespace ClientWPF.Models.Data
 			return image;
 		}
 
+		static Profile()
+		{
+			var image = new BitmapImage();
+			image.BeginInit();
+			image.DecodePixelWidth = 160;
+			image.CacheOption = BitmapCacheOption.OnLoad;
+			image.UriSource = new Uri("Assets/Images/default-avatar.png", UriKind.Relative);
+			image.EndInit();
+			DefaultImage = image;
+		}
+
 		public static BitmapImage DefaultImage
 		{
-			get
-			{
-				var image = new BitmapImage();
-				image.BeginInit();
-				image.DecodePixelWidth = 160;
-				image.CacheOption = BitmapCacheOption.OnLoad;
-				image.UriSource = new Uri("Assets/Images/default-avatar.png", UriKind.Relative);
-				image.EndInit();
-				return image;
-			}
+			get; private set;
 		}
 	}
 }
