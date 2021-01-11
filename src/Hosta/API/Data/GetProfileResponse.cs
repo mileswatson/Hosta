@@ -8,9 +8,10 @@ namespace Hosta.API.Data
 	/// </summary>
 	public record GetProfileResponse
 	{
-		public GetProfileResponse() => (ID, DisplayName, Tagline, Bio, Avatar, LastUpdated) = ("", "", "", "", "", DateTime.UtcNow);
+		public GetProfileResponse() =>
+			(ID, DisplayName, Tagline, Bio, Avatar, LastUpdated) = ("", "", "", "", Array.Empty<byte>(), DateTime.UtcNow);
 
-		public GetProfileResponse(string id, string displayName, string tagline, string bio, string avatar, DateTime lastUpdated)
+		public GetProfileResponse(string id, string displayName, string tagline, string bio, byte[] avatar, DateTime lastUpdated)
 			=> (ID, DisplayName, Tagline, Bio, Avatar, LastUpdated) = (id, displayName, tagline, bio, avatar, lastUpdated);
 
 		/// <summary>
@@ -43,7 +44,7 @@ namespace Hosta.API.Data
 		public string Bio { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public string Avatar { get; init; }
+		public byte[] Avatar { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
 		public DateTime LastUpdated { get; init; }

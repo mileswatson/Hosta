@@ -6,16 +6,37 @@
              xmlns:local="clr-namespace:ClientWPF.Views"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-	<Grid Background="White">
-		<StackPanel Orientation="Vertical">
-			<TextBox Text="Profile"
-					 Style="{StaticResource TextBox}" />
-			<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-				<Button Content="Save"
+	<ScrollViewer Background="White">
+		<StackPanel>
+			<Image Source="{Binding Avatar}" Width="160" Height="160" HorizontalAlignment="Left" Margin="10" />
+			<StackPanel Orientation="Horizontal">
+				<Button Content="Select" Click="SelectButton_Clicked"
 						Style="{StaticResource Button}" />
-				<Button Content="Cancel" Command="{Binding CancelEditing}"
+				<Button Content="Remove" Command="{Binding RemoveAvatar}"
 						Style="{StaticResource Button}" />
 			</StackPanel>
+			<DockPanel>
+				<Label Content="Name" Style="{StaticResource FieldLabel}" />
+				<TextBox Text="{Binding Name, Mode=TwoWay}"
+					Style="{StaticResource TextBox}" />
+			</DockPanel>
+			<DockPanel>
+				<Label Content="Tagline" Style="{StaticResource FieldLabel}" />
+				<TextBox Text="{Binding Tagline, Mode=TwoWay}"
+					Style="{StaticResource TextBox}" />
+			</DockPanel>
+			<DockPanel>
+				<Label Content="Bio" Style="{StaticResource FieldLabel}" />
+				<TextBox Text="{Binding Bio, Mode=TwoWay}" TextWrapping="Wrap"
+					Style="{StaticResource TextBox}" />
+			</DockPanel>
+			<Label Content="" />
+			<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+				<Button Content="Save" Command="{Binding Save}"
+					Style="{StaticResource Button}" />
+				<Button Content="Cancel" Command="{Binding CancelEditing}"
+					Style="{StaticResource Button}" />
+			</StackPanel>
 		</StackPanel>
-	</Grid>
+	</ScrollViewer>
 </UserControl>

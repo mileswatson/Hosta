@@ -1,12 +1,11 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Net;
 using System.Windows.Input;
 using static ClientWPF.ApplicationEnvironment;
 
 namespace ClientWPF.ViewModels
 {
-	public class StartupViewModel : INotifyPropertyChanged
+	public class StartupViewModel : ObservableObject
 	{
 		public ICommand Continue { get; private set; }
 		public ICommand Quit { get; private set; }
@@ -91,14 +90,8 @@ namespace ClientWPF.ViewModels
 			Quit = new RelayCommand((object? _) => OnQuit());
 		}
 
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
+		public override void Update(bool force)
 		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }

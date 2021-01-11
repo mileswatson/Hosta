@@ -27,7 +27,7 @@ namespace Program
 
 			Console.WriteLine(await client.GetProfile());
 
-			await client.SetProfile(new("newdisplayname", "newtagline", "newbio", ""));
+			await client.SetProfile(new("newdisplayname", "newtagline", "newbio", Array.Empty<byte>()));
 
 			Console.WriteLine(await client.GetProfile());
 

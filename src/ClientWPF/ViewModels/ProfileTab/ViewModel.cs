@@ -1,12 +1,12 @@
-﻿using System.ComponentModel;
+﻿using ClientWPF.Models.Data;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {
-	public class ViewModel : INotifyPropertyChanged
+	public class ViewModel : ObservableObject
 	{
-		private object _vm;
+		private ObservableObject _vm = new InfoViewModel((Profile _) => { });
 
-		public object VM
+		public ObservableObject VM
 		{
 			get
 			{
@@ -16,38 +16,32 @@ namespace ClientWPF.ViewModels.ProfileTab
 			{
 				_vm = value;
 				NotifyPropertyChanged(nameof(VM));
+				_vm.Update(false);
 			}
 		}
 
 		private readonly InfoViewModel profileInfo;
 
-		private readonly EditViewModel profileEdit;
-
 		public ViewModel()
 		{
 			profileInfo = new(StartEditing);
-			profileEdit = new(StopEditing);
-			_vm = profileInfo;
-		}
-
-		public void StartEditing()
-		{
-			VM = profileEdit;
-		}
-
-		public void StopEditing()
-		{
 			VM = profileInfo;
 		}
 
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
+		public void StartEditing(Profile profile)
 		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+			VM = new EditViewModel(StopEditing, profile);
+		}
+
+		public void StopEditing(bool changed)
+		{
+			VM = profileInfo;
+			VM.Update(changed);
+		}
+
+		public override void Update(bool force)
+		{
+			VM.Update(force);
 		}
 	}
 }

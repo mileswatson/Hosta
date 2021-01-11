@@ -1,28 +1,28 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows.Input;
 
 namespace ClientWPF.ViewModels
 {
-	public class ConnectedViewModel : INotifyPropertyChanged
+	public class ConnectedViewModel : ObservableObject
 	{
 		private readonly HomeTab.ViewModel homeTab;
 		private readonly PostTab.ViewModel postTab;
 		private readonly ProfileTab.ViewModel profileTab;
 		private readonly SettingsTab.ViewModel settingsTab;
 
-		private object _vm;
+		private ObservableObject _vm;
 
-		public object VM
+		public ObservableObject VM
 		{
 			get
 			{
 				return _vm;
 			}
-			set
+			private set
 			{
 				_vm = value;
 				NotifyPropertyChanged(nameof(VM));
+				_vm.Update(false);
 			}
 		}
 
@@ -45,14 +45,9 @@ namespace ClientWPF.ViewModels
 			SettingsTab = new RelayCommand((object? _) => { VM = settingsTab; });
 		}
 
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
+		public override void Update(bool force)
 		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+			VM.Update(force);
 		}
 	}
 }

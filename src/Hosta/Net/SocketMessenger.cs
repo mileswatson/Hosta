@@ -30,7 +30,7 @@ namespace Hosta.Net
 		/// <summary>
 		/// The maximum length for a single message.
 		/// </summary>
-		private const int MaxLength = 1 << 15;
+		private const int MaxLength = 1 << 16;
 
 		/// <summary>
 		/// Constructs a new SocketMessenger from a connected socket.

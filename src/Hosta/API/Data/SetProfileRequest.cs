@@ -8,9 +8,9 @@ namespace Hosta.API.Data
 	/// </summary>
 	public record SetProfileRequest
 	{
-		public SetProfileRequest() => (DisplayName, Tagline, Bio, Avatar) = ("", "", "", "");
+		public SetProfileRequest() => (DisplayName, Tagline, Bio, Avatar) = ("", "", "", Array.Empty<byte>());
 
-		public SetProfileRequest(string displayName, string tagline, string bio, string avatar)
+		public SetProfileRequest(string displayName, string tagline, string bio, byte[] avatar)
 			=> (DisplayName, Tagline, Bio, Avatar) = (displayName, tagline, bio, avatar);
 
 		/// <summary>
@@ -40,6 +40,6 @@ namespace Hosta.API.Data
 		public string Bio { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public string Avatar { get; init; }
+		public byte[] Avatar { get; init; }
 	}
 }

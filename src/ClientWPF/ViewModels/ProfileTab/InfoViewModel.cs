@@ -1,53 +1,29 @@
-﻿using ClientWPF.ViewModels.Components;
-using Hosta.API.Data;
+﻿using ClientWPF.Models.Data;
+using ClientWPF.ViewModels.Components;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Input;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {
-	public class InfoViewModel : INotifyPropertyChanged
+	public class InfoViewModel : ObservableObject
 	{
-		public ICommand Refresh { get; private set; }
+		public ICommand Refresh { get; init; }
 
-		public ICommand StartEditing { get; private set; }
+		public ICommand StartEditing { get; init; }
 
-		private ProfileViewModel _profile = new ProfileViewModel(Resources!.Self);
+		public ProfileViewModel Profile { get; init; }
 
-		public ProfileViewModel Profile
+		public InfoViewModel(Action<Profile> OnEdit)
 		{
-			get => _profile;
-			set
-			{
-				_profile = value;
-				NotifyPropertyChanged(nameof(Profile));
-			}
+			Refresh = new RelayCommand((object? _) => Update(true));
+			Profile = new ProfileViewModel(Resources!.Self);
+			StartEditing = new RelayCommand((object? _) => OnEdit(Profile.Profile));
 		}
 
-		public InfoViewModel(Action OnEdit)
+		public override void Update(bool force)
 		{
-			Refresh = new RelayCommand((object? _) => Update());
-			StartEditing = new RelayCommand((object? _) => OnEdit());
-			Update();
-		}
-
-		public async void Update()
-		{
-			await Profile.Refresh();
-		}
-
-		//// Implement INotifyPropertyChanged
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+			Profile.Update(force);
 		}
 	}
 }

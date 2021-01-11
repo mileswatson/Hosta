@@ -1,6 +1,9 @@
 ﻿namespace ClientWPF.ViewModels.HomeTab
 {
-	public class ViewModel
+	public class ViewModel : ObservableObject
 	{
+		public override void Update(bool force)
+		{
+		}
 	}
 }

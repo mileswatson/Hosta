@@ -169,7 +169,7 @@ namespace Hosta.RPC
 				messenger.Dispose();
 
 				// Signal awaited responses
-				foreach (var kvp in awaitedResponses) kvp.Value.SetException(new ObjectDisposedException("RPClient has been disposed!"));
+				foreach (var kvp in awaitedResponses) kvp.Value.TrySetException(new ObjectDisposedException("RPClient has been disposed!"));
 				awaitedResponses.Clear();
 			}
 

@@ -44,7 +44,7 @@ namespace Node
 			}
 			catch
 			{
-				var profile = new Profile(self, "olddisplayname", "oldtagline", "oldbio", "oldavatar", DateTime.UtcNow);
+				var profile = new Profile(self, "olddisplayname", "oldtagline", "oldbio", Array.Empty<byte>(), DateTime.UtcNow);
 				await conn.InsertAsync(profile);
 				Console.WriteLine($"Created new profile {profile}.");
 			}
@@ -76,11 +76,17 @@ namespace Node
 		public override async Task<string> SetProfile(SetProfileRequest r, PublicIdentity client)
 		{
 			ThrowIfDisposed();
-			// TODO: Change this to what it should actually be (!=)
-			if (client.ID == self)
+			if (client.ID != self)
 			{
-				throw new RPException("Access denied!");
+				throw new RPException("Access denied.");
 			}
+
+			if (r.DisplayName.Length > 18)
+				throw new RPException($"Name used {r.DisplayName.Length}/18 characters.");
+			if (r.Tagline.Length > 30)
+				throw new RPException($"Tagline used {r.Tagline.Length}/30 characters.");
+			if (r.Bio.Length > 200)
+				throw new RPException($"Bio used {r.Bio.Length}/200 characters.");
 
 			try
 			{
@@ -90,7 +96,7 @@ namespace Node
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
-				throw new RPException("Database error!");
+				throw new RPException("Database error.");
 			}
 		}
 

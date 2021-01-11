@@ -3,7 +3,6 @@ using Hosta.API;
 using Hosta.Crypto;
 using Hosta.Tools;
 using System;
-using System.ComponentModel;
 using System.IO;
 using System.Net;
 using static ClientWPF.ApplicationEnvironment;
@@ -11,13 +10,13 @@ using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels
 {
-	public class ViewModel : INotifyPropertyChanged
+	public class ViewModel : ObservableObject
 	{
 		private readonly StartupViewModel startup;
 
-		private object _vm;
+		private ObservableObject _vm;
 
-		public object VM
+		public ObservableObject VM
 		{
 			get
 			{
@@ -27,6 +26,7 @@ namespace ClientWPF.ViewModels
 			{
 				_vm = value;
 				NotifyPropertyChanged(nameof(VM));
+				_vm.Update(false);
 			}
 		}
 
@@ -83,14 +83,9 @@ namespace ClientWPF.ViewModels
 			Resources?.Dispose();
 		}
 
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
+		public override void Update(bool force)
 		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+			VM.Update(force);
 		}
 	}
 }

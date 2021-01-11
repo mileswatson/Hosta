@@ -1,21 +1,17 @@
-﻿using static ClientWPF.Models.ResourceManager;
-using ClientWPF.Models.Components;
-using System;
-using System.ComponentModel;
-using System.IO;
-using System.Threading.Tasks;
+﻿using ClientWPF.Models.Data;
 using System.Windows.Media.Imaging;
+using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components
 {
-	public class ProfileViewModel : INotifyPropertyChanged
+	public class ProfileViewModel : ObservableObject
 	{
 		private Profile _profile = new();
 
-		private Profile Profile
+		public Profile Profile
 		{
 			get => _profile;
-			set
+			private set
 			{
 				_profile = value;
 				NotifyPropertyChanged(nameof(Profile));
@@ -23,14 +19,13 @@ namespace ClientWPF.ViewModels.Components
 				NotifyPropertyChanged(nameof(ID));
 				NotifyPropertyChanged(nameof(Tagline));
 				NotifyPropertyChanged(nameof(Bio));
-				NotifyPropertyChanged(nameof(AvatarImage));
-				changed = true;
+				NotifyPropertyChanged(nameof(Avatar));
 			}
 		}
 
 		public string Name { get => Profile.DisplayName; }
 
-		public string ID { get => Profile.ID.Length < 12 ? Profile.ID : Profile.ID.Substring(0, 12) + "..."; }
+		public string ID { get => Profile.ID; }
 
 		public string Tagline { get => Profile.Tagline; }
 
@@ -38,42 +33,13 @@ namespace ClientWPF.ViewModels.Components
 
 		public string LastUpdated { get => Profile.LastUpdated; }
 
-		private string id;
+		public BitmapImage Avatar { get => Profile.Avatar; }
 
-		private bool changed = true;
+		private readonly string id;
 
-		private BitmapImage _avatarImage = new BitmapImage();
-
-		public BitmapImage AvatarImage
+		public ProfileViewModel()
 		{
-			get
-			{
-				if (!changed) return _avatarImage;
-				var image = new BitmapImage();
-				try
-				{
-					using (var stream = new MemoryStream(Profile.Avatar, 0, Profile.Avatar.Length))
-					{
-						image.BeginInit();
-						image.DecodePixelWidth = 160;
-						image.CacheOption = BitmapCacheOption.None;
-						image.StreamSource = stream;
-						image.EndInit();
-					}
-				}
-				catch
-				{
-					image = new BitmapImage();
-					image.BeginInit();
-					image.DecodePixelWidth = 160;
-					image.CacheOption = BitmapCacheOption.OnLoad;
-					image.UriSource = new Uri("Assets/Images/default-avatar.png", UriKind.Relative);
-					image.EndInit();
-				}
-				_avatarImage = image;
-				changed = false;
-				return image;
-			}
+			id = "";
 		}
 
 		public ProfileViewModel(string id)
@@ -81,20 +47,10 @@ namespace ClientWPF.ViewModels.Components
 			this.id = id;
 		}
 
-		public async Task Refresh()
+		public override async void Update(bool force)
 		{
-			var newProfile = await Resources!.GetProfile(id);
+			var newProfile = await Resources!.GetProfile(id, force);
 			if (Profile != newProfile) Profile = newProfile;
-		}
-
-		public event PropertyChangedEventHandler? PropertyChanged;
-
-		public void NotifyPropertyChanged(string propertyName)
-		{
-			if (PropertyChanged is not null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
 		}
 	}
 }

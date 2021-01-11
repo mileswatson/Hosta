@@ -11,9 +11,9 @@ namespace Node.Data
 	{
 		public Profile() =>
 			(ID, DisplayName, Tagline, Bio, Avatar, LastUpdated)
-			= ("", "", "", "", "", DateTime.UtcNow);
+			= ("", "", "", "", Array.Empty<byte>(), DateTime.UtcNow);
 
-		public Profile(string id, string displayName, string tagline, string bio, string avatar, DateTime lastUpdated) =>
+		public Profile(string id, string displayName, string tagline, string bio, byte[] avatar, DateTime lastUpdated) =>
 			   (ID, DisplayName, Tagline, Bio, Avatar, LastUpdated)
 			 = (id, displayName, tagline, bio, avatar, lastUpdated);
 
@@ -33,7 +33,7 @@ namespace Node.Data
 
 		public string Bio { get; init; }
 
-		public string Avatar { get; init; }
+		public byte[] Avatar { get; init; }
 
 		public DateTime LastUpdated { get; init; }
 	}

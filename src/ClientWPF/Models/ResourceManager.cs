@@ -1,5 +1,6 @@
-﻿using ClientWPF.Models.Components;
+﻿using ClientWPF.Models.Data;
 using Hosta.API;
+using Hosta.API.Data;
 using Hosta.Crypto;
 using System;
 using System.Threading.Tasks;
@@ -33,7 +34,9 @@ namespace ClientWPF.Models
 			});
 		}
 
-		public Task<Profile> GetProfile(string user)
+		//// Implementation
+
+		public Task<Profile> GetProfile(string user, bool force = false)
 		{
 			ThrowIfDisposed();
 			return Profiles.LazyGet(user, async () =>
@@ -41,7 +44,15 @@ namespace ClientWPF.Models
 				var conn = await connections.GetConnection(user);
 				var response = await conn.GetProfile();
 				return new Profile(response);
-			}, TimeSpan.FromSeconds(10));
+			}, TimeSpan.FromMinutes(5), force);
+		}
+
+		public async Task SetProfile(string displayName, string tagline, string bio, byte[] avatar)
+		{
+			ThrowIfDisposed();
+			var request = new SetProfileRequest(displayName, tagline, bio, avatar);
+			var conn = await connections.GetConnection(Self);
+			await conn.SetProfile(request);
 		}
 
 		//// Singleton
