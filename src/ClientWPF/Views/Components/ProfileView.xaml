@@ -3,13 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
              mc:Ignorable="d"
 			 Height="180" MinWidth="490"
              d:DesignHeight="180" d:DesignWidth="500">
-	<UserControl.DataContext>
-		<componentviewmodels:ProfileViewModel />
-	</UserControl.DataContext>
 
 	<Border CornerRadius="5"
                 BorderBrush="Black"

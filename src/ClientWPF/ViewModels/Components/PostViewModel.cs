@@ -4,21 +4,13 @@ using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components
 {
-	public class ProfileViewModel : ObservableObject
+	internal class PostViewModel : ObservableObject
 	{
 		public string Name { get => Profile.DisplayName; }
 
 		public string ID { get => Profile.ID; }
 
-		public string Tagline { get => Profile.Tagline; }
-
-		public string Bio { get => Profile.Bio; }
-
-		public string LastUpdated { get => Profile.LastUpdated.ToShortDateString(); }
-
 		public BitmapImage Avatar { get => Profile.Avatar; }
-
-		private readonly string id;
 
 		private Profile _profile = new();
 
@@ -31,26 +23,45 @@ namespace ClientWPF.ViewModels.Components
 				NotifyPropertyChanged(nameof(Profile));
 				NotifyPropertyChanged(nameof(Name));
 				NotifyPropertyChanged(nameof(ID));
-				NotifyPropertyChanged(nameof(Tagline));
-				NotifyPropertyChanged(nameof(Bio));
 				NotifyPropertyChanged(nameof(Avatar));
 			}
 		}
 
-		public ProfileViewModel()
+		public string Content { get => Post.Content; }
+
+		public string LastUpdated
 		{
-			id = "";
+			get => Post.LastUpdated.ToShortDateString();
 		}
 
-		public ProfileViewModel(string id)
+		private Post _post = new();
+
+		private Post Post
 		{
-			this.id = id;
+			get => _post;
+			set
+			{
+				_post = value;
+				NotifyPropertyChanged(nameof(Post));
+				NotifyPropertyChanged(nameof(Content));
+				NotifyPropertyChanged(nameof(LastUpdated));
+			}
 		}
 
-		public override async void Update(bool force)
+		public override void Update(bool force)
 		{
-			var newProfile = await Resources!.GetProfile(id, force);
+			UpdateProfile(force);
+			UpdatePost(force);
+		}
+
+		private async void UpdateProfile(bool force)
+		{
+			var newProfile = await Resources!.GetProfile(ID, force);
 			if (Profile != newProfile) Profile = newProfile;
+		}
+
+		private void UpdatePost(bool force)
+		{
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace ClientWPF.Models.Data
 
 		public BitmapImage Avatar { get; init; }
 
-		public string LastUpdated { get; init; }
+		public DateTime LastUpdated { get; init; }
 
 		public Profile()
 		{
@@ -29,16 +29,16 @@ namespace ClientWPF.Models.Data
 			Bio = "[Bio]";
 			AvatarBytes = Array.Empty<byte>();
 			Avatar = DefaultImage;
-			LastUpdated = "[LastUpdated]";
+			LastUpdated = DateTime.MinValue;
 		}
 
-		public Profile(GetProfileResponse response)
+		public Profile(GetProfileResponse response, string id)
 		{
 			DisplayName = response.DisplayName;
-			ID = response.ID;
+			ID = id;
 			Tagline = response.Tagline;
 			Bio = response.Bio;
-			LastUpdated = response.LastUpdated.ToShortDateString();
+			LastUpdated = response.LastUpdated;
 			AvatarBytes = response.Avatar;
 			Avatar = TryImageFromBytes(AvatarBytes);
 		}

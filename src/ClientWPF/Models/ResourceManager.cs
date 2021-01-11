@@ -43,7 +43,7 @@ namespace ClientWPF.Models
 			{
 				var conn = await connections.GetConnection(user);
 				var response = await conn.GetProfile();
-				return new Profile(response);
+				return new Profile(response, user);
 			}, TimeSpan.FromMinutes(5), force);
 		}
 

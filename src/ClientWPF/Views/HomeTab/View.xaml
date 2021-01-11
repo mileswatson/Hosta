@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
+			 xmlns:componentviewmodels="clr-namespace:ClientWPF.Views.Components"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid Background="White">
@@ -27,48 +29,14 @@
 
 		<ScrollViewer Grid.Row="2" Grid.Column="0">
 			<StackPanel>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA AAAAA
-				</TextBlock>
+				<componentviews:Profile />
+				<ItemsControl ItemsSource="{Binding Posts}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="{x:Type componentviewmodels:PostView}">
+							<componentviews:PostView DataContext="{Binding}" />
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 			</StackPanel>
 		</ScrollViewer>
 
