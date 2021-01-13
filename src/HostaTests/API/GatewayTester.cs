@@ -52,13 +52,13 @@ namespace HostaTests.API
 		}
 
 		[TestMethod]
-		public async Task TestAddGetResource()
+		public async Task TestAddGetBlob()
 		{
 			var data = new byte[] { 0, 1, 3, 255, 6, 0 };
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(data));
-			await Assert.ThrowsExceptionAsync<RPException>(() => remoteGateway.GetResource(hash));
-			hash = await remoteGateway.AddResource(new AddResourceRequest { Data = data });
-			var response = await remoteGateway.GetResource(hash);
+			await Assert.ThrowsExceptionAsync<RPException>(() => remoteGateway.GetBlob(hash));
+			hash = await remoteGateway.AddBlob(new AddBlobRequest { Data = data });
+			var response = await remoteGateway.GetBlob(hash);
 			CollectionAssert.AreEqual(data, response.Data);
 		}
 
@@ -77,7 +77,7 @@ namespace HostaTests.API
 
 		private readonly Dictionary<string, byte[]> resources = new();
 
-		public override Task<string> AddResource(AddResourceRequest request, PublicIdentity _)
+		public override Task<string> AddBlob(AddBlobRequest request, PublicIdentity _)
 		{
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(request.Data));
 			resources[hash] = request.Data;
@@ -101,9 +101,9 @@ namespace HostaTests.API
 			return Task.CompletedTask;
 		}
 
-		public override Task<GetResourceResponse> GetResource(string hash, PublicIdentity _)
+		public override Task<GetBlobResponse> GetBlob(string hash, PublicIdentity _)
 		{
-			return Task.FromResult(new GetResourceResponse
+			return Task.FromResult(new GetBlobResponse
 			{
 				Data = resources[hash],
 				LastUpdated = DateTime.Now

@@ -6,12 +6,12 @@ namespace Hosta.API.Data
 	/// <summary>
 	/// Represents the request for an AddResource operation.
 	/// </summary>
-	public record AddResourceRequest
+	public record AddBlobRequest
 	{
 		[JsonProperty(Required = Required.Always)]
 		public byte[] Data { get; init; }
 
-		public AddResourceRequest()
+		public AddBlobRequest()
 		{
 			Data = Array.Empty<byte>();
 		}

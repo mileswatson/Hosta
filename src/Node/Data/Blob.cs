@@ -6,29 +6,31 @@ using System.Security.Cryptography;
 
 namespace Node.Data
 {
-	internal record Resource
+	internal record Blob
 	{
 		[PrimaryKey]
 		public string Hash { get; init; }
+
+		public string Title { get; init; }
 
 		public byte[] Data { get; init; }
 
 		public DateTime LastUpdated { get; init; }
 
-		public Resource()
+		public Blob()
 		{
 			Hash = "";
 			Data = Array.Empty<byte>();
 			LastUpdated = DateTime.MinValue;
 		}
 
-		public GetResourceResponse ToResponse() => new GetResourceResponse
+		public GetBlobResponse ToResponse() => new GetBlobResponse
 		{
 			Data = Data,
 			LastUpdated = LastUpdated
 		};
 
-		public static Resource FromAddRequest(AddResourceRequest request) => new Resource
+		public static Blob FromAddRequest(AddBlobRequest request) => new Blob
 		{
 			Hash = Transcoder.HexFromBytes(SHA256.HashData(request.Data)),
 			Data = request.Data,

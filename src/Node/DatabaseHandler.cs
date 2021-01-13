@@ -29,7 +29,7 @@ namespace Node
 			var h = new DatabaseHandler(path, admin);
 
 			await h.InitProfile();
-			await h.conn.CreateTableAsync<Resource>();
+			await h.conn.CreateTableAsync<Blob>();
 
 			return new DatabaseHandler(path, admin);
 		}
@@ -59,7 +59,7 @@ namespace Node
 
 		//// Implementations
 
-		public override async Task<string> AddResource(AddResourceRequest request, PublicIdentity client)
+		public override async Task<string> AddBlob(AddBlobRequest request, PublicIdentity client)
 		{
 			ThrowIfDisposed();
 			if (client.ID != self)
@@ -67,7 +67,7 @@ namespace Node
 				throw new RPException("Access denied.");
 			}
 
-			var resource = Resource.FromAddRequest(request);
+			var resource = Blob.FromAddRequest(request);
 
 			try
 			{
@@ -97,12 +97,12 @@ namespace Node
 			}
 		}
 
-		public override async Task<GetResourceResponse> GetResource(string hash, PublicIdentity client)
+		public override async Task<GetBlobResponse> GetBlob(string hash, PublicIdentity client)
 		{
 			ThrowIfDisposed();
 			try
 			{
-				var p = await conn.GetAsync<Resource>(hash);
+				var p = await conn.GetAsync<Blob>(hash);
 				return p.ToResponse();
 			}
 			catch (Exception e)

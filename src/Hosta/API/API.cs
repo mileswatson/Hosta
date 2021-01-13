@@ -8,7 +8,7 @@ namespace Hosta.API
 {
 	public abstract class API
 	{
-		public abstract Task<string> AddResource(AddResourceRequest request, PublicIdentity client = null);
+		public abstract Task<string> AddBlob(AddBlobRequest request, PublicIdentity client = null);
 
 		/// <summary>
 		/// Gets the profile.
@@ -23,7 +23,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Gets a resource from the server.
 		/// </summary>
-		public abstract Task<GetResourceResponse> GetResource(string hash, PublicIdentity client = null);
+		public abstract Task<GetBlobResponse> GetBlob(string hash, PublicIdentity client = null);
 
 		//// Translation
 
