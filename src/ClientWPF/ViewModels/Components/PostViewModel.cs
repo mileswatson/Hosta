@@ -6,11 +6,11 @@ namespace ClientWPF.ViewModels.Components
 {
 	internal class PostViewModel : ObservableObject
 	{
-		public string Name { get => Profile.DisplayName; }
+		public string Name { get => Profile.Name; }
 
 		public string ID { get => Profile.ID; }
 
-		public BitmapImage Avatar { get => Profile.Avatar; }
+		public BitmapImage Avatar { get => DefaultImage; }
 
 		private Profile _profile = new();
 

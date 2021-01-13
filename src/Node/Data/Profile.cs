@@ -33,7 +33,8 @@ namespace Node.Data
 			ID = id,
 			Name = r.Name,
 			Tagline = r.Tagline,
-			AvatarResource = r.AvatarResource
+			Bio = r.Bio,
+			AvatarResource = r.AvatarHash
 		};
 
 		public GetProfileResponse ToResponse() => new GetProfileResponse
@@ -41,7 +42,7 @@ namespace Node.Data
 			Name = Name,
 			Tagline = Tagline,
 			Bio = Bio,
-			AvatarResource = AvatarResource
+			AvatarHash = AvatarResource
 		};
 	}
 }

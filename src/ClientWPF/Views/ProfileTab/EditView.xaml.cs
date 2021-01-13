@@ -14,18 +14,5 @@ namespace ClientWPF.Views.ProfileTab
 		{
 			InitializeComponent();
 		}
-
-		public void SelectButton_Clicked(object sender, RoutedEventArgs e)
-		{
-			var dialog = new CommonOpenFileDialog
-			{
-			};
-			CommonFileDialogResult result = dialog.ShowDialog();
-			if (result == CommonFileDialogResult.Ok)
-			{
-				var vm = (EditViewModel)DataContext;
-				vm.SetAvatarFile(dialog.FileName);
-			}
-		}
 	}
 }

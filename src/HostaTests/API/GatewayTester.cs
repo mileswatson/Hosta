@@ -44,7 +44,7 @@ namespace HostaTests.API
 				Name = "name",
 				Tagline = "tagline",
 				Bio = "bio",
-				AvatarResource = "avatarresource"
+				AvatarHash = "avatarresource"
 			};
 			await remoteGateway.SetProfile(n);
 			p = await remoteGateway.GetProfile();
@@ -96,7 +96,7 @@ namespace HostaTests.API
 				Name = profile.Name,
 				Tagline = profile.Tagline,
 				Bio = profile.Bio,
-				AvatarResource = profile.AvatarResource
+				AvatarHash = profile.AvatarHash
 			};
 			return Task.CompletedTask;
 		}

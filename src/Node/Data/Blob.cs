@@ -20,6 +20,7 @@ namespace Node.Data
 		public Blob()
 		{
 			Hash = "";
+			Title = "";
 			Data = Array.Empty<byte>();
 			LastUpdated = DateTime.MinValue;
 		}

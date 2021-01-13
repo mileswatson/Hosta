@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
              mc:Ignorable="d"
 			 Height="180" MinWidth="490"
              d:DesignHeight="180" d:DesignWidth="500">
@@ -23,11 +24,7 @@
 				<RowDefinition Height="160" />
 			</Grid.RowDefinitions>
 
-			<Ellipse Width="160" Height="160" Grid.Column="0">
-				<Ellipse.Fill>
-					<ImageBrush ImageSource="{Binding Avatar}" />
-				</Ellipse.Fill>
-			</Ellipse>
+			<componentviews:ProfileImageView DataContext="{Binding Image}" Width="160" Height="160" />
 
 			<DockPanel Grid.Column="1">
 				<Label Content="{Binding Name}"

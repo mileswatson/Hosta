@@ -29,7 +29,6 @@
 
 		<ScrollViewer Grid.Row="2" Grid.Column="0">
 			<StackPanel>
-				<componentviews:Profile />
 				<ItemsControl ItemsSource="{Binding Posts}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="{x:Type componentviewmodels:PostView}">

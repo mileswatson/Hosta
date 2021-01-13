@@ -18,14 +18,14 @@ namespace Hosta.API.Data
 		public string Bio { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public string AvatarResource { get; init; }
+		public string AvatarHash { get; init; }
 
 		public GetProfileResponse()
 		{
 			Name = "";
 			Tagline = "";
 			Bio = "";
-			AvatarResource = "";
+			AvatarHash = "";
 		}
 	}
 }

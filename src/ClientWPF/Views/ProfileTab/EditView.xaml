@@ -9,12 +9,6 @@
 	<ScrollViewer Background="White">
 		<StackPanel>
 			<Image Source="{Binding Avatar}" Width="160" Height="160" HorizontalAlignment="Left" Margin="10" />
-			<StackPanel Orientation="Horizontal">
-				<Button Content="Select" Click="SelectButton_Clicked"
-						Style="{StaticResource Button}" />
-				<Button Content="Remove" Command="{Binding RemoveAvatar}"
-						Style="{StaticResource Button}" />
-			</StackPanel>
 			<DockPanel>
 				<Label Content="Name" Style="{StaticResource FieldLabel}" />
 				<TextBox Text="{Binding Name, Mode=TwoWay}"
