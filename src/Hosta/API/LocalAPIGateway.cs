@@ -41,7 +41,9 @@ namespace Hosta.API
 			// Decides which handler to use.
 			ProcedureHandler handler = proc switch
 			{
+				"AddResource" => AddResource,
 				"GetProfile" => GetProfile,
+				"GetResource" => GetResource,
 				"SetProfile" => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
 			};
@@ -64,11 +66,31 @@ namespace Hosta.API
 
 		//// Translators
 
+		public async Task<string> AddResource(string args, PublicIdentity client)
+		{
+			AddResourceRequest r;
+			try
+			{
+				r = API.Import<AddResourceRequest>(args);
+			}
+			catch
+			{
+				throw new RPException("Arguments were formatted incorrectly!");
+			}
+			return await api.AddResource(r, client);
+		}
+
 		public async Task<string> GetProfile(string args, PublicIdentity client)
 		{
 			if (args != "") throw new RPException("Arguments were formatted incorrectly!");
-			var gpr = await api.GetProfile(client);
-			return GetProfileResponse.Export(gpr);
+			var response = await api.GetProfile(client);
+			return API.Export(response);
+		}
+
+		public async Task<string> GetResource(string args, PublicIdentity client)
+		{
+			var response = await api.GetResource(args, client);
+			return API.Export(response);
 		}
 
 		public async Task<string> SetProfile(string args, PublicIdentity client)
@@ -76,7 +98,7 @@ namespace Hosta.API
 			SetProfileRequest r;
 			try
 			{
-				r = SetProfileRequest.Import(args);
+				r = API.Import<SetProfileRequest>(args);
 			}
 			catch
 			{

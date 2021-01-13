@@ -8,30 +8,8 @@ namespace Hosta.API.Data
 	/// </summary>
 	public record SetProfileRequest
 	{
-		public SetProfileRequest() => (DisplayName, Tagline, Bio, Avatar) = ("", "", "", Array.Empty<byte>());
-
-		public SetProfileRequest(string displayName, string tagline, string bio, byte[] avatar)
-			=> (DisplayName, Tagline, Bio, Avatar) = (displayName, tagline, bio, avatar);
-
-		/// <summary>
-		/// Exports SetProfileRequest as a JSON string.
-		/// </summary>
-		public static string Export(SetProfileRequest request)
-		{
-			return JsonConvert.SerializeObject(request);
-		}
-
-		/// <summary>
-		/// Creates a new SetProfileRequest from a JSON string.
-		/// </summary>
-		public static SetProfileRequest Import(string json)
-		{
-			var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
-			return JsonConvert.DeserializeObject<SetProfileRequest>(json, settings) ?? throw new Exception("Could not import SetProfileRequest!");
-		}
-
 		[JsonProperty(Required = Required.Always)]
-		public string DisplayName { get; init; }
+		public string Name { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
 		public string Tagline { get; init; }
@@ -40,6 +18,14 @@ namespace Hosta.API.Data
 		public string Bio { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public byte[] Avatar { get; init; }
+		public string AvatarResource { get; init; }
+
+		public SetProfileRequest()
+		{
+			Name = "";
+			Tagline = "";
+			Bio = "";
+			AvatarResource = "";
+		}
 	}
 }

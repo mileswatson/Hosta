@@ -1,4 +1,5 @@
 ﻿using Hosta.API;
+using Hosta.API.Data;
 using Hosta.Crypto;
 using System;
 using System.Net;
@@ -15,7 +16,7 @@ namespace Program
 			Console.Write("Server ID: ");
 			var serverID = Console.ReadLine() ?? throw new NullReferenceException();
 
-			var client = await RemoteAPIGateway.CreateAndConnect(new RemoteAPIGateway.ConnectionArgs
+			using var client = await RemoteAPIGateway.CreateAndConnect(new RemoteAPIGateway.ConnectionArgs
 			{
 				Address = IPAddress.Loopback,
 				Port = 12000,
@@ -25,15 +26,14 @@ namespace Program
 
 			Console.WriteLine("Calling...");
 
-			Console.WriteLine(await client.GetProfile());
+			var hash = await client.AddResource(new AddResourceRequest
+			{
+				Data = new byte[] { 1, 2, 3, 4, 1 }
+			});
 
-			await client.SetProfile(new("newdisplayname", "newtagline", "newbio", Array.Empty<byte>()));
+			Console.WriteLine(hash);
 
-			Console.WriteLine(await client.GetProfile());
-
-			Console.WriteLine("Done!");
-
-			client.Dispose();
+			Console.WriteLine((await client.GetResource(hash)).Data.Length);
 
 			Console.ReadKey();
 		}

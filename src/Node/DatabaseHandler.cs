@@ -29,6 +29,7 @@ namespace Node
 			var h = new DatabaseHandler(path, admin);
 
 			await h.InitProfile();
+			await h.conn.CreateTableAsync<Resource>();
 
 			return new DatabaseHandler(path, admin);
 		}
@@ -44,7 +45,13 @@ namespace Node
 			}
 			catch
 			{
-				var profile = new Profile(self, "olddisplayname", "oldtagline", "oldbio", Array.Empty<byte>(), DateTime.UtcNow);
+				var profile = new Profile
+				{
+					ID = self,
+					Name = "oldname",
+					Tagline = "oldtagline",
+					Bio = "oldbio"
+				};
 				await conn.InsertAsync(profile);
 				Console.WriteLine($"Created new profile {profile}.");
 			}
@@ -52,9 +59,29 @@ namespace Node
 
 		//// Implementations
 
-		/// <summary>
-		/// Get the profile name.
-		/// </summary>
+		public override async Task<string> AddResource(AddResourceRequest request, PublicIdentity client)
+		{
+			ThrowIfDisposed();
+			if (client.ID != self)
+			{
+				throw new RPException("Access denied.");
+			}
+
+			var resource = Resource.FromAddRequest(request);
+
+			try
+			{
+				await conn.InsertOrReplaceAsync(resource);
+				Console.WriteLine(resource.Hash);
+				return resource.Hash;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw new RPException("Database error.");
+			}
+		}
+
 		public override async Task<GetProfileResponse> GetProfile(PublicIdentity _)
 		{
 			ThrowIfDisposed();
@@ -66,13 +93,26 @@ namespace Node
 			catch (Exception e)
 			{
 				Console.WriteLine(e);
-				throw new RPException("Database error!");
+				throw new RPException("Database error.");
 			}
 		}
 
-		/// <summary>
-		/// Set the profile name.
-		/// </summary>
+		public override async Task<GetResourceResponse> GetResource(string hash, PublicIdentity client)
+		{
+			ThrowIfDisposed();
+			try
+			{
+				var p = await conn.GetAsync<Resource>(hash);
+				return p.ToResponse();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw new RPException("Database error.");
+			}
+			throw new Exception();
+		}
+
 		public override async Task<string> SetProfile(SetProfileRequest r, PublicIdentity client)
 		{
 			ThrowIfDisposed();
@@ -81,8 +121,8 @@ namespace Node
 				throw new RPException("Access denied.");
 			}
 
-			if (r.DisplayName.Length > 18)
-				throw new RPException($"Name used {r.DisplayName.Length}/18 characters.");
+			if (r.Name.Length > 18)
+				throw new RPException($"Name used {r.Name.Length}/18 characters.");
 			if (r.Tagline.Length > 30)
 				throw new RPException($"Tagline used {r.Tagline.Length}/30 characters.");
 			if (r.Bio.Length > 200)
@@ -90,7 +130,7 @@ namespace Node
 
 			try
 			{
-				var s = await conn.InsertOrReplaceAsync(new Profile(self, r));
+				await conn.InsertOrReplaceAsync(Profile.FromSetRequest(r, self));
 				return "";
 			}
 			catch (Exception e)
