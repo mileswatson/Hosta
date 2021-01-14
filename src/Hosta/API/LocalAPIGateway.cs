@@ -1,7 +1,9 @@
-﻿using Hosta.API.Data;
+﻿using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -42,8 +44,10 @@ namespace Hosta.API
 			ProcedureHandler handler = proc switch
 			{
 				nameof(AddImage) => AddImage,
-				nameof(GetProfile) => GetProfile,
 				nameof(GetImage) => GetImage,
+				nameof(GetImageList) => GetImageList,
+				nameof(GetProfile) => GetProfile,
+				nameof(RemoveImage) => RemoveImage,
 				nameof(SetProfile) => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
 			};
@@ -80,6 +84,18 @@ namespace Hosta.API
 			return await api.AddImage(r, client);
 		}
 
+		public async Task<string> GetImage(string args, PublicIdentity client)
+		{
+			var response = await api.GetImage(args, client);
+			return API.Export(response);
+		}
+
+		public async Task<string> GetImageList(string args, PublicIdentity client)
+		{
+			var response = await api.GetImageList(client);
+			return API.Export(response);
+		}
+
 		public async Task<string> GetProfile(string args, PublicIdentity client)
 		{
 			if (args != "") throw new RPException("Arguments were formatted incorrectly!");
@@ -87,10 +103,10 @@ namespace Hosta.API
 			return API.Export(response);
 		}
 
-		public async Task<string> GetImage(string args, PublicIdentity client)
+		public async Task<string> RemoveImage(string args, PublicIdentity client)
 		{
-			var response = await api.GetImage(args, client);
-			return API.Export(response);
+			await api.RemoveImage(args, client);
+			return "";
 		}
 
 		public async Task<string> SetProfile(string args, PublicIdentity client)

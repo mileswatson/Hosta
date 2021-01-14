@@ -1,7 +1,9 @@
-﻿using Hosta.API.Data;
+﻿using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -93,6 +95,19 @@ namespace Hosta.API
 			ThrowIfDisposed();
 			var str = await Call(nameof(GetImage), hash);
 			return Import<GetImageResponse>(str);
+		}
+
+		public override async Task<List<ImageInfo>> GetImageList(PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			var str = await Call(nameof(GetImageList), "");
+			return Import<List<ImageInfo>>(str);
+		}
+
+		public override async Task RemoveImage(string hash, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			await Call(nameof(RemoveImage), hash);
 		}
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)

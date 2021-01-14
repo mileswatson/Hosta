@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Hosta.API.Data
+namespace Hosta.API.Image
 {
 	/// <summary>
 	/// Represents the request for an AddResource operation.

@@ -1,4 +1,4 @@
-﻿using Hosta.API.Data;
+﻿using Hosta.API.Profile;
 using SQLite;
 
 namespace Node.Data

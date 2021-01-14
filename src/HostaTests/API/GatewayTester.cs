@@ -1,5 +1,6 @@
 ﻿using Hosta.API;
-using Hosta.API.Data;
+using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using Hosta.Tools;
@@ -84,9 +85,29 @@ namespace HostaTests.API
 			return Task.FromResult(hash);
 		}
 
+		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity _)
+		{
+			return Task.FromResult(new GetImageResponse
+			{
+				Data = resources[hash],
+				LastUpdated = DateTime.Now
+			});
+		}
+
+		public override Task<List<ImageInfo>> GetImageList(PublicIdentity _)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override Task<GetProfileResponse> GetProfile(PublicIdentity _)
 		{
 			return Task.FromResult(storedProfile);
+		}
+
+		public override Task RemoveImage(string hash, PublicIdentity _)
+		{
+			resources.Remove(hash);
+			return Task.CompletedTask;
 		}
 
 		public override Task SetProfile(SetProfileRequest profile, PublicIdentity _)
@@ -99,15 +120,6 @@ namespace HostaTests.API
 				AvatarHash = profile.AvatarHash
 			};
 			return Task.CompletedTask;
-		}
-
-		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity _)
-		{
-			return Task.FromResult(new GetImageResponse
-			{
-				Data = resources[hash],
-				LastUpdated = DateTime.Now
-			});
 		}
 	}
 }

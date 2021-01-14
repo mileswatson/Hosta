@@ -8,6 +8,8 @@
 			 xmlns:homeviewmodels="clr-namespace:ClientWPF.ViewModels.HomeTab"
 			 xmlns:postviews="clr-namespace:ClientWPF.Views.PostTab"
 			 xmlns:postviewmodels="clr-namespace:ClientWPF.ViewModels.PostTab"
+			 xmlns:imagesviews="clr-namespace:ClientWPF.Views.ImagesTab"
+			 xmlns:imagesviewmodels="clr-namespace:ClientWPF.ViewModels.ImagesTab"
 			 xmlns:profileviews="clr-namespace:ClientWPF.Views.ProfileTab"
 			 xmlns:profileviewmodels="clr-namespace:ClientWPF.ViewModels.ProfileTab"
 			 xmlns:settingsviews="clr-namespace:ClientWPF.Views.SettingsTab"
@@ -15,16 +17,19 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<UserControl.Resources>
-		<DataTemplate x:Name="homeViewTemplate" DataType="{x:Type homeviewmodels:ViewModel}">
+		<DataTemplate DataType="{x:Type homeviewmodels:ViewModel}">
 			<homeviews:View DataContext="{Binding}" />
 		</DataTemplate>
-		<DataTemplate x:Name="postViewTemplate" DataType="{x:Type postviewmodels:ViewModel}">
+		<DataTemplate DataType="{x:Type postviewmodels:ViewModel}">
 			<postviews:View DataContext="{Binding}" />
 		</DataTemplate>
-		<DataTemplate x:Name="profileViewTemplate" DataType="{x:Type profileviewmodels:ViewModel}">
+		<DataTemplate DataType="{x:Type imagesviewmodels:ViewModel}">
+			<imagesviews:View DataContext="{Binding}" />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type profileviewmodels:ViewModel}">
 			<profileviews:View DataContext="{Binding}" />
 		</DataTemplate>
-		<DataTemplate x:Name="settingsViewTemplate" DataType="{x:Type settingsviewmodels:ViewModel}">
+		<DataTemplate DataType="{x:Type settingsviewmodels:ViewModel}">
 			<settingsviews:View DataContext="{Binding}" />
 		</DataTemplate>
 	</UserControl.Resources>
@@ -54,6 +59,8 @@
 			<Button Content="Home" Command="{Binding HomeTab}"
 					Style="{StaticResource SidebarButton}" />
 			<Button Content="Post" Command="{Binding PostTab}"
+					Style="{StaticResource SidebarButton}" />
+			<Button Content="Images" Command="{Binding ImagesTab}"
 					Style="{StaticResource SidebarButton}" />
 			<Button Content="Profile" Command="{Binding ProfileTab}"
 					Style="{StaticResource SidebarButton}" />

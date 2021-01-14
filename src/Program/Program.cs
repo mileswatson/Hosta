@@ -1,5 +1,5 @@
 ﻿using Hosta.API;
-using Hosta.API.Data;
+using Hosta.API.Image;
 using Hosta.Crypto;
 using System;
 using System.Net;
@@ -26,14 +26,24 @@ namespace Program
 
 			Console.WriteLine("Calling...");
 
-			var hash = await client.AddImage(new AddImageRequest
+			await client.AddImage(new AddImageRequest
+			{
+				Data = new byte[] { 1, 2, 3, 4, 0 }
+			});
+
+			await client.AddImage(new AddImageRequest
 			{
 				Data = new byte[] { 1, 2, 3, 4, 1 }
 			});
 
-			Console.WriteLine(hash);
+			var infoList = await client.GetImageList();
 
-			Console.WriteLine((await client.GetImage(hash)).Data.Length);
+			foreach (var info in infoList)
+			{
+				Console.WriteLine(info);
+			}
+
+			Console.WriteLine("Done.");
 
 			Console.ReadKey();
 		}

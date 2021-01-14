@@ -1,10 +1,12 @@
 ﻿using Hosta.API;
-using Hosta.API.Data;
+using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using Node.Data;
 using SQLite;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Node
@@ -62,7 +64,7 @@ namespace Node
 		public override async Task<string> AddImage(AddImageRequest request, PublicIdentity client)
 		{
 			ThrowIfDisposed();
-			if (client.ID == self)
+			if (client.ID != self)
 			{
 				throw new RPException("Access denied.");
 			}
@@ -73,21 +75,6 @@ namespace Node
 			{
 				await conn.InsertOrReplaceAsync(resource);
 				return resource.Hash;
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw new RPException("Database error.");
-			}
-		}
-
-		public override async Task<GetProfileResponse> GetProfile(PublicIdentity _)
-		{
-			ThrowIfDisposed();
-			try
-			{
-				var p = await conn.GetAsync<Profile>(self);
-				return p.ToResponse();
 			}
 			catch (Exception e)
 			{
@@ -112,10 +99,69 @@ namespace Node
 			throw new Exception();
 		}
 
+		public override async Task<List<ImageInfo>> GetImageList(PublicIdentity client)
+		{
+			if (client.ID != self)
+			{
+				throw new RPException("Access denied.");
+			}
+
+			try
+			{
+				var images = await conn.Table<Image>().ToListAsync();
+				List<ImageInfo> info = new();
+				foreach (var image in images)
+				{
+					info.Add(new ImageInfo
+					{
+						Hash = image.Hash,
+						LastUpdated = image.LastUpdated
+					});
+				}
+				return info;
+			}
+			catch
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task<GetProfileResponse> GetProfile(PublicIdentity _)
+		{
+			ThrowIfDisposed();
+			try
+			{
+				var p = await conn.GetAsync<Profile>(self);
+				return p.ToResponse();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task RemoveImage(string hash, PublicIdentity client)
+		{
+			if (client.ID != self)
+			{
+				throw new RPException("Access denied.");
+			}
+			try
+			{
+				var num = await conn.DeleteAsync<Image>(hash);
+				if (num == 0) throw new RPException("Image could not be found!");
+			}
+			catch (Exception e) when (e is not RPException)
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
 		public override async Task<string> SetProfile(SetProfileRequest r, PublicIdentity client)
 		{
 			ThrowIfDisposed();
-			if (client.ID == self)
+			if (client.ID != self)
 			{
 				throw new RPException("Access denied.");
 			}

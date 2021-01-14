@@ -3,17 +3,17 @@ using System;
 
 namespace Hosta.API.Image
 {
-	public record GetImageResponse
+	public record ImageInfo
 	{
 		[JsonProperty(Required = Required.Always)]
-		public byte[] Data { get; init; }
+		public string Hash { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
 		public DateTime LastUpdated { get; init; }
 
-		public GetImageResponse()
+		public ImageInfo()
 		{
-			Data = Array.Empty<byte>();
+			Hash = "";
 			LastUpdated = DateTime.MinValue;
 		}
 	}

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Hosta.API.Data
+namespace Hosta.API.Profile
 {
 	/// <summary>
 	/// Represents a response to a GetProfile call.

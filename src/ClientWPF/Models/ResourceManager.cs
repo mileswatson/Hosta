@@ -1,9 +1,12 @@
 ﻿using ClientWPF.Models.Data;
 using Hosta.API;
-using Hosta.API.Data;
+using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.Tools;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -45,6 +48,17 @@ namespace ClientWPF.Models
 
 		//// Implementation
 
+		public async Task<string> AddImage(byte[] data)
+		{
+			ThrowIfDisposed();
+			var request = new AddImageRequest
+			{
+				Data = data
+			};
+			var conn = await connections.GetConnection(Self);
+			return await conn.AddImage(request);
+		}
+
 		public Task<BitmapImage> GetImage(string user, string hash, bool force = false)
 		{
 			ThrowIfDisposed();
@@ -65,6 +79,12 @@ namespace ClientWPF.Models
 			}, TimeSpan.MaxValue, force);
 		}
 
+		public async Task<List<ImageInfo>> GetImageList()
+		{
+			var conn = await connections.GetConnection(Self);
+			return await conn.GetImageList();
+		}
+
 		public Task<Profile> GetProfile(string user, bool force = false)
 		{
 			ThrowIfDisposed();
@@ -74,6 +94,12 @@ namespace ClientWPF.Models
 				var response = await conn.GetProfile();
 				return Profile.FromResponse(response, user);
 			}, TimeSpan.FromMinutes(5), force);
+		}
+
+		public async Task RemoveImage(string hash)
+		{
+			var conn = await connections.GetConnection(Self);
+			await conn.RemoveImage(hash);
 		}
 
 		public async Task SetProfile(string name, string tagline, string bio, string avatarHash)
@@ -88,17 +114,6 @@ namespace ClientWPF.Models
 			};
 			var conn = await connections.GetConnection(Self);
 			await conn.SetProfile(request);
-		}
-
-		public async Task<string> AddImage(string user, byte[] data, bool force = false)
-		{
-			ThrowIfDisposed();
-			var request = new AddImageRequest
-			{
-				Data = data
-			};
-			var conn = await connections.GetConnection(Self);
-			return await conn.AddImage(request);
 		}
 
 		//// Static

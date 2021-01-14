@@ -7,6 +7,7 @@ namespace ClientWPF.ViewModels
 	{
 		private readonly HomeTab.ViewModel homeTab;
 		private readonly PostTab.ViewModel postTab;
+		private readonly ImagesTab.ViewModel imagesTab;
 		private readonly ProfileTab.ViewModel profileTab;
 		private readonly SettingsTab.ViewModel settingsTab;
 
@@ -28,6 +29,7 @@ namespace ClientWPF.ViewModels
 
 		public ICommand HomeTab { get; private set; }
 		public ICommand PostTab { get; private set; }
+		public ICommand ImagesTab { get; private set; }
 		public ICommand ProfileTab { get; private set; }
 		public ICommand SettingsTab { get; private set; }
 
@@ -35,12 +37,14 @@ namespace ClientWPF.ViewModels
 		{
 			homeTab = new();
 			postTab = new();
+			imagesTab = new();
 			profileTab = new();
 			settingsTab = new(() => OnDisconnect());
 
 			_vm = homeTab;
 			HomeTab = new RelayCommand((object? _) => { VM = homeTab; });
 			PostTab = new RelayCommand((object? _) => { VM = postTab; });
+			ImagesTab = new RelayCommand((object? _) => { VM = imagesTab; });
 			ProfileTab = new RelayCommand((object? _) => { VM = profileTab; });
 			SettingsTab = new RelayCommand((object? _) => { VM = settingsTab; });
 		}
