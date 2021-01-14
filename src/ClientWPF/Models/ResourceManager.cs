@@ -5,7 +5,6 @@ using Hosta.Crypto;
 using Hosta.Tools;
 using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -24,11 +23,6 @@ namespace ClientWPF.Models
 		private readonly AsyncCache<Profile> Profiles = new AsyncCache<Profile>(
 			(Task<Profile> t) => true,
 			(Task<Profile> t) => { }
-		);
-
-		private readonly AsyncCache<byte[]> Blobs = new AsyncCache<byte[]>(
-			(Task<byte[]> t) => true,
-			(Task<byte[]> t) => { }
 		);
 
 		private readonly AsyncCache<BitmapImage> Images = new AsyncCache<BitmapImage>(
@@ -51,21 +45,6 @@ namespace ClientWPF.Models
 
 		//// Implementation
 
-		public Task<byte[]> GetBlob(string user, string hash, bool force = false)
-		{
-			ThrowIfDisposed();
-			var key = Combine(user, hash);
-			return Blobs.LazyGet(user + hash, async () =>
-			{
-				if (user == "" || hash == "") return Array.Empty<byte>();
-				var conn = await connections.GetConnection(user);
-				var response = await conn.GetBlob(hash);
-				var testHash = Transcoder.HexFromBytes(SHA256.HashData(response.Data));
-				if (testHash != hash) throw new CryptographicException("Hash didn't match!");
-				return response.Data;
-			}, TimeSpan.FromHours(1), force);
-		}
-
 		public Task<BitmapImage> GetImage(string user, string hash, bool force = false)
 		{
 			ThrowIfDisposed();
@@ -75,8 +54,9 @@ namespace ClientWPF.Models
 				if (user == "" || hash == "") return DefaultImage;
 				try
 				{
-					var data = await GetBlob(user, hash, force);
-					return ImageFromBytes(data);
+					var conn = await connections.GetConnection(user);
+					var response = await conn.GetImage(hash);
+					return ImageFromBytes(response.Data);
 				}
 				catch
 				{
@@ -108,6 +88,17 @@ namespace ClientWPF.Models
 			};
 			var conn = await connections.GetConnection(Self);
 			await conn.SetProfile(request);
+		}
+
+		public async Task<string> AddImage(string user, byte[] data, bool force = false)
+		{
+			ThrowIfDisposed();
+			var request = new AddImageRequest
+			{
+				Data = data
+			};
+			var conn = await connections.GetConnection(Self);
+			return await conn.AddImage(request);
 		}
 
 		//// Static

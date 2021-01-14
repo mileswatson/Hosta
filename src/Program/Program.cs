@@ -26,14 +26,14 @@ namespace Program
 
 			Console.WriteLine("Calling...");
 
-			var hash = await client.AddBlob(new AddBlobRequest
+			var hash = await client.AddImage(new AddImageRequest
 			{
 				Data = new byte[] { 1, 2, 3, 4, 1 }
 			});
 
 			Console.WriteLine(hash);
 
-			Console.WriteLine((await client.GetBlob(hash)).Data.Length);
+			Console.WriteLine((await client.GetImage(hash)).Data.Length);
 
 			Console.ReadKey();
 		}

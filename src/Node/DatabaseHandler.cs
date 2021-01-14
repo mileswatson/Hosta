@@ -29,7 +29,7 @@ namespace Node
 			var h = new DatabaseHandler(path, admin);
 
 			await h.InitProfile();
-			await h.conn.CreateTableAsync<Blob>();
+			await h.conn.CreateTableAsync<Image>();
 
 			return new DatabaseHandler(path, admin);
 		}
@@ -59,20 +59,19 @@ namespace Node
 
 		//// Implementations
 
-		public override async Task<string> AddBlob(AddBlobRequest request, PublicIdentity client)
+		public override async Task<string> AddImage(AddImageRequest request, PublicIdentity client)
 		{
 			ThrowIfDisposed();
-			if (client.ID != self)
+			if (client.ID == self)
 			{
 				throw new RPException("Access denied.");
 			}
 
-			var resource = Blob.FromAddRequest(request);
+			var resource = Image.FromAddRequest(request);
 
 			try
 			{
 				await conn.InsertOrReplaceAsync(resource);
-				Console.WriteLine(resource.Hash);
 				return resource.Hash;
 			}
 			catch (Exception e)
@@ -97,12 +96,12 @@ namespace Node
 			}
 		}
 
-		public override async Task<GetBlobResponse> GetBlob(string hash, PublicIdentity client)
+		public override async Task<GetImageResponse> GetImage(string hash, PublicIdentity client)
 		{
 			ThrowIfDisposed();
 			try
 			{
-				var p = await conn.GetAsync<Blob>(hash);
+				var p = await conn.GetAsync<Image>(hash);
 				return p.ToResponse();
 			}
 			catch (Exception e)
@@ -116,7 +115,7 @@ namespace Node
 		public override async Task<string> SetProfile(SetProfileRequest r, PublicIdentity client)
 		{
 			ThrowIfDisposed();
-			if (client.ID != self)
+			if (client.ID == self)
 			{
 				throw new RPException("Access denied.");
 			}

@@ -56,9 +56,9 @@ namespace HostaTests.API
 		{
 			var data = new byte[] { 0, 1, 3, 255, 6, 0 };
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(data));
-			await Assert.ThrowsExceptionAsync<RPException>(() => remoteGateway.GetBlob(hash));
-			hash = await remoteGateway.AddBlob(new AddBlobRequest { Data = data });
-			var response = await remoteGateway.GetBlob(hash);
+			await Assert.ThrowsExceptionAsync<RPException>(() => remoteGateway.GetImage(hash));
+			hash = await remoteGateway.AddImage(new AddImageRequest { Data = data });
+			var response = await remoteGateway.GetImage(hash);
 			CollectionAssert.AreEqual(data, response.Data);
 		}
 
@@ -77,7 +77,7 @@ namespace HostaTests.API
 
 		private readonly Dictionary<string, byte[]> resources = new();
 
-		public override Task<string> AddBlob(AddBlobRequest request, PublicIdentity _)
+		public override Task<string> AddImage(AddImageRequest request, PublicIdentity _)
 		{
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(request.Data));
 			resources[hash] = request.Data;
@@ -101,9 +101,9 @@ namespace HostaTests.API
 			return Task.CompletedTask;
 		}
 
-		public override Task<GetBlobResponse> GetBlob(string hash, PublicIdentity _)
+		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity _)
 		{
-			return Task.FromResult(new GetBlobResponse
+			return Task.FromResult(new GetImageResponse
 			{
 				Data = resources[hash],
 				LastUpdated = DateTime.Now

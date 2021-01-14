@@ -75,10 +75,10 @@ namespace Hosta.API
 
 		//// Translators
 
-		public override async Task<string> AddBlob(AddBlobRequest request, PublicIdentity? _ = null)
+		public override async Task<string> AddImage(AddImageRequest request, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
-			return await Call(nameof(AddBlob), Export(request));
+			return await Call(nameof(AddImage), Export(request));
 		}
 
 		public override async Task<GetProfileResponse> GetProfile(PublicIdentity? _ = null)
@@ -88,11 +88,11 @@ namespace Hosta.API
 			return Import<GetProfileResponse>(str);
 		}
 
-		public override async Task<GetBlobResponse> GetBlob(string hash, PublicIdentity? _ = null)
+		public override async Task<GetImageResponse> GetImage(string hash, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
-			var str = await Call(nameof(GetBlob), hash);
-			return Import<GetBlobResponse>(str);
+			var str = await Call(nameof(GetImage), hash);
+			return Import<GetImageResponse>(str);
 		}
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)
