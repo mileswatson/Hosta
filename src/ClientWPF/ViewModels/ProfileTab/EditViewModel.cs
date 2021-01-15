@@ -1,4 +1,5 @@
 ﻿using ClientWPF.Models.Data;
+using ClientWPF.ViewModels.Components;
 using Hosta.RPC;
 using System;
 using System.Windows.Input;
@@ -49,9 +50,22 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		public BitmapImage Avatar
+		private ImageViewModel _avatar = new();
+
+		public ImageViewModel Avatar
 		{
-			get => DefaultImage;
+			get => _avatar;
+			private set
+			{
+				_avatar = value;
+				NotifyPropertyChanged(nameof(Avatar));
+			}
+		}
+
+		public void SetAvatarHash(string hash)
+		{
+			Avatar = new ImageViewModel(Resources!.Self, hash);
+			Avatar.Update();
 		}
 
 		public EditViewModel(Action<bool> OnDone, Profile profile)
@@ -63,7 +77,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			{
 				try
 				{
-					await Resources!.SetProfile(Name, Tagline, Bio, "");
+					await Resources!.SetProfile(Name, Tagline, Bio, Avatar.Hash);
 					OnDone(true);
 				}
 				catch (RPException e)
@@ -80,6 +94,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public override void Update(bool force)
 		{
+			Avatar.Update(force);
 		}
 	}
 }
