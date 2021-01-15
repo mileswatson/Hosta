@@ -6,6 +6,28 @@ namespace ClientWPF.ViewModels.Components
 {
 	public class ProfileViewModel : ObservableObject
 	{
+		public string Name { get => Profile.Name; }
+
+		public string ID { get => Profile.ID; }
+
+		public string Tagline { get => Profile.Tagline; }
+
+		public string Bio { get => Profile.Bio; }
+
+		private ImageViewModel _image = new ImageViewModel();
+
+		public ImageViewModel Image
+		{
+			get => _image;
+			private set
+			{
+				_image = value;
+				NotifyPropertyChanged(nameof(Image));
+			}
+		}
+
+		private readonly string id;
+
 		private Profile _profile = new();
 
 		public Profile Profile
@@ -19,23 +41,8 @@ namespace ClientWPF.ViewModels.Components
 				NotifyPropertyChanged(nameof(ID));
 				NotifyPropertyChanged(nameof(Tagline));
 				NotifyPropertyChanged(nameof(Bio));
-				NotifyPropertyChanged(nameof(Avatar));
 			}
 		}
-
-		public string Name { get => Profile.DisplayName; }
-
-		public string ID { get => Profile.ID; }
-
-		public string Tagline { get => Profile.Tagline; }
-
-		public string Bio { get => Profile.Bio; }
-
-		public string LastUpdated { get => Profile.LastUpdated; }
-
-		public BitmapImage Avatar { get => Profile.Avatar; }
-
-		private readonly string id;
 
 		public ProfileViewModel()
 		{
@@ -51,6 +58,8 @@ namespace ClientWPF.ViewModels.Components
 		{
 			var newProfile = await Resources!.GetProfile(id, force);
 			if (Profile != newProfile) Profile = newProfile;
+			if (Profile.AvatarHash != Image.Hash) Image = new ImageViewModel(id, Profile.AvatarHash);
+			Image.Update(force);
 		}
 	}
 }

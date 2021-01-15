@@ -1,7 +1,9 @@
-﻿using Hosta.API.Data;
+﻿using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -41,8 +43,12 @@ namespace Hosta.API
 			// Decides which handler to use.
 			ProcedureHandler handler = proc switch
 			{
-				"GetProfile" => GetProfile,
-				"SetProfile" => SetProfile,
+				nameof(AddImage) => AddImage,
+				nameof(GetImage) => GetImage,
+				nameof(GetImageList) => GetImageList,
+				nameof(GetProfile) => GetProfile,
+				nameof(RemoveImage) => RemoveImage,
+				nameof(SetProfile) => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
 			};
 
@@ -64,11 +70,43 @@ namespace Hosta.API
 
 		//// Translators
 
+		public async Task<string> AddImage(string args, PublicIdentity client)
+		{
+			AddImageRequest r;
+			try
+			{
+				r = API.Import<AddImageRequest>(args);
+			}
+			catch
+			{
+				throw new RPException("Arguments were formatted incorrectly!");
+			}
+			return await api.AddImage(r, client);
+		}
+
+		public async Task<string> GetImage(string args, PublicIdentity client)
+		{
+			var response = await api.GetImage(args, client);
+			return API.Export(response);
+		}
+
+		public async Task<string> GetImageList(string args, PublicIdentity client)
+		{
+			var response = await api.GetImageList(client);
+			return API.Export(response);
+		}
+
 		public async Task<string> GetProfile(string args, PublicIdentity client)
 		{
 			if (args != "") throw new RPException("Arguments were formatted incorrectly!");
-			var gpr = await api.GetProfile(client);
-			return GetProfileResponse.Export(gpr);
+			var response = await api.GetProfile(client);
+			return API.Export(response);
+		}
+
+		public async Task<string> RemoveImage(string args, PublicIdentity client)
+		{
+			await api.RemoveImage(args, client);
+			return "";
 		}
 
 		public async Task<string> SetProfile(string args, PublicIdentity client)
@@ -76,7 +114,7 @@ namespace Hosta.API
 			SetProfileRequest r;
 			try
 			{
-				r = SetProfileRequest.Import(args);
+				r = API.Import<SetProfileRequest>(args);
 			}
 			catch
 			{

@@ -1,5 +1,7 @@
 ﻿using ClientWPF.ViewModels.ProfileTab;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using ClientWPF.Views.ImagePicker;
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,17 +17,19 @@ namespace ClientWPF.Views.ProfileTab
 			InitializeComponent();
 		}
 
-		public void SelectButton_Clicked(object sender, RoutedEventArgs e)
+		public void ChangeButton_Clicked(object sender, RoutedEventArgs e)
 		{
-			var dialog = new CommonOpenFileDialog
-			{
-			};
-			CommonFileDialogResult result = dialog.ShowDialog();
-			if (result == CommonFileDialogResult.Ok)
-			{
-				var vm = (EditViewModel)DataContext;
-				vm.SetAvatarFile(dialog.FileName);
-			}
+			if (DataContext is null) return;
+			EditViewModel vm = DataContext as EditViewModel ?? throw new NullReferenceException();
+			var picker = new ImagePickerWindow(vm.SetAvatarHash);
+			picker.ShowDialog();
+		}
+
+		public void RemoveButton_Clicked(object sender, RoutedEventArgs e)
+		{
+			if (DataContext is null) return;
+			EditViewModel vm = DataContext as EditViewModel ?? throw new NullReferenceException();
+			vm.SetAvatarHash("");
 		}
 	}
 }

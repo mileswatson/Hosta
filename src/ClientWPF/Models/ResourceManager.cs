@@ -1,9 +1,16 @@
 ﻿using ClientWPF.Models.Data;
 using Hosta.API;
-using Hosta.API.Data;
+using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
+using Hosta.Tools;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace ClientWPF.Models
 {
@@ -21,6 +28,11 @@ namespace ClientWPF.Models
 			(Task<Profile> t) => { }
 		);
 
+		private readonly AsyncCache<BitmapImage> Images = new AsyncCache<BitmapImage>(
+			(Task<BitmapImage> t) => true,
+			(Task<BitmapImage> t) => { }
+		);
+
 		/// <summary>
 		/// Creates a new instance of a ResourceManager.
 		/// </summary>
@@ -36,6 +48,43 @@ namespace ClientWPF.Models
 
 		//// Implementation
 
+		public async Task<string> AddImage(byte[] data)
+		{
+			ThrowIfDisposed();
+			var request = new AddImageRequest
+			{
+				Data = data
+			};
+			var conn = await connections.GetConnection(Self);
+			return await conn.AddImage(request);
+		}
+
+		public Task<BitmapImage> GetImage(string user, string hash, bool force = false)
+		{
+			ThrowIfDisposed();
+			var key = Combine(user, hash);
+			return Images.LazyGet(hash, async () =>
+			{
+				if (user == "" || hash == "") return DefaultImage;
+				try
+				{
+					var conn = await connections.GetConnection(user);
+					var response = await conn.GetImage(hash);
+					return ImageFromBytes(response.Data);
+				}
+				catch
+				{
+					return DefaultImage;
+				}
+			}, TimeSpan.MaxValue, force);
+		}
+
+		public async Task<List<ImageInfo>> GetImageList()
+		{
+			var conn = await connections.GetConnection(Self);
+			return await conn.GetImageList();
+		}
+
 		public Task<Profile> GetProfile(string user, bool force = false)
 		{
 			ThrowIfDisposed();
@@ -43,21 +92,72 @@ namespace ClientWPF.Models
 			{
 				var conn = await connections.GetConnection(user);
 				var response = await conn.GetProfile();
-				return new Profile(response);
+				return Profile.FromResponse(response, user);
 			}, TimeSpan.FromMinutes(5), force);
 		}
 
-		public async Task SetProfile(string displayName, string tagline, string bio, byte[] avatar)
+		public async Task RemoveImage(string hash)
+		{
+			var conn = await connections.GetConnection(Self);
+			await conn.RemoveImage(hash);
+		}
+
+		public async Task SetProfile(string name, string tagline, string bio, string avatarHash)
 		{
 			ThrowIfDisposed();
-			var request = new SetProfileRequest(displayName, tagline, bio, avatar);
+			var request = new SetProfileRequest
+			{
+				Name = name,
+				Tagline = tagline,
+				Bio = bio,
+				AvatarHash = avatarHash
+			};
 			var conn = await connections.GetConnection(Self);
 			await conn.SetProfile(request);
 		}
 
-		//// Singleton
+		//// Static
 
 		public static ResourceManager? Resources { get; set; }
+
+		static ResourceManager()
+		{
+			var image = new BitmapImage();
+			image.BeginInit();
+			image.DecodePixelWidth = 160;
+			image.CacheOption = BitmapCacheOption.OnLoad;
+			image.UriSource = new Uri("Assets/Images/default-avatar.png", UriKind.Relative);
+			image.EndInit();
+			DefaultImage = image;
+		}
+
+		/// <summary>
+		/// Provides basic protection against cache attacks.
+		/// </summary>
+		private static string Combine(string user, string id)
+		{
+			using var hmac = new HMACSHA256(Transcoder.BytesFromHex(user));
+			return Transcoder.HexFromBytes(hmac.ComputeHash(Transcoder.BytesFromHex(id)));
+		}
+
+		public static BitmapImage ImageFromBytes(byte[] data)
+		{
+			var image = new BitmapImage();
+			using (var stream = new MemoryStream(data, 0, data.Length))
+			{
+				image.BeginInit();
+				image.DecodePixelWidth = 160;
+				image.CacheOption = BitmapCacheOption.OnLoad;
+				image.StreamSource = stream;
+				image.EndInit();
+			}
+			return image;
+		}
+
+		public static BitmapImage DefaultImage
+		{
+			get; private set;
+		}
 
 		//// Cleanup
 

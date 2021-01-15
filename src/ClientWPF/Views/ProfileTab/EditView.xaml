@@ -3,18 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:ClientWPF.Views"
+             xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<ScrollViewer Background="White">
 		<StackPanel>
-			<Image Source="{Binding Avatar}" Width="160" Height="160" HorizontalAlignment="Left" Margin="10" />
+			<componentviews:ProfileImageView DataContext="{Binding Avatar}"
+											 Width="160" Height="160" HorizontalAlignment="Left" Margin="10" />
 			<StackPanel Orientation="Horizontal">
-				<Button Content="Select" Click="SelectButton_Clicked"
-						Style="{StaticResource Button}" />
-				<Button Content="Remove" Command="{Binding RemoveAvatar}"
-						Style="{StaticResource Button}" />
+				<Button Content="Change" Click="ChangeButton_Clicked" Style="{StaticResource Button}" />
+				<Button Content="Remove" Click="RemoveButton_Clicked" Style="{StaticResource Button}" />
 			</StackPanel>
+			<Label />
 			<DockPanel>
 				<Label Content="Name" Style="{StaticResource FieldLabel}" />
 				<TextBox Text="{Binding Name, Mode=TwoWay}"

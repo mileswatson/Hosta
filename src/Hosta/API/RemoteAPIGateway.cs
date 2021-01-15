@@ -1,7 +1,9 @@
-﻿using Hosta.API.Data;
+﻿using Hosta.API.Image;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -75,17 +77,43 @@ namespace Hosta.API
 
 		//// Translators
 
+		public override async Task<string> AddImage(AddImageRequest request, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			return await Call(nameof(AddImage), Export(request));
+		}
+
 		public override async Task<GetProfileResponse> GetProfile(PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
-			var str = await Call("GetProfile", "");
-			return GetProfileResponse.Import(str);
+			var str = await Call(nameof(GetProfile), "");
+			return Import<GetProfileResponse>(str);
+		}
+
+		public override async Task<GetImageResponse> GetImage(string hash, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			var str = await Call(nameof(GetImage), hash);
+			return Import<GetImageResponse>(str);
+		}
+
+		public override async Task<List<ImageInfo>> GetImageList(PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			var str = await Call(nameof(GetImageList), "");
+			return Import<List<ImageInfo>>(str);
+		}
+
+		public override async Task RemoveImage(string hash, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			await Call(nameof(RemoveImage), hash);
 		}
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
-			return Call("SetProfile", SetProfileRequest.Export(request));
+			return Call(nameof(SetProfile), Export(request));
 		}
 
 		/// <summary>

@@ -33,7 +33,6 @@ namespace ClientWPF.ViewModels
 		public ViewModel()
 		{
 			_vm = startup = new StartupViewModel(OnConnect, OnQuit);
-			Transcoder.BytesFromHex("A4");
 		}
 
 		public void OnQuit() => Environment.Exit(0);
