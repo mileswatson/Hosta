@@ -1,67 +1,67 @@
-﻿using ClientWPF.Models.Data;
-using System.Windows.Media.Imaging;
+﻿using System;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components
 {
-	internal class PostViewModel : ObservableObject
+	public class PostViewModel : ObservableObject
 	{
-		public string Name { get => Profile.Name; }
+		public string User { get; init; }
 
-		public string ID { get => Profile.ID; }
+		public string ID { get; init; }
 
-		public BitmapImage Avatar { get => DefaultImage; }
+		public ProfileViewModel Profile { get; init; }
 
-		private Profile _profile = new();
+		private string _content = "";
 
-		public Profile Profile
+		public string Content
 		{
-			get => _profile;
+			get => _content;
 			private set
 			{
-				_profile = value;
-				NotifyPropertyChanged(nameof(Profile));
-				NotifyPropertyChanged(nameof(Name));
-				NotifyPropertyChanged(nameof(ID));
-				NotifyPropertyChanged(nameof(Avatar));
+				_content = value;
+				NotifyPropertyChanged(nameof(Content));
 			}
 		}
 
-		public string Content { get => Post.Content; }
+		private ImageViewModel? _image = null;
 
-		public string LastUpdated
+		public ImageViewModel? Image
 		{
-			get => Post.TimePosted.ToShortDateString();
+			get => _image;
+			private set
+			{
+				_image = value;
+				NotifyPropertyChanged(nameof(Image));
+			}
 		}
 
-		private Post _post = new();
+		private DateTime _timePosted = DateTime.MinValue;
 
-		private Post Post
+		public DateTime TimePosted
 		{
-			get => _post;
+			get => _timePosted;
 			set
 			{
-				_post = value;
-				NotifyPropertyChanged(nameof(Post));
-				NotifyPropertyChanged(nameof(Content));
-				NotifyPropertyChanged(nameof(LastUpdated));
+				_timePosted = value;
+				NotifyPropertyChanged(nameof(TimePosted));
 			}
 		}
 
-		public override void Update(bool force)
+		public PostViewModel(string user, string id)
 		{
-			UpdateProfile(force);
-			UpdatePost(force);
+			User = user;
+			ID = id;
+			Profile = new ProfileViewModel(user);
 		}
 
-		private async void UpdateProfile(bool force)
+		public override async void Update(bool force = false)
 		{
-			var newProfile = await Resources!.GetProfile(ID, force);
-			if (Profile != newProfile) Profile = newProfile;
-		}
-
-		private void UpdatePost(bool force)
-		{
+			Profile.Update(force);
+			var newPost = await Resources!.GetPost(User, ID, force);
+			if (newPost.Content != Content) Content = newPost.Content;
+			if (newPost.TimePosted != TimePosted) TimePosted = newPost.TimePosted;
+			if (newPost.ImageHash == "") Image = null;
+			else if (Image is null || newPost.ImageHash != Image.Hash) Image = new ImageViewModel(User, newPost.ImageHash);
 		}
 	}
 }

@@ -9,14 +9,17 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
 	<Grid Background="White">
-		<StackPanel Orientation="Vertical">
-			<componentviews:Profile DataContext="{Binding Profile}" />
-			<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
-				<Button Content="Refresh" Command="{Binding Refresh}"
+		<ScrollViewer>
+			<StackPanel Orientation="Vertical">
+				<componentviews:Profile DataContext="{Binding Profile}" />
+				<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="2">
+					<Button Content="Refresh" Command="{Binding Refresh}"
 						Style="{StaticResource Button}" />
-				<Button Content="Edit" Command="{Binding StartEditing}"
+					<Button Content="Edit" Command="{Binding StartEditing}"
 						Style="{StaticResource Button}" />
+				</StackPanel>
+				<componentviews:PostFeedView DataContext="{Binding Feed}" />
 			</StackPanel>
-		</StackPanel>
+		</ScrollViewer>
 	</Grid>
 </UserControl>

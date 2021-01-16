@@ -3,7 +3,6 @@ using ClientWPF.ViewModels.Components;
 using Hosta.RPC;
 using System;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
 
@@ -50,7 +49,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		private ImageViewModel _avatar = new();
+		private ImageViewModel _avatar;
 
 		public ImageViewModel Avatar
 		{
@@ -73,6 +72,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			Name = profile.Name;
 			Tagline = profile.Tagline;
 			Bio = profile.Bio;
+			_avatar = new ImageViewModel(profile.ID, profile.AvatarHash);
 			Save = new RelayCommand(async (object? _) =>
 			{
 				try

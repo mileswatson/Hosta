@@ -14,6 +14,18 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public ProfileViewModel Profile { get; init; }
 
+		private PostFeedViewModel _feed = new PostFeedViewModel(Resources!.Self);
+
+		public PostFeedViewModel Feed
+		{
+			get => _feed;
+			set
+			{
+				_feed = value;
+				NotifyPropertyChanged(nameof(Feed));
+			}
+		}
+
 		public InfoViewModel(Action<Profile> OnEdit)
 		{
 			Refresh = new RelayCommand((object? _) => Update(true));
@@ -24,6 +36,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 		public override void Update(bool force)
 		{
 			Profile.Update(force);
+			Feed.Update(force);
 		}
 	}
 }

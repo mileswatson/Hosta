@@ -7,7 +7,6 @@ using Hosta.Crypto;
 using Hosta.Tools;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -97,10 +96,10 @@ namespace ClientWPF.Models
 			await conn.RemoveImage(hash);
 		}
 
-		public async Task<string> AddPost(string content, string hash)
+		public async Task<string> AddPost(string content, string imageHash)
 		{
 			var conn = await connections.GetConnection(Self);
-			return await conn.AddPost(new AddPostRequest { Content = content, ImageHash = hash });
+			return await conn.AddPost(new AddPostRequest { Content = content, ImageHash = imageHash });
 		}
 
 		public Task<Post> GetPost(string user, string id, bool force = false)
@@ -114,6 +113,13 @@ namespace ClientWPF.Models
 				var response = await conn.GetPost(id);
 				return Post.FromResponse(response, user, id);
 			}, TimeSpan.FromHours(1), force);
+		}
+
+		public async Task<List<PostInfo>> GetPostList(string user, DateTime start, bool force = false)
+		{
+			ThrowIfDisposed();
+			var conn = await connections.GetConnection(user);
+			return await conn.GetPostList(start);
 		}
 
 		public Task<Profile> GetProfile(string user, bool force = false)

@@ -22,7 +22,7 @@ namespace ClientWPF.ViewModels.HomeTab
 			Posts = new();
 			for (int i = 0; i < 100; i++)
 			{
-				Posts.Add(new PostViewModel());
+				Posts.Add(new PostViewModel("", ""));
 			}
 		}
 

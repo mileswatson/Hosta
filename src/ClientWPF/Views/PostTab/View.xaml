@@ -21,10 +21,10 @@
 			   Style="{StaticResource TabHeadingLabel}" />
 
 		<StackPanel Grid.Row="2" Grid.Column="0">
-			<TextBox Text="Make a post..." TextWrapping="Wrap"
+			<TextBox Text="{Binding Content}" TextWrapping="Wrap"
 					 Style="{StaticResource TextBox}" />
 
-			<Button Content=" Post! "
+			<Button Content="Post!" Command="{Binding Post}"
 					Style="{StaticResource Button}" />
 		</StackPanel>
 	</Grid>
