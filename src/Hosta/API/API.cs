@@ -1,5 +1,6 @@
-﻿using Hosta.API.Profile;
-using Hosta.API.Image;
+﻿using Hosta.API.Image;
+using Hosta.API.Post;
+using Hosta.API.Profile;
 using Hosta.Crypto;
 using Newtonsoft.Json;
 using System;
@@ -23,14 +24,29 @@ namespace Hosta.API
 		public abstract Task<List<ImageInfo>> GetImageList(PublicIdentity client = null);
 
 		/// <summary>
-		/// Gets the profile.
-		/// </summary>
-		public abstract Task<GetProfileResponse> GetProfile(PublicIdentity client = null);
-
-		/// <summary>
 		/// Removes an image.
 		/// </summary>
 		public abstract Task RemoveImage(string hash, PublicIdentity client = null);
+
+		/// <summary>
+		/// Adds a post.
+		/// </summary>
+		public abstract Task<string> AddPost(AddPostRequest request, PublicIdentity client = null);
+
+		/// <summary>
+		/// Retrieves the post with the given id.
+		/// </summary>
+		public abstract Task<GetPostResponse> GetPost(string id, PublicIdentity client = null);
+
+		/// <summary>
+		/// Gets a list of the posts that were added after the given datetime.
+		/// </summary>
+		public abstract Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity client = null);
+
+		/// <summary>
+		/// Gets the profile.
+		/// </summary>
+		public abstract Task<GetProfileResponse> GetProfile(PublicIdentity client = null);
 
 		/// <summary>
 		/// Sets the profile.

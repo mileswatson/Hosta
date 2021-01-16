@@ -1,6 +1,7 @@
 ﻿using ClientWPF.Models.Data;
 using Hosta.API;
 using Hosta.API.Image;
+using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.Tools;
@@ -31,6 +32,11 @@ namespace ClientWPF.Models
 		private readonly AsyncCache<BitmapImage> Images = new AsyncCache<BitmapImage>(
 			(Task<BitmapImage> t) => true,
 			(Task<BitmapImage> t) => { }
+		);
+
+		private readonly AsyncCache<Post> Posts = new AsyncCache<Post>(
+			(Task<Post> t) => true,
+			(Task<Post> t) => { }
 		);
 
 		/// <summary>
@@ -85,6 +91,31 @@ namespace ClientWPF.Models
 			return await conn.GetImageList();
 		}
 
+		public async Task RemoveImage(string hash)
+		{
+			var conn = await connections.GetConnection(Self);
+			await conn.RemoveImage(hash);
+		}
+
+		public async Task<string> AddPost(string content, string hash)
+		{
+			var conn = await connections.GetConnection(Self);
+			return await conn.AddPost(new AddPostRequest { Content = content, ImageHash = hash });
+		}
+
+		public Task<Post> GetPost(string user, string id, bool force = false)
+		{
+			ThrowIfDisposed();
+			var key = Combine(user, id);
+			return Posts.LazyGet(key, async () =>
+			{
+				if (user == "" || id == "") throw new Exception();
+				var conn = await connections.GetConnection(user);
+				var response = await conn.GetPost(id);
+				return Post.FromResponse(response, user, id);
+			}, TimeSpan.FromHours(1), force);
+		}
+
 		public Task<Profile> GetProfile(string user, bool force = false)
 		{
 			ThrowIfDisposed();
@@ -94,12 +125,6 @@ namespace ClientWPF.Models
 				var response = await conn.GetProfile();
 				return Profile.FromResponse(response, user);
 			}, TimeSpan.FromMinutes(5), force);
-		}
-
-		public async Task RemoveImage(string hash)
-		{
-			var conn = await connections.GetConnection(Self);
-			await conn.RemoveImage(hash);
 		}
 
 		public async Task SetProfile(string name, string tagline, string bio, string avatarHash)

@@ -31,7 +31,7 @@ namespace ClientWPF.ViewModels.Components
 
 		public string LastUpdated
 		{
-			get => Post.LastUpdated.ToShortDateString();
+			get => Post.TimePosted.ToShortDateString();
 		}
 
 		private Post _post = new();

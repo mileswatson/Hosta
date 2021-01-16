@@ -1,29 +1,36 @@
-﻿using System;
+﻿using Hosta.API.Post;
+using System;
 
 namespace ClientWPF.Models.Data
 {
 	public record Post
 	{
-		public string UserID { get; init; }
+		public string User { get; init; }
 
-		public string PostID { get; init; }
+		public string ID { get; init; }
 
 		public string Content { get; init; }
 
-		public string FileName { get; init; }
+		public string ImageHash { get; init; }
 
-		public byte[] FileData { get; init; }
-
-		public DateTime LastUpdated { get; init; }
+		public DateTime TimePosted { get; init; }
 
 		public Post()
 		{
-			UserID = "[ID]";
-			PostID = "[PostID]";
-			Content = "[Content]";
-			FileName = "[FileName]";
-			FileData = Array.Empty<byte>();
-			LastUpdated = DateTime.MinValue;
+			User = "";
+			ID = "";
+			Content = "";
+			ImageHash = "";
+			TimePosted = DateTime.MinValue;
 		}
+
+		public static Post FromResponse(GetPostResponse response, string user, string id) => new Post
+		{
+			User = user,
+			ID = id,
+			Content = response.Content,
+			ImageHash = response.ImageHash,
+			TimePosted = response.TimePosted
+		};
 	}
 }

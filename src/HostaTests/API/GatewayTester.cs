@@ -1,5 +1,6 @@
 ﻿using Hosta.API;
 using Hosta.API.Image;
+using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
@@ -36,7 +37,7 @@ namespace HostaTests.API
 		}
 
 		[TestMethod]
-		public async Task TestGetSetProfile()
+		public async Task GetSetProfile()
 		{
 			var p = await remoteGateway.GetProfile();
 			Assert.IsTrue(p == new GetProfileResponse());
@@ -53,7 +54,22 @@ namespace HostaTests.API
 		}
 
 		[TestMethod]
-		public async Task TestAddGetBlob()
+		public async Task AddGetPosts()
+		{
+			var img1 = new AddPostRequest { Content = "1" };
+			var img2 = new AddPostRequest { Content = "2" };
+			var id1 = await remoteGateway.AddPost(img1);
+			var list = await remoteGateway.GetPostList(DateTime.MinValue);
+			Assert.AreEqual(list.Count, 1);
+			var id2 = await remoteGateway.AddPost(img2);
+			list = await remoteGateway.GetPostList(DateTime.MinValue);
+			Assert.AreEqual(list.Count, 2);
+			Assert.AreEqual((await remoteGateway.GetPost(id1)).Content, "1");
+			Assert.AreEqual((await remoteGateway.GetPost(id2)).Content, "2");
+		}
+
+		[TestMethod]
+		public async Task AddGetImage()
 		{
 			var data = new byte[] { 0, 1, 3, 255, 6, 0 };
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(data));
@@ -76,12 +92,14 @@ namespace HostaTests.API
 	{
 		private GetProfileResponse storedProfile = new();
 
-		private readonly Dictionary<string, byte[]> resources = new();
+		private readonly Dictionary<string, byte[]> images = new();
+
+		private readonly Dictionary<string, GetPostResponse> posts = new();
 
 		public override Task<string> AddImage(AddImageRequest request, PublicIdentity _)
 		{
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(request.Data));
-			resources[hash] = request.Data;
+			images[hash] = request.Data;
 			return Task.FromResult(hash);
 		}
 
@@ -89,7 +107,7 @@ namespace HostaTests.API
 		{
 			return Task.FromResult(new GetImageResponse
 			{
-				Data = resources[hash],
+				Data = images[hash],
 				LastUpdated = DateTime.Now
 			});
 		}
@@ -99,15 +117,53 @@ namespace HostaTests.API
 			throw new NotImplementedException();
 		}
 
+		public override Task RemoveImage(string hash, PublicIdentity _)
+		{
+			images.Remove(hash);
+			return Task.CompletedTask;
+		}
+
+		public override Task<string> AddPost(AddPostRequest request, PublicIdentity _)
+		{
+			var id = Transcoder.HexFromBytes(SecureRandomGenerator.GetBytes(32));
+			posts[id] = new GetPostResponse
+			{
+				Content = request.Content,
+				ImageHash = request.ImageHash,
+				TimePosted = DateTime.Now
+			};
+			return Task.FromResult(id);
+		}
+
+		public override Task<GetPostResponse> GetPost(string id, PublicIdentity _)
+		{
+			var request = posts[id];
+			return Task.FromResult(new GetPostResponse
+			{
+				Content = request.Content,
+				ImageHash = request.ImageHash,
+				TimePosted = DateTime.Now
+			});
+		}
+
+		public override Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity _)
+		{
+			var list = new List<PostInfo>();
+			foreach (var kvp in posts)
+			{
+				var id = kvp.Key;
+				var post = kvp.Value;
+				if (post.TimePosted > start)
+				{
+					list.Add(new PostInfo { ID = id, TimePosted = post.TimePosted });
+				}
+			}
+			return Task.FromResult(list);
+		}
+
 		public override Task<GetProfileResponse> GetProfile(PublicIdentity _)
 		{
 			return Task.FromResult(storedProfile);
-		}
-
-		public override Task RemoveImage(string hash, PublicIdentity _)
-		{
-			resources.Remove(hash);
-			return Task.CompletedTask;
 		}
 
 		public override Task SetProfile(SetProfileRequest profile, PublicIdentity _)
