@@ -161,6 +161,12 @@ namespace HostaTests.API
 			return Task.FromResult(list);
 		}
 
+		public override Task RemovePost(string id, PublicIdentity _)
+		{
+			posts.Remove(id);
+			return Task.CompletedTask;
+		}
+
 		public override Task<GetProfileResponse> GetProfile(PublicIdentity _)
 		{
 			return Task.FromResult(storedProfile);

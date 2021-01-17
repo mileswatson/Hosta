@@ -115,7 +115,7 @@ namespace ClientWPF.Models
 			}, TimeSpan.FromHours(1), force);
 		}
 
-		public async Task<List<PostInfo>> GetPostList(string user, DateTime start, bool force = false)
+		public async Task<List<PostInfo>> GetPostList(string user, DateTime start)
 		{
 			ThrowIfDisposed();
 			var conn = await connections.GetConnection(user);
