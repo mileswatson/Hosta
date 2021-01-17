@@ -148,6 +148,7 @@ namespace Node
 
 		public override async Task<string> AddPost(AddPostRequest request, PublicIdentity client)
 		{
+			ThrowIfDisposed();
 			if (client.ID != self)
 			{
 				throw new RPException("Access denied.");
@@ -189,6 +190,24 @@ namespace Node
 				return posts.Select(x => new PostInfo { ID = x.ID, TimePosted = x.TimePosted }).ToList();
 			}
 			catch
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task RemovePost(string id, PublicIdentity client)
+		{
+			ThrowIfDisposed();
+			if (client.ID != self)
+			{
+				throw new RPException("Access denied.");
+			}
+			try
+			{
+				var num = await conn.DeleteAsync<Post>(id);
+				if (num == 0) throw new RPException("Image could not be found!");
+			}
+			catch (Exception e) when (e is not RPException)
 			{
 				throw new RPException("Database error.");
 			}

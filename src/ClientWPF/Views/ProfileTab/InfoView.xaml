@@ -18,7 +18,13 @@
 					<Button Content="Edit" Command="{Binding StartEditing}"
 						Style="{StaticResource Button}" />
 				</StackPanel>
-				<componentviews:PostFeedView DataContext="{Binding Feed}" />
+				<componentviews:PostFeedView DataContext="{Binding Feed}">
+					<componentviews:PostFeedView.PostContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Remove" Command="{Binding Remove}" />
+						</ContextMenu>
+					</componentviews:PostFeedView.PostContextMenu>
+				</componentviews:PostFeedView>
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

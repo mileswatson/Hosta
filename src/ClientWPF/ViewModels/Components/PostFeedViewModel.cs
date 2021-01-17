@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components
@@ -15,18 +16,21 @@ namespace ClientWPF.ViewModels.Components
 		public List<PostViewModel> Posts
 		{
 			get => _posts;
-			set
+			private set
 			{
 				_posts = value;
 				NotifyPropertyChanged(nameof(Posts));
 			}
 		}
 
-		private string user;
+		private readonly List<ContextMenuItem<PostViewModel>> menuItems;
 
-		public PostFeedViewModel(string user)
+		private readonly string user;
+
+		public PostFeedViewModel(string user, List<ContextMenuItem<PostViewModel>> menuItems)
 		{
 			this.user = user;
+			this.menuItems = menuItems;
 		}
 
 		public override async void Update(bool force = false)
@@ -36,14 +40,14 @@ namespace ClientWPF.ViewModels.Components
 			var newList = new List<PostViewModel>();
 			foreach (var info in infoList)
 			{
-				var post = new PostViewModel(user, info.ID);
+				var post = new PostViewModel(user, info.ID, menuItems);
 				post.Update(force);
 				newList.Add(post);
 			}
 			Posts = newList;
 		}
 
-		public int Compare(PostInfo x, PostInfo y)
+		public static int Compare(PostInfo x, PostInfo y)
 		{
 			if (x.TimePosted < y.TimePosted) return 1;
 			else if (x.TimePosted > y.TimePosted) return -1;

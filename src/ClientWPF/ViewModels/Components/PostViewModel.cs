@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Windows.Input;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components
@@ -47,11 +49,19 @@ namespace ClientWPF.ViewModels.Components
 			}
 		}
 
+		public List<ContextMenuItem<PostViewModel>> MenuItems { get; init; }
+
 		public PostViewModel(string user, string id)
 		{
 			User = user;
 			ID = id;
 			Profile = new ProfileViewModel(user);
+			MenuItems = new();
+		}
+
+		public PostViewModel(string user, string id, List<ContextMenuItem<PostViewModel>> menuItems) : this(user, id)
+		{
+			MenuItems = menuItems;
 		}
 
 		public override async void Update(bool force = false)
@@ -61,7 +71,11 @@ namespace ClientWPF.ViewModels.Components
 			if (newPost.Content != Content) Content = newPost.Content;
 			if (newPost.TimePosted != TimePosted) TimePosted = newPost.TimePosted;
 			if (newPost.ImageHash == "") Image = null;
-			else if (Image is null || newPost.ImageHash != Image.Hash) Image = new ImageViewModel(User, newPost.ImageHash);
+			else if (Image is null || newPost.ImageHash != Image.Hash)
+			{
+				Image = new ImageViewModel(User, newPost.ImageHash);
+				Image.Update(force);
+			}
 		}
 	}
 }

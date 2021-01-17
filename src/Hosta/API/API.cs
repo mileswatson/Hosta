@@ -44,6 +44,11 @@ namespace Hosta.API
 		public abstract Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity client = null);
 
 		/// <summary>
+		/// Removes the post with the given ID.
+		/// </summary>
+		public abstract Task RemovePost(string id, PublicIdentity client = null);
+
+		/// <summary>
 		/// Gets the profile.
 		/// </summary>
 		public abstract Task<GetProfileResponse> GetProfile(PublicIdentity client = null);

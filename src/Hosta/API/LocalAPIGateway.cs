@@ -50,6 +50,7 @@ namespace Hosta.API
 				nameof(AddPost) => AddPost,
 				nameof(GetPost) => GetPost,
 				nameof(GetPostList) => GetPostList,
+				nameof(RemovePost) => RemovePost,
 				nameof(GetProfile) => GetProfile,
 				nameof(SetProfile) => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
@@ -138,6 +139,12 @@ namespace Hosta.API
 			}
 			var response = await api.GetPostList(start, client);
 			return API.Export(response);
+		}
+
+		public async Task<string> RemovePost(string args, PublicIdentity client)
+		{
+			await api.RemovePost(args, client);
+			return "";
 		}
 
 		public async Task<string> GetProfile(string args, PublicIdentity client)

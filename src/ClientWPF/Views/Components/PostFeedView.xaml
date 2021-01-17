@@ -6,14 +6,15 @@
 			 xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
              xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
-	<Grid Background="White">
+             d:DesignHeight="450" d:DesignWidth="800" x:Name="Self">
+
+	<StackPanel Background="White">
 		<ItemsControl ItemsSource="{Binding Posts}">
 			<ItemsControl.ItemTemplate>
 				<DataTemplate DataType="{x:Type componentviewmodels:PostViewModel}">
-					<componentviews:PostView DataContext="{Binding}" />
+					<componentviews:PostView DataContext="{Binding}" Margin="0, 5" />
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
-	</Grid>
+	</StackPanel>
 </UserControl>

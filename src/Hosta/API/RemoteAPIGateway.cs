@@ -113,6 +113,12 @@ namespace Hosta.API
 			return Import<GetProfileResponse>(str);
 		}
 
+		public override async Task RemovePost(string id, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			await Call(nameof(RemovePost), id);
+		}
+
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();

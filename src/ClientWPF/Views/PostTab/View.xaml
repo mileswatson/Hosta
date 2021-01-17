@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
+			 xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -21,8 +23,23 @@
 			   Style="{StaticResource TabHeadingLabel}" />
 
 		<StackPanel Grid.Row="2" Grid.Column="0">
-			<TextBox Text="{Binding Content}" TextWrapping="Wrap"
-					 Style="{StaticResource TextBox}" />
+			<DockPanel>
+				<StackPanel Orientation="Vertical" DockPanel.Dock="Right">
+					<ContentPresenter Content="{Binding Image}">
+						<ContentPresenter.Resources>
+							<DataTemplate DataType="{x:Type componentviewmodels:ImageViewModel}">
+								<componentviews:ImageView DataContext="{Binding}" Width="320" Height="320" />
+							</DataTemplate>
+						</ContentPresenter.Resources>
+					</ContentPresenter>
+					<StackPanel Orientation="Horizontal">
+						<Button Content="Select Image" Click="SelectImageButton_Clicked" Style="{StaticResource Button}" />
+						<Button Content="Remove Image" Command="{Binding RemoveImage}" Style="{StaticResource Button}" />
+					</StackPanel>
+				</StackPanel>
+				<TextBox Text="{Binding Content}" TextWrapping="Wrap" DockPanel.Dock="Left"
+						 Style="{StaticResource TextBox}" />
+			</DockPanel>
 
 			<Button Content="Post!" Command="{Binding Post}"
 					Style="{StaticResource Button}" />

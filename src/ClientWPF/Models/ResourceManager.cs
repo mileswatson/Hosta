@@ -122,6 +122,13 @@ namespace ClientWPF.Models
 			return await conn.GetPostList(start);
 		}
 
+		public async Task RemovePost(string id)
+		{
+			ThrowIfDisposed();
+			var conn = await connections.GetConnection(Self);
+			await conn.RemovePost(id);
+		}
+
 		public Task<Profile> GetProfile(string user, bool force = false)
 		{
 			ThrowIfDisposed();

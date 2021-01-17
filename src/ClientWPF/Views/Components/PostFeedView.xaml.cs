@@ -24,5 +24,16 @@ namespace ClientWPF.Views.Components
 		{
 			InitializeComponent();
 		}
+
+		public static readonly DependencyProperty PostContextMenuProperty = DependencyProperty.Register(
+			nameof(PostContextMenu), typeof(ContextMenu),
+			typeof(PostFeedView)
+		);
+
+		public ContextMenu PostContextMenu
+		{
+			get { return (ContextMenu)GetValue(PostContextMenuProperty); }
+			set { SetValue(PostContextMenuProperty, value); }
+		}
 	}
 }
