@@ -1,4 +1,5 @@
 ﻿using ClientWPF.Models.Data;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using static ClientWPF.Models.ResourceManager;
 
@@ -54,7 +55,7 @@ namespace ClientWPF.ViewModels.Components
 			this.id = id;
 		}
 
-		public override async void Update(bool force)
+		public override async Task UpdateAsync(bool force)
 		{
 			var newProfile = await Resources!.GetProfile(id, force);
 			if (Profile != newProfile) Profile = newProfile;

@@ -1,12 +1,12 @@
 ﻿using ClientWPF.Models.Data;
 using Hosta.API;
 using Hosta.API.Image;
+using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.Tools;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -31,6 +31,11 @@ namespace ClientWPF.Models
 		private readonly AsyncCache<BitmapImage> Images = new AsyncCache<BitmapImage>(
 			(Task<BitmapImage> t) => true,
 			(Task<BitmapImage> t) => { }
+		);
+
+		private readonly AsyncCache<Post> Posts = new AsyncCache<Post>(
+			(Task<Post> t) => true,
+			(Task<Post> t) => { }
 		);
 
 		/// <summary>
@@ -85,6 +90,45 @@ namespace ClientWPF.Models
 			return await conn.GetImageList();
 		}
 
+		public async Task RemoveImage(string hash)
+		{
+			var conn = await connections.GetConnection(Self);
+			await conn.RemoveImage(hash);
+		}
+
+		public async Task<string> AddPost(string content, string imageHash)
+		{
+			var conn = await connections.GetConnection(Self);
+			return await conn.AddPost(new AddPostRequest { Content = content, ImageHash = imageHash });
+		}
+
+		public Task<Post> GetPost(string user, string id, bool force = false)
+		{
+			ThrowIfDisposed();
+			var key = Combine(user, id);
+			return Posts.LazyGet(key, async () =>
+			{
+				if (user == "" || id == "") throw new Exception();
+				var conn = await connections.GetConnection(user);
+				var response = await conn.GetPost(id);
+				return Post.FromResponse(response, user, id);
+			}, TimeSpan.FromHours(1), force);
+		}
+
+		public async Task<List<PostInfo>> GetPostList(string user, DateTime start)
+		{
+			ThrowIfDisposed();
+			var conn = await connections.GetConnection(user);
+			return await conn.GetPostList(start);
+		}
+
+		public async Task RemovePost(string id)
+		{
+			ThrowIfDisposed();
+			var conn = await connections.GetConnection(Self);
+			await conn.RemovePost(id);
+		}
+
 		public Task<Profile> GetProfile(string user, bool force = false)
 		{
 			ThrowIfDisposed();
@@ -94,12 +138,6 @@ namespace ClientWPF.Models
 				var response = await conn.GetProfile();
 				return Profile.FromResponse(response, user);
 			}, TimeSpan.FromMinutes(5), force);
-		}
-
-		public async Task RemoveImage(string hash)
-		{
-			var conn = await connections.GetConnection(Self);
-			await conn.RemoveImage(hash);
 		}
 
 		public async Task SetProfile(string name, string tagline, string bio, string avatarHash)

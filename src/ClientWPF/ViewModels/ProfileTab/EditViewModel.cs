@@ -2,8 +2,8 @@
 using ClientWPF.ViewModels.Components;
 using Hosta.RPC;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
 
@@ -50,7 +50,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			}
 		}
 
-		private ImageViewModel _avatar = new();
+		private ImageViewModel _avatar;
 
 		public ImageViewModel Avatar
 		{
@@ -65,7 +65,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 		public void SetAvatarHash(string hash)
 		{
 			Avatar = new ImageViewModel(Resources!.Self, hash);
-			Avatar.Update();
+			Avatar.Update(false);
 		}
 
 		public EditViewModel(Action<bool> OnDone, Profile profile)
@@ -73,6 +73,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			Name = profile.Name;
 			Tagline = profile.Tagline;
 			Bio = profile.Bio;
+			_avatar = new ImageViewModel(profile.ID, profile.AvatarHash);
 			Save = new RelayCommand(async (object? _) =>
 			{
 				try
@@ -92,9 +93,10 @@ namespace ClientWPF.ViewModels.ProfileTab
 			CancelEditing = new RelayCommand((object? _) => OnDone(false));
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
 			Avatar.Update(force);
+			return Task.CompletedTask;
 		}
 	}
 }

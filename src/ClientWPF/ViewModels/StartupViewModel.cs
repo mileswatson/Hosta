@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using static ClientWPF.ApplicationEnvironment;
 
@@ -90,8 +91,6 @@ namespace ClientWPF.ViewModels
 			Quit = new RelayCommand((object? _) => OnQuit());
 		}
 
-		public override void Update(bool force)
-		{
-		}
+		public override Task UpdateAsync(bool force) => Task.CompletedTask;
 	}
 }

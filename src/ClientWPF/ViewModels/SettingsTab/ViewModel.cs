@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ClientWPF.ViewModels.SettingsTab
@@ -12,8 +13,6 @@ namespace ClientWPF.ViewModels.SettingsTab
 			Disconnect = new RelayCommand((object? _) => OnDisconnect());
 		}
 
-		public override void Update(bool force)
-		{
-		}
+		public override Task UpdateAsync(bool force) => Task.CompletedTask;
 	}
 }

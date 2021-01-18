@@ -1,13 +1,14 @@
 ﻿using ClientWPF.ViewModels.Components;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels.HomeTab
 {
 	public class ViewModel : ObservableObject
 	{
-		private ObservableCollection<ObservableObject> _posts = new();
+		private List<ObservableObject> _posts = new();
 
-		public ObservableCollection<ObservableObject> Posts
+		public List<ObservableObject> Posts
 		{
 			get => _posts;
 			set
@@ -19,15 +20,17 @@ namespace ClientWPF.ViewModels.HomeTab
 
 		public ViewModel()
 		{
-			Posts = new();
+			var newList = new List<ObservableObject>();
 			for (int i = 0; i < 100; i++)
 			{
-				Posts.Add(new PostViewModel());
+				newList.Add(new PostViewModel("", ""));
 			}
+			Posts = newList;
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
+			return Task.CompletedTask;
 		}
 	}
 }

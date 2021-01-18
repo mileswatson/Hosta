@@ -16,21 +16,24 @@ using System.Windows.Shapes;
 namespace ClientWPF.Views.Components
 {
 	/// <summary>
-	/// Interaction logic for PostView.xaml
+	/// Interaction logic for PostFeedView.xaml
 	/// </summary>
-	public partial class PostView : UserControl
+	public partial class PostFeedView : UserControl
 	{
-		public PostView()
+		public PostFeedView()
 		{
 			InitializeComponent();
 		}
 
-		public void DropdownButton_Clicked(object sender, RoutedEventArgs e)
+		public static readonly DependencyProperty PostContextMenuProperty = DependencyProperty.Register(
+			nameof(PostContextMenu), typeof(ContextMenu),
+			typeof(PostFeedView)
+		);
+
+		public ContextMenu PostContextMenu
 		{
-			DropdownMenu.IsEnabled = true;
-			DropdownMenu.IsOpen = true;
-			DropdownMenu.PlacementTarget = sender as Button;
-			DropdownMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+			get { return (ContextMenu)GetValue(PostContextMenuProperty); }
+			set { SetValue(PostContextMenuProperty, value); }
 		}
 	}
 }

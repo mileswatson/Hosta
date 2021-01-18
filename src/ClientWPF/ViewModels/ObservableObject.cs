@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels
 {
@@ -12,6 +14,26 @@ namespace ClientWPF.ViewModels
 			PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		public abstract void Update(bool force);
+		public abstract Task UpdateAsync(bool force);
+
+		private enum UpdateStatus
+		{
+			NotUpdating = 0,
+			Updating = 1,
+			ForceUpdating = 2
+		}
+
+		private UpdateStatus status = UpdateStatus.NotUpdating;
+
+		public async void Update(bool force)
+		{
+			var lastStatus = status;
+			var thisStatus = force ? UpdateStatus.ForceUpdating : UpdateStatus.Updating;
+			if (thisStatus <= lastStatus) return;
+			status = thisStatus;
+			await UpdateAsync(force);
+			if (status == thisStatus) status = UpdateStatus.NotUpdating;
+			else if (thisStatus == UpdateStatus.ForceUpdating) throw new Exception();
+		}
 	}
 }

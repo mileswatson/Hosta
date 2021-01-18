@@ -16,10 +16,10 @@ namespace ClientWPF.Models.Data
 
 		public Profile()
 		{
-			Name = "[Name]";
-			ID = "[ID]";
-			Tagline = "[Tagline]";
-			Bio = "[Bio]";
+			Name = "";
+			ID = "";
+			Tagline = "";
+			Bio = "";
 			AvatarHash = "";
 		}
 

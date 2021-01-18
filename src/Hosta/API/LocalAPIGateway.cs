@@ -1,9 +1,9 @@
 ﻿using Hosta.API.Image;
+using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -46,8 +46,12 @@ namespace Hosta.API
 				nameof(AddImage) => AddImage,
 				nameof(GetImage) => GetImage,
 				nameof(GetImageList) => GetImageList,
-				nameof(GetProfile) => GetProfile,
 				nameof(RemoveImage) => RemoveImage,
+				nameof(AddPost) => AddPost,
+				nameof(GetPost) => GetPost,
+				nameof(GetPostList) => GetPostList,
+				nameof(RemovePost) => RemovePost,
+				nameof(GetProfile) => GetProfile,
 				nameof(SetProfile) => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
 			};
@@ -96,17 +100,58 @@ namespace Hosta.API
 			return API.Export(response);
 		}
 
+		public async Task<string> RemoveImage(string args, PublicIdentity client)
+		{
+			await api.RemoveImage(args, client);
+			return "";
+		}
+
+		public async Task<string> AddPost(string args, PublicIdentity client)
+		{
+			AddPostRequest r;
+			try
+			{
+				r = API.Import<AddPostRequest>(args);
+			}
+			catch
+			{
+				throw new RPException("Arguments were formatted incorrectly!");
+			}
+			return await api.AddPost(r, client);
+		}
+
+		public async Task<string> GetPost(string args, PublicIdentity client)
+		{
+			var response = await api.GetPost(args, client);
+			return API.Export(response);
+		}
+
+		public async Task<string> GetPostList(string args, PublicIdentity client)
+		{
+			DateTime start;
+			try
+			{
+				start = API.Import<DateTime>(args);
+			}
+			catch
+			{
+				throw new RPException("Arguments were formatted incorrectly!");
+			}
+			var response = await api.GetPostList(start, client);
+			return API.Export(response);
+		}
+
+		public async Task<string> RemovePost(string args, PublicIdentity client)
+		{
+			await api.RemovePost(args, client);
+			return "";
+		}
+
 		public async Task<string> GetProfile(string args, PublicIdentity client)
 		{
 			if (args != "") throw new RPException("Arguments were formatted incorrectly!");
 			var response = await api.GetProfile(client);
 			return API.Export(response);
-		}
-
-		public async Task<string> RemoveImage(string args, PublicIdentity client)
-		{
-			await api.RemoveImage(args, client);
-			return "";
 		}
 
 		public async Task<string> SetProfile(string args, PublicIdentity client)

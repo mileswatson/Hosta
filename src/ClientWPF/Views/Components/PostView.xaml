@@ -3,39 +3,58 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
              xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
+			 xmlns:viewmodels="clr-namespace:ClientWPF.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="120" d:DesignWidth="800">
+             d:DesignHeight="300" d:DesignWidth="800">
 
-	<UserControl.DataContext>
-		<componentviewmodels:PostViewModel />
-	</UserControl.DataContext>
+	<Border Background="WhiteSmoke" BorderBrush="DimGray" BorderThickness="3px" CornerRadius="5">
+		<Grid Background="WhiteSmoke" Margin="5">
 
-	<Grid Background="WhiteSmoke">
-		
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="100" />
-			<ColumnDefinition Width="*" MinWidth="320" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="100" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="100" />
+				<ColumnDefinition Width="*" MinWidth="320" />
+			</Grid.ColumnDefinitions>
 
-		<Ellipse Width="80" Height="80" Grid.Column="0" Grid.Row="0" Margin="10">
-			<Ellipse.Fill>
-				<ImageBrush ImageSource="{Binding Avatar}" />
-			</Ellipse.Fill>
-		</Ellipse>
+			<componentviews:ProfileImageView Grid.Column="0" DataContext="{Binding Profile.Image}"
+											 Height="80" Width="80" VerticalAlignment="Top" Margin="10" />
 
-		<StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
-			<Label Content="{Binding Name}" Style="{StaticResource SubHeadingLabel}" />
-			<TextBlock Text="{Binding Content}"
-						   Style="{StaticResource TextBlock}" />
-			<StackPanel Orientation="Horizontal">
-				<Label Content="Last Updated:" Style="{StaticResource FieldLabel}" />
-				<Label Content="{Binding LastUpdated}" Style="{StaticResource FieldLabel}" />
+			<StackPanel Grid.Column="1">
+				<DockPanel>
+					<Button Content="..." DockPanel.Dock="Right" Click="DropdownButton_Clicked" Style="{StaticResource Button}">
+						<Button.ContextMenu>
+							<ContextMenu x:Name="DropdownMenu">
+								<ItemsControl ItemsSource="{Binding MenuItems}">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<MenuItem Header="{Binding Header}"
+													  Command="{Binding Command}"
+													  CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=componentviews:PostView}}" />
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</ContextMenu>
+						</Button.ContextMenu>
+					</Button>
+					<Label Content="{Binding TimePosted}" DockPanel.Dock="Right"
+						   Style="{StaticResource FieldLabel}" Foreground="DimGray" />
+					<Label Content="{Binding Profile.Name}" DockPanel.Dock="Left"
+						   Style="{StaticResource SubHeadingLabel}" />
+				</DockPanel>
+
+				<DockPanel>
+					<ContentPresenter Content="{Binding Image}" DockPanel.Dock="Right">
+						<ContentPresenter.Resources>
+							<DataTemplate DataType="{x:Type componentviewmodels:ImageViewModel}">
+								<componentviews:ImageView DataContext="{Binding}" Width="320" Height="320" Padding="10" HorizontalAlignment="Left" />
+							</DataTemplate>
+						</ContentPresenter.Resources>
+					</ContentPresenter>
+					<TextBlock Text="{Binding Content}" TextWrapping="Wrap" DockPanel.Dock="Left"
+							   Style="{StaticResource TextBlock}" />
+				</DockPanel>
 			</StackPanel>
-		</StackPanel>
-	</Grid>
+		</Grid>
+	</Border>
 </UserControl>

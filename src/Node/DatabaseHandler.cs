@@ -1,5 +1,6 @@
 ﻿using Hosta.API;
 using Hosta.API.Image;
+using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
@@ -7,6 +8,7 @@ using Node.Data;
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Node
@@ -32,6 +34,7 @@ namespace Node
 
 			await h.InitProfile();
 			await h.conn.CreateTableAsync<Image>();
+			await h.conn.CreateTableAsync<Post>();
 
 			return new DatabaseHandler(path, admin);
 		}
@@ -126,21 +129,6 @@ namespace Node
 			}
 		}
 
-		public override async Task<GetProfileResponse> GetProfile(PublicIdentity _)
-		{
-			ThrowIfDisposed();
-			try
-			{
-				var p = await conn.GetAsync<Profile>(self);
-				return p.ToResponse();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw new RPException("Database error.");
-			}
-		}
-
 		public override async Task RemoveImage(string hash, PublicIdentity client)
 		{
 			if (client.ID != self)
@@ -154,6 +142,88 @@ namespace Node
 			}
 			catch (Exception e) when (e is not RPException)
 			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task<string> AddPost(AddPostRequest request, PublicIdentity client)
+		{
+			ThrowIfDisposed();
+			if (client.ID != self)
+			{
+				throw new RPException("Access denied.");
+			}
+
+			var post = Post.FromAddRequest(request);
+			try
+			{
+				var num = await conn.InsertAsync(post);
+				if (num == 0) throw new RPException("Image could not be found!");
+				return post.ID;
+			}
+			catch (Exception e) when (e is not RPException)
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task<GetPostResponse> GetPost(string id, PublicIdentity client)
+		{
+			ThrowIfDisposed();
+			try
+			{
+				var post = await conn.GetAsync<Post>(id);
+				return post.ToResponse();
+			}
+			catch
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity _)
+		{
+			ThrowIfDisposed();
+			try
+			{
+				var posts = await conn.Table<Post>().Where(x => start < x.TimePosted).ToListAsync();
+				return posts.Select(x => new PostInfo { ID = x.ID, TimePosted = x.TimePosted }).ToList();
+			}
+			catch
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task RemovePost(string id, PublicIdentity client)
+		{
+			ThrowIfDisposed();
+			if (client.ID != self)
+			{
+				throw new RPException("Access denied.");
+			}
+			try
+			{
+				var num = await conn.DeleteAsync<Post>(id);
+				if (num == 0) throw new RPException("Image could not be found!");
+			}
+			catch (Exception e) when (e is not RPException)
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		public override async Task<GetProfileResponse> GetProfile(PublicIdentity _)
+		{
+			ThrowIfDisposed();
+			try
+			{
+				var p = await conn.GetAsync<Profile>(self);
+				return p.ToResponse();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
 				throw new RPException("Database error.");
 			}
 		}

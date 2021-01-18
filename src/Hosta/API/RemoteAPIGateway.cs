@@ -1,4 +1,5 @@
 ﻿using Hosta.API.Image;
+using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
@@ -42,37 +43,19 @@ namespace Hosta.API
 
 		public record ConnectionArgs
 		{
-			private string serverID = "";
+			public string ServerID { get; init; }
 
-			public string ServerID
-			{
-				get
-				{
-					return serverID; ;
-				}
-				init
-				{
-					serverID = value;
-				}
-			}
-
-			private IPAddress address = IPAddress.None;
-
-			public IPAddress Address
-			{
-				get
-				{
-					return address;
-				}
-				init
-				{
-					address = value;
-				}
-			}
+			public IPAddress Address { get; init; }
 
 			public int Port { get; init; }
 
 			public PrivateIdentity? Self { get; init; }
+
+			public ConnectionArgs()
+			{
+				ServerID = "";
+				Address = IPAddress.None;
+			}
 		}
 
 		//// Translators
@@ -81,13 +64,6 @@ namespace Hosta.API
 		{
 			ThrowIfDisposed();
 			return await Call(nameof(AddImage), Export(request));
-		}
-
-		public override async Task<GetProfileResponse> GetProfile(PublicIdentity? _ = null)
-		{
-			ThrowIfDisposed();
-			var str = await Call(nameof(GetProfile), "");
-			return Import<GetProfileResponse>(str);
 		}
 
 		public override async Task<GetImageResponse> GetImage(string hash, PublicIdentity? _ = null)
@@ -108,6 +84,39 @@ namespace Hosta.API
 		{
 			ThrowIfDisposed();
 			await Call(nameof(RemoveImage), hash);
+		}
+
+		public override async Task<string> AddPost(AddPostRequest request, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			return await Call(nameof(AddPost), Export(request));
+		}
+
+		public override async Task<GetPostResponse> GetPost(string id, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			var str = await Call(nameof(GetPost), id);
+			return Import<GetPostResponse>(str);
+		}
+
+		public override async Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			var str = await Call(nameof(GetPostList), Export(start));
+			return Import<List<PostInfo>>(str);
+		}
+
+		public override async Task<GetProfileResponse> GetProfile(PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			var str = await Call(nameof(GetProfile), "");
+			return Import<GetProfileResponse>(str);
+		}
+
+		public override async Task RemovePost(string id, PublicIdentity? _ = null)
+		{
+			ThrowIfDisposed();
+			await Call(nameof(RemovePost), id);
 		}
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)
