@@ -1,7 +1,7 @@
 ﻿using Hosta.API.Profile;
 using SQLite;
 
-namespace Node.Data
+namespace Node.Profiles
 {
 	/// <summary>
 	/// Represents a user profile.

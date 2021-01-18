@@ -4,7 +4,7 @@ using SQLite;
 using System;
 using System.Security.Cryptography;
 
-namespace Node.Data
+namespace Node.Images
 {
 	internal record Image
 	{

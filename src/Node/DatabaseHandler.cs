@@ -4,7 +4,9 @@ using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
-using Node.Data;
+using Node.Images;
+using Node.Posts;
+using Node.Profiles;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -22,21 +24,28 @@ namespace Node
 
 		private readonly SQLiteAsyncConnection conn;
 
-		private DatabaseHandler(string path, string admin)
+		private readonly ImageHandler images;
+
+		private DatabaseHandler(string self, SQLiteAsyncConnection conn, ImageHandler images)
 		{
-			this.conn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
-			this.self = admin;
+			this.self = self;
+			this.conn = conn;
+			this.images = images;
 		}
 
-		public static async Task<DatabaseHandler> Create(string path, string admin)
+		public static async Task<DatabaseHandler> Create(string path, string self)
 		{
-			var h = new DatabaseHandler(path, admin);
+			var conn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
+
+			var images = await ImageHandler.CreateAndInit(conn, self);
+
+			await conn.CreateTableAsync<Post>();
+
+			var h = new DatabaseHandler(self, conn, images);
 
 			await h.InitProfile();
-			await h.conn.CreateTableAsync<Image>();
-			await h.conn.CreateTableAsync<Post>();
 
-			return new DatabaseHandler(path, admin);
+			return h;
 		}
 
 		private async Task InitProfile()
@@ -62,89 +71,45 @@ namespace Node
 			}
 		}
 
-		//// Implementations
-
-		public override async Task<string> AddImage(AddImageRequest request, PublicIdentity client)
-		{
-			ThrowIfDisposed();
-			if (client.ID != self)
-			{
-				throw new RPException("Access denied.");
-			}
-
-			var resource = Image.FromAddRequest(request);
-
-			try
-			{
-				await conn.InsertOrReplaceAsync(resource);
-				return resource.Hash;
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw new RPException("Database error.");
-			}
-		}
-
-		public override async Task<GetImageResponse> GetImage(string hash, PublicIdentity client)
+		public async Task SafeCall(Func<Task> action)
 		{
 			ThrowIfDisposed();
 			try
 			{
-				var p = await conn.GetAsync<Image>(hash);
-				return p.ToResponse();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw new RPException("Database error.");
-			}
-			throw new Exception();
-		}
-
-		public override async Task<List<ImageInfo>> GetImageList(PublicIdentity client)
-		{
-			if (client.ID != self)
-			{
-				throw new RPException("Access denied.");
-			}
-
-			try
-			{
-				var images = await conn.Table<Image>().ToListAsync();
-				List<ImageInfo> info = new();
-				foreach (var image in images)
-				{
-					info.Add(new ImageInfo
-					{
-						Hash = image.Hash,
-						LastUpdated = image.LastUpdated
-					});
-				}
-				return info;
-			}
-			catch
-			{
-				throw new RPException("Database error.");
-			}
-		}
-
-		public override async Task RemoveImage(string hash, PublicIdentity client)
-		{
-			if (client.ID != self)
-			{
-				throw new RPException("Access denied.");
-			}
-			try
-			{
-				var num = await conn.DeleteAsync<Image>(hash);
-				if (num == 0) throw new RPException("Image could not be found!");
+				await action();
 			}
 			catch (Exception e) when (e is not RPException)
 			{
 				throw new RPException("Database error.");
 			}
 		}
+
+		public async Task<T> SafeCall<T>(Func<Task<T>> function)
+		{
+			ThrowIfDisposed();
+			try
+			{
+				return await function();
+			}
+			catch (Exception e) when (e is not RPException)
+			{
+				throw new RPException("Database error.");
+			}
+		}
+
+		//// Implementations
+
+		public override Task<string> AddImage(AddImageRequest request, PublicIdentity client) =>
+			SafeCall(() => images.Add(request, client));
+
+		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity client) =>
+			SafeCall(() => images.Get(hash, client));
+
+		public override Task<List<ImageInfo>> GetImageList(PublicIdentity client) =>
+			SafeCall(() => images.GetList(client));
+
+		public override Task RemoveImage(string hash, PublicIdentity client) =>
+			SafeCall(() => images.Remove(hash, client));
 
 		public override async Task<string> AddPost(AddPostRequest request, PublicIdentity client)
 		{

@@ -7,6 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Image\**" />
+    <Compile Remove="Post\**" />
+    <Compile Remove="Profile\**" />
+    <EmbeddedResource Remove="Image\**" />
+    <EmbeddedResource Remove="Post\**" />
+    <EmbeddedResource Remove="Profile\**" />
+    <None Remove="Image\**" />
+    <None Remove="Post\**" />
+    <None Remove="Profile\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
   </ItemGroup>
 
