@@ -4,6 +4,7 @@ using Hosta.RPC;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
@@ -77,7 +78,7 @@ namespace ClientWPF.ViewModels.ImagesTab
 			}
 		}
 
-		public override async void Update(bool force)
+		public override async Task UpdateAsync(bool force)
 		{
 			var infoList = await Resources!.GetImageList();
 			infoList.Sort(Comparer);

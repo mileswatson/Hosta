@@ -4,6 +4,7 @@ using Hosta.RPC;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
@@ -61,10 +62,11 @@ namespace ClientWPF.ViewModels.ProfileTab
 			_feed = new PostFeedViewModel(Resources!.Self, menuItems);
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
 			Profile.Update(force);
 			Feed.Update(force);
+			return Task.CompletedTask;
 		}
 	}
 }

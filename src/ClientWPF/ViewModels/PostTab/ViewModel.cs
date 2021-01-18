@@ -3,6 +3,7 @@ using static ClientWPF.Models.ResourceManager;
 using static ClientWPF.ApplicationEnvironment;
 using Hosta.RPC;
 using ClientWPF.ViewModels.Components;
+using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels.PostTab
 {
@@ -72,8 +73,9 @@ namespace ClientWPF.ViewModels.PostTab
 			});
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
+			return Task.CompletedTask;
 		}
 	}
 }

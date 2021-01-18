@@ -5,6 +5,7 @@ using Hosta.Tools;
 using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
 
@@ -82,9 +83,10 @@ namespace ClientWPF.ViewModels
 			Resources?.Dispose();
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
 			VM.Update(force);
+			return Task.CompletedTask;
 		}
 	}
 }

@@ -33,7 +33,7 @@ namespace ClientWPF.ViewModels.Components
 			this.menuItems = menuItems;
 		}
 
-		public override async void Update(bool force = false)
+		public override async Task UpdateAsync(bool force = false)
 		{
 			var infoList = await Resources!.GetPostList(user, DateTime.Now - TimeSpan.FromDays(1));
 			infoList.Sort(Compare);

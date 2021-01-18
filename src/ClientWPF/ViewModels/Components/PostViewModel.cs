@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using static ClientWPF.Models.ResourceManager;
 
@@ -64,7 +65,7 @@ namespace ClientWPF.ViewModels.Components
 			MenuItems = menuItems;
 		}
 
-		public override async void Update(bool force = false)
+		public override async Task UpdateAsync(bool force = false)
 		{
 			Profile.Update(force);
 			var newPost = await Resources!.GetPost(User, ID, force);

@@ -1,4 +1,5 @@
 ﻿using ClientWPF.Models.Data;
+using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels.ProfileTab
 {
@@ -39,9 +40,10 @@ namespace ClientWPF.ViewModels.ProfileTab
 			VM.Update(changed);
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
 			VM.Update(force);
+			return Task.CompletedTask;
 		}
 	}
 }

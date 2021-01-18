@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components
@@ -32,7 +33,7 @@ namespace ClientWPF.ViewModels.Components
 			Hash = hash;
 		}
 
-		public override async void Update(bool force = false)
+		public override async Task UpdateAsync(bool force = false)
 		{
 			if (User == "" || Hash == "") return;
 			var newImage = await Resources!.GetImage(User, Hash, false);

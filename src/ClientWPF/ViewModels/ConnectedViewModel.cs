@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ClientWPF.ViewModels
@@ -49,9 +50,10 @@ namespace ClientWPF.ViewModels
 			SettingsTab = new RelayCommand((object? _) => { VM = settingsTab; });
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
 			VM.Update(force);
+			return Task.CompletedTask;
 		}
 	}
 }

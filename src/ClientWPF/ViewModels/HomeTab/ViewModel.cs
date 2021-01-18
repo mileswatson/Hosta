@@ -1,5 +1,6 @@
 ﻿using ClientWPF.ViewModels.Components;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels.HomeTab
 {
@@ -27,8 +28,9 @@ namespace ClientWPF.ViewModels.HomeTab
 			Posts = newList;
 		}
 
-		public override void Update(bool force)
+		public override Task UpdateAsync(bool force)
 		{
+			return Task.CompletedTask;
 		}
 	}
 }
