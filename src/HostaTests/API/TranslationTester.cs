@@ -73,7 +73,7 @@ namespace HostaTests.API
 		{
 			var data = new byte[] { 0, 1, 3, 255, 6, 0 };
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(data));
-			await Assert.ThrowsExceptionAsync<RPException>(() => remoteGateway.GetImage(hash));
+			await Assert.ThrowsExceptionAsync<APIException>(() => remoteGateway.GetImage(hash));
 			hash = await remoteGateway.AddImage(new AddImageRequest { Data = data });
 			var response = await remoteGateway.GetImage(hash);
 			CollectionAssert.AreEqual(data, response.Data);

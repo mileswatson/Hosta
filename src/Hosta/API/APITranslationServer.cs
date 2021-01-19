@@ -36,7 +36,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Handles an RP call.
 		/// </summary>
-		public Task<string> Call(string proc, string args, PublicIdentity client)
+		public async Task<string> Call(string proc, string args, PublicIdentity client)
 		{
 			if (client is null) throw new Exception("Unknown identity!");
 
@@ -55,8 +55,14 @@ namespace Hosta.API
 				nameof(SetProfile) => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
 			};
-
-			return handler(args, client);
+			try
+			{
+				return await handler(args, client);
+			}
+			catch (APIException e)
+			{
+				throw new RPException(e.Message);
+			}
 		}
 
 		/// <summary>

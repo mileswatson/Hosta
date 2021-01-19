@@ -1,6 +1,6 @@
 ﻿using Hosta.API.Post;
 using Hosta.Crypto;
-using Hosta.RPC;
+using Hosta.API;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -31,11 +31,11 @@ namespace Node.Posts
 		{
 			if (client.ID != self)
 			{
-				throw new RPException("Access denied.");
+				throw new APIException("Access denied.");
 			}
 			var post = Post.FromAddRequest(request);
 			var num = await conn.InsertAsync(post);
-			if (num == 0) throw new RPException("Image could not be found!");
+			if (num == 0) throw new APIException("Image could not be found!");
 			return post.ID;
 		}
 
@@ -55,10 +55,10 @@ namespace Node.Posts
 		{
 			if (client.ID != self)
 			{
-				throw new RPException("Access denied.");
+				throw new APIException("Access denied.");
 			}
 			var num = await conn.DeleteAsync<Post>(id);
-			if (num == 0) throw new RPException("Image could not be found!");
+			if (num == 0) throw new APIException("Image could not be found!");
 		}
 	}
 }

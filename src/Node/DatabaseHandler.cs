@@ -45,60 +45,60 @@ namespace Node
 			return new DatabaseHandler(images, posts, profiles);
 		}
 
-		public async Task SafeCall(Func<Task> action)
+		public static async Task Call(Func<Task> action)
 		{
 			try
 			{
 				await action();
 			}
-			catch (Exception e) when (e is not RPException)
+			catch (Exception e) when (e is not APIException)
 			{
-				throw new RPException("Database error.");
+				throw new APIException("Database error.");
 			}
 		}
 
-		public async Task<T> SafeCall<T>(Func<Task<T>> function)
+		public static async Task<T> Call<T>(Func<Task<T>> function)
 		{
 			try
 			{
 				return await function();
 			}
-			catch (Exception e) when (e is not RPException)
+			catch (Exception e) when (e is not APIException)
 			{
-				throw new RPException("Database error.");
+				throw new APIException("Database error.");
 			}
 		}
 
 		//// Implementations
 
 		public override Task<string> AddImage(AddImageRequest request, PublicIdentity client) =>
-			SafeCall(() => images.Add(request, client));
+			Call(() => images.Add(request, client));
 
 		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity client) =>
-			SafeCall(() => images.Get(hash, client));
+			Call(() => images.Get(hash, client));
 
 		public override Task<List<ImageInfo>> GetImageList(PublicIdentity client) =>
-			SafeCall(() => images.GetList(client));
+			Call(() => images.GetList(client));
 
 		public override Task RemoveImage(string hash, PublicIdentity client) =>
-			SafeCall(() => images.Remove(hash, client));
+			Call(() => images.Remove(hash, client));
 
 		public override Task<string> AddPost(AddPostRequest request, PublicIdentity client) =>
-			SafeCall(() => posts.Add(request, client));
+			Call(() => posts.Add(request, client));
 
 		public override Task<GetPostResponse> GetPost(string id, PublicIdentity client) =>
-			SafeCall(() => posts.Get(id, client));
+			Call(() => posts.Get(id, client));
 
 		public override Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity client) =>
-			SafeCall(() => posts.GetList(start, client));
+			Call(() => posts.GetList(start, client));
 
 		public override Task RemovePost(string id, PublicIdentity client) =>
-			SafeCall(() => posts.RemovePost(id, client));
+			Call(() => posts.RemovePost(id, client));
 
 		public override Task<GetProfileResponse> GetProfile(PublicIdentity client) =>
-			SafeCall(() => profiles.GetProfile(client));
+			Call(() => profiles.Get(client));
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity client) =>
-			SafeCall(() => profiles.SetProfile(request, client));
+			Call(() => profiles.Set(request, client));
 	}
 }

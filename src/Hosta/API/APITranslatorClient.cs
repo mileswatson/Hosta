@@ -58,6 +58,26 @@ namespace Hosta.API
 			}
 		}
 
+		/// <summary>
+		/// Disposes if any critical exceptions are thrown.
+		/// </summary>
+		private async Task<string> Call(string procedure, string args)
+		{
+			try
+			{
+				return await client.Call(procedure, args);
+			}
+			catch (Exception e) when (e is not RPException)
+			{
+				Dispose();
+				throw;
+			}
+			catch (RPException e)
+			{
+				throw new APIException(e.Message);
+			}
+		}
+
 		//// Translators
 
 		public override async Task<string> AddImage(AddImageRequest request, PublicIdentity? _ = null)
@@ -123,22 +143,6 @@ namespace Hosta.API
 		{
 			ThrowIfDisposed();
 			return Call(nameof(SetProfile), Export(request));
-		}
-
-		/// <summary>
-		/// Disposes if any critical exceptions are thrown.
-		/// </summary>
-		private async Task<string> Call(string procedure, string args)
-		{
-			try
-			{
-				return await client.Call(procedure, args);
-			}
-			catch (Exception e) when (e is not RPException)
-			{
-				Dispose();
-				throw;
-			}
 		}
 
 		//// Implements IDisposable

@@ -1,6 +1,6 @@
 ﻿using ClientWPF.Models.Data;
 using ClientWPF.ViewModels.Components;
-using Hosta.RPC;
+using Hosta.API;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -81,7 +81,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 					await Resources!.SetProfile(Name, Tagline, Bio, Avatar.Hash);
 					OnDone(true);
 				}
-				catch (RPException e)
+				catch (APIException e)
 				{
 					Env.Alert($"Could not update profile! {e.Message}");
 				}

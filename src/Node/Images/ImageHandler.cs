@@ -1,6 +1,6 @@
 ﻿using Hosta.API.Image;
 using Hosta.Crypto;
-using Hosta.RPC;
+using Hosta.API;
 using SQLite;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -29,7 +29,7 @@ namespace Node.Images
 		{
 			if (client.ID != self)
 			{
-				throw new RPException("Access denied.");
+				throw new APIException("Access denied.");
 			}
 
 			var resource = Image.FromAddRequest(request);
@@ -47,7 +47,7 @@ namespace Node.Images
 		{
 			if (client.ID != self)
 			{
-				throw new RPException("Access denied.");
+				throw new APIException("Access denied.");
 			}
 
 			var images = await conn.Table<Image>().ToListAsync();
@@ -67,10 +67,10 @@ namespace Node.Images
 		{
 			if (client.ID != self)
 			{
-				throw new RPException("Access denined.");
+				throw new APIException("Access denined.");
 			}
 			var num = await conn.DeleteAsync<Image>(hash);
-			if (num == 0) throw new RPException("Image could not be found!");
+			if (num == 0) throw new APIException("Image could not be found!");
 		}
 	}
 }
