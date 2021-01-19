@@ -146,7 +146,6 @@ namespace Node
 			{
 				// Disposes of gateway and database.
 				gateway.Dispose();
-				databaseHandler.Dispose();
 			}
 
 			disposed = true;
