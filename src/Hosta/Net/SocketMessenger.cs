@@ -32,6 +32,8 @@ namespace Hosta.Net
 		/// </summary>
 		private const int MaxLength = 1 << 16;
 
+		private const int ChunkSize = 8000;
+
 		/// <summary>
 		/// Constructs a new SocketMessenger from a connected socket.
 		/// </summary>
@@ -54,14 +56,32 @@ namespace Hosta.Net
 			try
 			{
 				// Read the length from the stream
-				var lengthBytes = await ReadFixedLength(4).ConfigureAwait(false);
+				var lengthBytes = new byte[4];
+				await ReadIntoBuffer(lengthBytes).ConfigureAwait(false);
 
 				// Convert the length to an integer and check that it's valid.
 				int length = BitConverter.ToInt32(lengthBytes, 0);
 				if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
 
 				// Read the message from the stream
-				return await ReadFixedLength(length).ConfigureAwait(false);
+				var bytes = new List<byte>();
+				if (length >= ChunkSize)
+				{
+					var buffer = new byte[ChunkSize];
+					while (length >= ChunkSize)
+					{
+						await ReadIntoBuffer(buffer).ConfigureAwait(false);
+						bytes.AddRange(buffer);
+						length -= ChunkSize;
+					}
+				}
+				if (length > 0)
+				{
+					var buffer = new byte[length];
+					await ReadIntoBuffer(buffer).ConfigureAwait(false);
+					bytes.AddRange(buffer);
+				}
+				return bytes.ToArray();
 			}
 			catch
 			{
@@ -78,18 +98,17 @@ namespace Hosta.Net
 		/// <summary>
 		/// A TAP to APM wrapper for reading a message from a stream.
 		/// </summary>
-		private Task<byte[]> ReadFixedLength(int length)
+		private Task ReadIntoBuffer(byte[] buffer)
 		{
-			var tcs = new TaskCompletionSource<byte[]>();
+			var tcs = new TaskCompletionSource();
 
 			// Read data into fixed length buffer.
-			byte[] messageBuffer = new byte[length];
-			socket.BeginReceive(messageBuffer, 0, length, SocketFlags.None, ar =>
+			socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ar =>
 			{
 				try
 				{
 					socket.EndReceive(ar);
-					tcs.SetResult(messageBuffer);
+					tcs.SetResult();
 				}
 				catch (Exception e)
 				{
