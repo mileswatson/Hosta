@@ -1,9 +1,8 @@
 ﻿using ClientWPF.Models.Data;
 using ClientWPF.ViewModels.Components;
-using Hosta.RPC;
+using Hosta.API;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static ClientWPF.ApplicationEnvironment;
@@ -48,7 +47,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 						Env.Alert("Post removed.");
 						Update(false);
 					}
-					catch (RPException e)
+					catch (APIException e)
 					{
 						Env.Alert($"Could not remove post! {e.Message}");
 					}

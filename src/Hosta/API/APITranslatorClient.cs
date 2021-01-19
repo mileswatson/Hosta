@@ -13,7 +13,7 @@ namespace Hosta.API
 	/// <summary>
 	/// Used to make requests to a remote API.
 	/// </summary>
-	public class RemoteAPIGateway : API, IDisposable
+	public class APITranslatorClient : API, IDisposable
 	{
 		/// <summary>
 		/// Underlying RP Client to use.
@@ -23,7 +23,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Creates a new instance of a RemoteAPIGateway.
 		/// </summary>
-		private RemoteAPIGateway(RPClient client)
+		private APITranslatorClient(RPClient client)
 		{
 			this.client = client;
 		}
@@ -31,14 +31,14 @@ namespace Hosta.API
 		/// <summary>
 		/// Connects an RPClient to the given endpoint, and then constructs a RemoteAPIGateway from it.
 		/// </summary>
-		public static async Task<RemoteAPIGateway> CreateAndConnect(ConnectionArgs args)
+		public static async Task<APITranslatorClient> CreateAndConnect(ConnectionArgs args)
 		{
 			var client = await RPClient.CreateAndConnect(
 				args.ServerID,
 				new IPEndPoint(args.Address, args.Port),
 				args.Self ?? throw new NullReferenceException("Self should not be null!")
 			).ConfigureAwait(false);
-			return new RemoteAPIGateway(client);
+			return new APITranslatorClient(client);
 		}
 
 		public record ConnectionArgs
@@ -55,6 +55,26 @@ namespace Hosta.API
 			{
 				ServerID = "";
 				Address = IPAddress.None;
+			}
+		}
+
+		/// <summary>
+		/// Disposes if any critical exceptions are thrown.
+		/// </summary>
+		private async Task<string> Call(string procedure, string args)
+		{
+			try
+			{
+				return await client.Call(procedure, args);
+			}
+			catch (Exception e) when (e is not RPException)
+			{
+				Dispose();
+				throw;
+			}
+			catch (RPException e)
+			{
+				throw new APIException(e.Message);
 			}
 		}
 
@@ -123,22 +143,6 @@ namespace Hosta.API
 		{
 			ThrowIfDisposed();
 			return Call(nameof(SetProfile), Export(request));
-		}
-
-		/// <summary>
-		/// Disposes if any critical exceptions are thrown.
-		/// </summary>
-		private async Task<string> Call(string procedure, string args)
-		{
-			try
-			{
-				return await client.Call(procedure, args);
-			}
-			catch (Exception e) when (e is not RPException)
-			{
-				Dispose();
-				throw;
-			}
 		}
 
 		//// Implements IDisposable

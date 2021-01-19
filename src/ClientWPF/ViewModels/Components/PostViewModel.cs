@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components

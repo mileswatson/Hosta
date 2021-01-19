@@ -1,9 +1,9 @@
-﻿using System.Windows.Input;
-using static ClientWPF.Models.ResourceManager;
-using static ClientWPF.ApplicationEnvironment;
-using Hosta.RPC;
-using ClientWPF.ViewModels.Components;
+﻿using ClientWPF.ViewModels.Components;
+using Hosta.API;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using static ClientWPF.ApplicationEnvironment;
+using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.PostTab
 {
@@ -62,7 +62,7 @@ namespace ClientWPF.ViewModels.PostTab
 					Env.Alert($"Posted! ID = {id}");
 					Content = "";
 				}
-				catch (RPException e)
+				catch (APIException e)
 				{
 					Env.Alert($"Could not add post! {e.Message}");
 				}

@@ -12,7 +12,7 @@ namespace Hosta.API
 	/// <summary>
 	/// Translates RPC calls to API calls.
 	/// </summary>
-	public class LocalAPIGateway : ICallable, IDisposable
+	public class APITranslationServer : ICallable, IDisposable
 	{
 		/// <summary>
 		/// Underlying API to call.
@@ -27,7 +27,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Creates a new instance of a LocalAPIGateway.
 		/// </summary>
-		public LocalAPIGateway(PrivateIdentity self, IPEndPoint endPoint, API gateway)
+		public APITranslationServer(PrivateIdentity self, IPEndPoint endPoint, API gateway)
 		{
 			server = new RPServer(self, endPoint, this);
 			this.api = gateway;
@@ -36,7 +36,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Handles an RP call.
 		/// </summary>
-		public Task<string> Call(string proc, string args, PublicIdentity client)
+		public async Task<string> Call(string proc, string args, PublicIdentity client)
 		{
 			if (client is null) throw new Exception("Unknown identity!");
 
@@ -55,8 +55,14 @@ namespace Hosta.API
 				nameof(SetProfile) => SetProfile,
 				_ => throw new Exception("Invalid procedure!"),
 			};
-
-			return handler(args, client);
+			try
+			{
+				return await handler(args, client);
+			}
+			catch (APIException e)
+			{
+				throw new RPException(e.Message);
+			}
 		}
 
 		/// <summary>

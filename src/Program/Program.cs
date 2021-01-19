@@ -16,7 +16,7 @@ namespace Program
 			Console.Write("Server ID: ");
 			var serverID = Console.ReadLine() ?? throw new NullReferenceException();
 
-			using var client = await RemoteAPIGateway.CreateAndConnect(new RemoteAPIGateway.ConnectionArgs
+			using var client = await APITranslatorClient.CreateAndConnect(new APITranslatorClient.ConnectionArgs
 			{
 				Address = IPAddress.Loopback,
 				Port = 12000,

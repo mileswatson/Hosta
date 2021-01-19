@@ -41,7 +41,7 @@ namespace ClientWPF.Models
 		/// <summary>
 		/// Creates a new instance of a ResourceManager.
 		/// </summary>
-		public ResourceManager(PrivateIdentity self, RemoteAPIGateway node, Action onConnectionFail)
+		public ResourceManager(PrivateIdentity self, APITranslatorClient node, Action onConnectionFail)
 		{
 			Self = self.ID;
 			connections = new ConnectionManager(self, node, () =>

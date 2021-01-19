@@ -1,9 +1,7 @@
 ﻿using ClientWPF.ViewModels.Components;
+using Hosta.API;
 using Hosta.API.Image;
-using Hosta.RPC;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static ClientWPF.ApplicationEnvironment;
@@ -51,7 +49,7 @@ namespace ClientWPF.ViewModels.ImagesTab
 				await Resources!.AddImage(data);
 				Update(true);
 			}
-			catch (RPException e)
+			catch (APIException e)
 			{
 				Env.Alert($"Could not upload image! {e.Message}");
 			}
@@ -68,7 +66,7 @@ namespace ClientWPF.ViewModels.ImagesTab
 				await Resources!.RemoveImage(hash);
 				Update(true);
 			}
-			catch (RPException e)
+			catch (APIException e)
 			{
 				Env.Alert($"Could not delete image! {e.Message}");
 			}
