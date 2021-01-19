@@ -12,7 +12,7 @@ namespace HostaTests.Crypto
 		[DataRow(31)]
 		[DataRow(32)]
 		[DataRow(33)]
-		[DataRow(12343)]
+		[DataRow(1 << 16 + 1)]
 		public void TestCycle(int size)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(size);

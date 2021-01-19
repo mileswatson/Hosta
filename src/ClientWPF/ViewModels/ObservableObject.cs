@@ -31,9 +31,16 @@ namespace ClientWPF.ViewModels
 			var thisStatus = force ? UpdateStatus.ForceUpdating : UpdateStatus.Updating;
 			if (thisStatus <= lastStatus) return;
 			status = thisStatus;
-			await UpdateAsync(force);
-			if (status == thisStatus) status = UpdateStatus.NotUpdating;
-			else if (thisStatus == UpdateStatus.ForceUpdating) throw new Exception();
+			try
+			{
+				await UpdateAsync(force);
+			}
+			catch { }
+			finally
+			{
+				if (status == thisStatus) status = UpdateStatus.NotUpdating;
+				else if (thisStatus == UpdateStatus.ForceUpdating) throw new Exception();
+			}
 		}
 	}
 }
