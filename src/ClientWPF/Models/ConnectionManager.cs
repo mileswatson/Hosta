@@ -12,14 +12,14 @@ namespace ClientWPF.Models
 	{
 		private readonly PrivateIdentity self;
 
-		private readonly RemoteAPIGateway node;
+		private readonly APITranslatorClient node;
 
-		private readonly AsyncCache<RemoteAPIGateway> connections = new(
+		private readonly AsyncCache<APITranslatorClient> connections = new(
 			// ensure that the item is not disposed
-			(Task<RemoteAPIGateway> checking) => !(checking.IsCompletedSuccessfully && checking.Result.Disposed),
+			(Task<APITranslatorClient> checking) => !(checking.IsCompletedSuccessfully && checking.Result.Disposed),
 
 			// dispose of the item
-			(Task<RemoteAPIGateway> disposing) =>
+			(Task<APITranslatorClient> disposing) =>
 			{
 				if (disposing.IsCompletedSuccessfully)
 				{
@@ -39,7 +39,7 @@ namespace ClientWPF.Models
 		/// <summary>
 		/// Create a new Connection Manager.
 		/// </summary>
-		public ConnectionManager(PrivateIdentity self, RemoteAPIGateway node, Action onConnectionFail)
+		public ConnectionManager(PrivateIdentity self, APITranslatorClient node, Action onConnectionFail)
 		{
 			this.self = self;
 			this.node = node;
@@ -47,11 +47,11 @@ namespace ClientWPF.Models
 			OnConnectionFail = onConnectionFail;
 		}
 
-		public Task<RemoteAPIGateway> GetConnection(string id, bool forceRefresh = false)
+		public Task<APITranslatorClient> GetConnection(string id, bool forceRefresh = false)
 		{
 			ThrowIfDisposed();
 			// Throw an error if not cached - DNS not implemented
-			return connections.LazyGet(id, () => Task.FromException<RemoteAPIGateway>(new NotImplementedException("IDAR has not been implemented!")), TimeSpan.FromHours(1), forceRefresh);
+			return connections.LazyGet(id, () => Task.FromException<APITranslatorClient>(new NotImplementedException("IDAR has not been implemented!")), TimeSpan.FromHours(1), forceRefresh);
 		}
 
 		//// Disposal

@@ -12,7 +12,7 @@ namespace Hosta.API
 	/// <summary>
 	/// Translates RPC calls to API calls.
 	/// </summary>
-	public class LocalAPIGateway : ICallable, IDisposable
+	public class APITranslationServer : ICallable, IDisposable
 	{
 		/// <summary>
 		/// Underlying API to call.
@@ -27,7 +27,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Creates a new instance of a LocalAPIGateway.
 		/// </summary>
-		public LocalAPIGateway(PrivateIdentity self, IPEndPoint endPoint, API gateway)
+		public APITranslationServer(PrivateIdentity self, IPEndPoint endPoint, API gateway)
 		{
 			server = new RPServer(self, endPoint, this);
 			this.api = gateway;

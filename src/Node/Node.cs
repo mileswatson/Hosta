@@ -16,7 +16,7 @@ namespace Node
 		/// <summary>
 		/// Gateway to forward API requests.
 		/// </summary>
-		private readonly LocalAPIGateway gateway;
+		private readonly APITranslationServer gateway;
 
 		/// <summary>
 		/// Handles API requests.
@@ -39,7 +39,7 @@ namespace Node
 		private Node(PrivateIdentity identity, IPEndPoint endpoint, DatabaseHandler dataBaseHandler)
 		{
 			databaseHandler = dataBaseHandler;
-			gateway = new LocalAPIGateway(identity, endpoint, databaseHandler);
+			gateway = new APITranslationServer(identity, endpoint, databaseHandler);
 		}
 
 		/// <summary>

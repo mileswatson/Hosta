@@ -15,25 +15,25 @@ using System.Threading.Tasks;
 namespace HostaTests.API
 {
 	[TestClass]
-	public class GatewayTester
+	public class TranslationTester
 	{
 		private readonly PrivateIdentity server = PrivateIdentity.Create();
 		private readonly PrivateIdentity client = PrivateIdentity.Create();
 
 		private readonly Hosta.API.API api = new MockAPI();
 
-		private readonly LocalAPIGateway localGateway;
+		private readonly APITranslationServer localGateway;
 
 		private readonly Task running;
 
-		private readonly RemoteAPIGateway remoteGateway;
+		private readonly APITranslatorClient remoteGateway;
 
-		public GatewayTester()
+		public TranslationTester()
 		{
-			localGateway = new LocalAPIGateway(server, new IPEndPoint(IPAddress.Loopback, 12000), api);
+			localGateway = new APITranslationServer(server, new IPEndPoint(IPAddress.Loopback, 12000), api);
 			running = localGateway.Run();
-			var args = new RemoteAPIGateway.ConnectionArgs { Address = IPAddress.Loopback, Port = 12000, Self = client, ServerID = server.ID };
-			remoteGateway = RemoteAPIGateway.CreateAndConnect(args).Result;
+			var args = new APITranslatorClient.ConnectionArgs { Address = IPAddress.Loopback, Port = 12000, Self = client, ServerID = server.ID };
+			remoteGateway = APITranslatorClient.CreateAndConnect(args).Result;
 		}
 
 		[TestMethod]

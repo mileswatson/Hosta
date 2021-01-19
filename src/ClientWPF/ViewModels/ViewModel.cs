@@ -56,10 +56,10 @@ namespace ClientWPF.ViewModels
 				identity = PrivateIdentity.Import(hex);
 			}
 
-			RemoteAPIGateway nodeConnection;
+			APITranslatorClient nodeConnection;
 			try
 			{
-				nodeConnection = await RemoteAPIGateway.CreateAndConnect(new RemoteAPIGateway.ConnectionArgs
+				nodeConnection = await APITranslatorClient.CreateAndConnect(new APITranslatorClient.ConnectionArgs
 				{
 					Self = identity,
 					ServerID = identity.ID,
