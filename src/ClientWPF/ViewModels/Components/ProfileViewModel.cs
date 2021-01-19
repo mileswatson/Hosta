@@ -1,6 +1,5 @@
 ﻿using ClientWPF.Models.Data;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.Components

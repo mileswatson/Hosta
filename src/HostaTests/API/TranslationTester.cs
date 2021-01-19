@@ -3,7 +3,6 @@ using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
-using Hosta.RPC;
 using Hosta.Tools;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

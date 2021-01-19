@@ -1,7 +1,6 @@
 ﻿using ClientWPF.ViewModels.ProfileTab;
 using ClientWPF.Views.ImagePicker;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 

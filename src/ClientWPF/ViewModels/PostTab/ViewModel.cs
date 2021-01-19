@@ -1,9 +1,9 @@
-﻿using System.Windows.Input;
-using static ClientWPF.Models.ResourceManager;
-using static ClientWPF.ApplicationEnvironment;
+﻿using ClientWPF.ViewModels.Components;
 using Hosta.API;
-using ClientWPF.ViewModels.Components;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using static ClientWPF.ApplicationEnvironment;
+using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.PostTab
 {
