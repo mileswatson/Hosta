@@ -7,16 +7,10 @@ using System.Threading.Tasks;
 
 namespace Node.Profiles
 {
-	internal class ProfileHandler
+	internal class ProfileHandler : DatabaseHandler
 	{
-		private readonly SQLiteAsyncConnection conn;
-
-		private readonly string self;
-
-		private ProfileHandler(SQLiteAsyncConnection conn, string self)
+		private ProfileHandler(SQLiteAsyncConnection conn, string self) : base(conn, self)
 		{
-			this.conn = conn;
-			this.self = self;
 		}
 
 		public static async Task<ProfileHandler> Create(SQLiteAsyncConnection conn, string self)

@@ -9,16 +9,10 @@ using System.Threading.Tasks;
 
 namespace Node.Posts
 {
-	internal class PostHandler
+	internal class PostHandler : DatabaseHandler
 	{
-		private readonly SQLiteAsyncConnection conn;
-
-		private readonly string self;
-
-		private PostHandler(SQLiteAsyncConnection conn, string self)
+		private PostHandler(SQLiteAsyncConnection conn, string self) : base(conn, self)
 		{
-			this.conn = conn;
-			this.self = self;
 		}
 
 		public static async Task<PostHandler> Create(SQLiteAsyncConnection conn, string self)
@@ -39,7 +33,7 @@ namespace Node.Posts
 			return post.ID;
 		}
 
-		public async Task<GetPostResponse> Get(string id, PublicIdentity client)
+		public async Task<GetPostResponse> Get(string id, PublicIdentity _)
 		{
 			var post = await conn.GetAsync<Post>(id);
 			return post.ToResponse();

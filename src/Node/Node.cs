@@ -21,7 +21,7 @@ namespace Node
 		/// <summary>
 		/// Handles API requests.
 		/// </summary>
-		private readonly DatabaseHandler databaseHandler;
+		private readonly APIGateway databaseHandler;
 
 		/// <summary>
 		/// IP binding modes for the node.
@@ -36,7 +36,7 @@ namespace Node
 		/// <summary>
 		/// Creates a new instance of a Node.
 		/// </summary>
-		private Node(PrivateIdentity identity, IPEndPoint endpoint, DatabaseHandler dataBaseHandler)
+		private Node(PrivateIdentity identity, IPEndPoint endpoint, APIGateway dataBaseHandler)
 		{
 			databaseHandler = dataBaseHandler;
 			gateway = new APITranslationServer(identity, endpoint, databaseHandler);
@@ -55,7 +55,7 @@ namespace Node
 			var address = await AddressFromBinding(binding);
 			var port = 12000;
 
-			var databaseHandler = await DatabaseHandler.Create(Path.Combine(folder, "hostanode.db"), privateIdentity.ID);
+			var databaseHandler = await APIGateway.Create(Path.Combine(folder, "hostanode.db"), privateIdentity.ID);
 
 			Console.WriteLine($"Creating node with location {privateIdentity.ID}:{address}:{port}");
 

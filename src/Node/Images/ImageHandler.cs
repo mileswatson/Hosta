@@ -7,16 +7,10 @@ using System.Threading.Tasks;
 
 namespace Node.Images
 {
-	internal class ImageHandler
+	internal class ImageHandler : DatabaseHandler
 	{
-		private readonly SQLiteAsyncConnection conn;
-
-		private readonly string self;
-
-		private ImageHandler(SQLiteAsyncConnection conn, string self)
+		protected ImageHandler(SQLiteAsyncConnection conn, string self) : base(conn, self)
 		{
-			this.conn = conn;
-			this.self = self;
 		}
 
 		public static async Task<ImageHandler> Create(SQLiteAsyncConnection conn, string self)
