@@ -19,7 +19,7 @@ namespace Node.Images
 			this.self = self;
 		}
 
-		public static async Task<ImageHandler> CreateAndInit(SQLiteAsyncConnection conn, string self)
+		public static async Task<ImageHandler> Create(SQLiteAsyncConnection conn, string self)
 		{
 			await conn.CreateTableAsync<Image>();
 			return new ImageHandler(conn, self);

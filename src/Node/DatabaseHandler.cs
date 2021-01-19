@@ -10,7 +10,6 @@ using Node.Profiles;
 using SQLite;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Node
@@ -26,22 +25,25 @@ namespace Node
 
 		private readonly ImageHandler images;
 
-		private DatabaseHandler(string self, SQLiteAsyncConnection conn, ImageHandler images)
+		private readonly PostHandler posts;
+
+		private DatabaseHandler(string self, SQLiteAsyncConnection conn, ImageHandler images, PostHandler posts)
 		{
 			this.self = self;
 			this.conn = conn;
 			this.images = images;
+			this.posts = posts;
 		}
 
 		public static async Task<DatabaseHandler> Create(string path, string self)
 		{
 			var conn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
 
-			var images = await ImageHandler.CreateAndInit(conn, self);
+			var images = await ImageHandler.Create(conn, self);
 
-			await conn.CreateTableAsync<Post>();
+			var posts = await PostHandler.Create(conn, self);
 
-			var h = new DatabaseHandler(self, conn, images);
+			var h = new DatabaseHandler(self, conn, images, posts);
 
 			await h.InitProfile();
 
@@ -111,72 +113,17 @@ namespace Node
 		public override Task RemoveImage(string hash, PublicIdentity client) =>
 			SafeCall(() => images.Remove(hash, client));
 
-		public override async Task<string> AddPost(AddPostRequest request, PublicIdentity client)
-		{
-			ThrowIfDisposed();
-			if (client.ID != self)
-			{
-				throw new RPException("Access denied.");
-			}
+		public override Task<string> AddPost(AddPostRequest request, PublicIdentity client) =>
+			SafeCall(() => posts.Add(request, client));
 
-			var post = Post.FromAddRequest(request);
-			try
-			{
-				var num = await conn.InsertAsync(post);
-				if (num == 0) throw new RPException("Image could not be found!");
-				return post.ID;
-			}
-			catch (Exception e) when (e is not RPException)
-			{
-				throw new RPException("Database error.");
-			}
-		}
+		public override Task<GetPostResponse> GetPost(string id, PublicIdentity client) =>
+			SafeCall(() => posts.Get(id, client));
 
-		public override async Task<GetPostResponse> GetPost(string id, PublicIdentity client)
-		{
-			ThrowIfDisposed();
-			try
-			{
-				var post = await conn.GetAsync<Post>(id);
-				return post.ToResponse();
-			}
-			catch
-			{
-				throw new RPException("Database error.");
-			}
-		}
+		public override Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity client) =>
+			SafeCall(() => posts.GetList(start, client));
 
-		public override async Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity _)
-		{
-			ThrowIfDisposed();
-			try
-			{
-				var posts = await conn.Table<Post>().Where(x => start < x.TimePosted).ToListAsync();
-				return posts.Select(x => new PostInfo { ID = x.ID, TimePosted = x.TimePosted }).ToList();
-			}
-			catch
-			{
-				throw new RPException("Database error.");
-			}
-		}
-
-		public override async Task RemovePost(string id, PublicIdentity client)
-		{
-			ThrowIfDisposed();
-			if (client.ID != self)
-			{
-				throw new RPException("Access denied.");
-			}
-			try
-			{
-				var num = await conn.DeleteAsync<Post>(id);
-				if (num == 0) throw new RPException("Image could not be found!");
-			}
-			catch (Exception e) when (e is not RPException)
-			{
-				throw new RPException("Database error.");
-			}
-		}
+		public override Task RemovePost(string id, PublicIdentity client) =>
+			SafeCall(() => posts.RemovePost(id, client));
 
 		public override async Task<GetProfileResponse> GetProfile(PublicIdentity _)
 		{
