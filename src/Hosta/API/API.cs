@@ -39,9 +39,9 @@ namespace Hosta.API
 		public abstract Task<GetPostResponse> GetPost(string id, PublicIdentity client = null);
 
 		/// <summary>
-		/// Gets a list of the posts that were added after the given datetime.
+		/// Gets a list of the posts that were added after the given DateTimeOffset.
 		/// </summary>
-		public abstract Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity client = null);
+		public abstract Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity client = null);
 
 		/// <summary>
 		/// Removes the post with the given ID.

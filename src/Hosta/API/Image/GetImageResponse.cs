@@ -9,12 +9,12 @@ namespace Hosta.API.Image
 		public byte[] Data { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public DateTime LastUpdated { get; init; }
+		public DateTimeOffset LastUpdated { get; init; }
 
 		public GetImageResponse()
 		{
 			Data = Array.Empty<byte>();
-			LastUpdated = DateTime.MinValue;
+			LastUpdated = DateTimeOffset.MinValue;
 		}
 	}
 }

@@ -107,7 +107,7 @@ namespace HostaTests.API
 			return Task.FromResult(new GetImageResponse
 			{
 				Data = images[hash],
-				LastUpdated = DateTime.Now
+				LastUpdated = DateTimeOffset.Now
 			});
 		}
 
@@ -129,7 +129,7 @@ namespace HostaTests.API
 			{
 				Content = request.Content,
 				ImageHash = request.ImageHash,
-				TimePosted = DateTime.Now
+				TimePosted = DateTimeOffset.Now
 			};
 			return Task.FromResult(id);
 		}
@@ -141,11 +141,11 @@ namespace HostaTests.API
 			{
 				Content = request.Content,
 				ImageHash = request.ImageHash,
-				TimePosted = DateTime.Now
+				TimePosted = DateTimeOffset.Now
 			});
 		}
 
-		public override Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity _)
+		public override Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity _)
 		{
 			var list = new List<PostInfo>();
 			foreach (var kvp in posts)

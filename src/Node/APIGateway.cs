@@ -88,7 +88,7 @@ namespace Node
 		public override Task<GetPostResponse> GetPost(string id, PublicIdentity client) =>
 			Call(() => posts.Get(id, client));
 
-		public override Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity client) =>
+		public override Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity client) =>
 			Call(() => posts.GetList(start, client));
 
 		public override Task RemovePost(string id, PublicIdentity client) =>

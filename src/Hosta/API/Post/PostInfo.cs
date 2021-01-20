@@ -9,12 +9,12 @@ namespace Hosta.API.Post
 		public string ID { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public DateTime TimePosted { get; init; }
+		public DateTimeOffset TimePosted { get; init; }
 
 		public PostInfo()
 		{
 			ID = "";
-			TimePosted = DateTime.MinValue;
+			TimePosted = DateTimeOffset.MinValue;
 		}
 	}
 }

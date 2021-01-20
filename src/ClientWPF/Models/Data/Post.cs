@@ -30,7 +30,7 @@ namespace ClientWPF.Models.Data
 			ID = id,
 			Content = response.Content,
 			ImageHash = response.ImageHash,
-			TimePosted = response.TimePosted
+			TimePosted = response.TimePosted.LocalDateTime
 		};
 	}
 }

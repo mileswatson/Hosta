@@ -12,13 +12,13 @@ namespace Hosta.API.Post
 		public string ImageHash { get; init; }
 
 		[JsonProperty(Required = Required.Always)]
-		public DateTime TimePosted { get; init; }
+		public DateTimeOffset TimePosted { get; init; }
 
 		public GetPostResponse()
 		{
 			Content = "";
 			ImageHash = "";
-			TimePosted = DateTime.MinValue;
+			TimePosted = DateTimeOffset.MinValue;
 		}
 	}
 }
