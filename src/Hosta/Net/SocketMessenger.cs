@@ -1,6 +1,5 @@
 ﻿using Hosta.Tools;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -56,32 +55,16 @@ namespace Hosta.Net
 			try
 			{
 				// Read the length from the stream
-				var lengthBytes = new byte[4];
-				await ReadIntoBuffer(lengthBytes).ConfigureAwait(false);
+				var lengthBytes = await ReadUntilDone(4);
 
 				// Convert the length to an integer and check that it's valid.
 				int length = BitConverter.ToInt32(lengthBytes, 0);
 				if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
 
-				// Read the message from the stream
-				var bytes = new List<byte>();
-				if (length >= ChunkSize)
-				{
-					var buffer = new byte[ChunkSize];
-					while (length >= ChunkSize)
-					{
-						await ReadIntoBuffer(buffer).ConfigureAwait(false);
-						bytes.AddRange(buffer);
-						length -= ChunkSize;
-					}
-				}
-				if (length > 0)
-				{
-					var buffer = new byte[length];
-					await ReadIntoBuffer(buffer).ConfigureAwait(false);
-					bytes.AddRange(buffer);
-				}
-				return bytes.ToArray();
+				// Read the message from the stream, and return it
+				var message = await ReadUntilDone(length).ConfigureAwait(false);
+
+				return message;
 			}
 			catch
 			{
@@ -96,19 +79,40 @@ namespace Hosta.Net
 		}
 
 		/// <summary>
+		/// Reads the given number of bytes into a buffer.
+		/// </summary>
+		private async Task<byte[]> ReadUntilDone(int length)
+		{
+			// Create a buffer to store the result
+			var buffer = new byte[length];
+
+			// Reading the full message may require multiple calls, so store
+			// an offset to keep track of the number of bytes read.
+			var offset = 0;
+			while (offset < buffer.Length)
+			{
+				var numBytes = await ReadIntoBuffer(buffer, offset).ConfigureAwait(false);
+				offset += numBytes;
+			}
+
+			// Return now that the buffer is full.
+			return buffer;
+		}
+
+		/// <summary>
 		/// A TAP to APM wrapper for reading a message from a stream.
 		/// </summary>
-		private Task ReadIntoBuffer(byte[] buffer)
+		private Task<int> ReadIntoBuffer(byte[] buffer, int offset)
 		{
-			var tcs = new TaskCompletionSource();
+			var tcs = new TaskCompletionSource<int>();
 
 			// Read data into fixed length buffer.
-			socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, ar =>
+			socket.BeginReceive(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
 			{
 				try
 				{
-					socket.EndReceive(ar);
-					tcs.SetResult();
+					var numBytesRead = socket.EndReceive(ar);
+					tcs.SetResult(numBytesRead);
 				}
 				catch (Exception e)
 				{
@@ -119,8 +123,7 @@ namespace Hosta.Net
 		}
 
 		/// <summary>
-		/// Asynchronously sends a message over
-		/// a TCP stream.
+		/// Asynchronously sends a message over a TCP stream.
 		/// </summary>
 		public async Task Send(byte[] message)
 		{
@@ -133,7 +136,12 @@ namespace Hosta.Net
 
 			try
 			{
-				await WriteLengthAndMessage(message).ConfigureAwait(false);
+				// Convert the length of the message to bytes, then write it to the stream.
+				var lengthBytes = BitConverter.GetBytes(message.Length);
+				await WriteUntilDone(lengthBytes).ConfigureAwait(false);
+
+				// Write the message to the stream
+				await WriteUntilDone(message).ConfigureAwait(false);
 			}
 			catch
 			{
@@ -147,33 +155,38 @@ namespace Hosta.Net
 			}
 		}
 
-		/// <summary>
-		/// An TAP to APM wrapper for writing a message to a stream.
-		/// </summary>
-		private Task WriteLengthAndMessage(byte[] message)
+		private async Task WriteUntilDone(byte[] buffer)
 		{
-			var tcs = new TaskCompletionSource();
+			// Reading the full message may require multiple calls, so store
+			// an offset to keep track of the number of bytes read.
+			var offset = 0;
+			while (offset < buffer.Length)
+			{
+				var numBytes = await WriteFromBuffer(buffer, offset).ConfigureAwait(false);
+				offset += numBytes;
+			}
+		}
 
-			// Concatenate length and message.
-			List<byte> package = new List<byte>();
-			package.AddRange(BitConverter.GetBytes(message.Length));
-			package.AddRange(message);
+		/// <summary>
+		/// A TAP to APM wrapper for reading a message from a stream.
+		/// </summary>
+		private Task<int> WriteFromBuffer(byte[] buffer, int offset)
+		{
+			var tcs = new TaskCompletionSource<int>();
 
-			// Convert to an array and send.
-			byte[] blob = package.ToArray();
-			socket.BeginSend(blob, 0, blob.Length, 0, ar =>
+			// Read data into fixed length buffer.
+			socket.BeginSend(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
 			{
 				try
 				{
-					socket.EndSend(ar);
-					tcs.SetResult();
+					var numBytesWritten = socket.EndSend(ar);
+					tcs.SetResult(numBytesWritten);
 				}
 				catch (Exception e)
 				{
 					tcs.SetException(e);
 				}
 			}, null);
-
 			return tcs.Task;
 		}
 
