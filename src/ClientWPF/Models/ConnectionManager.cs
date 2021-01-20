@@ -1,5 +1,6 @@
 ﻿using Hosta.API;
 using Hosta.Crypto;
+using Hosta.Tools;
 using System;
 using System.Threading.Tasks;
 

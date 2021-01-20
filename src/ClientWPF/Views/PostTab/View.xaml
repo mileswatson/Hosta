@@ -28,7 +28,7 @@
 					<ContentPresenter Content="{Binding Image}">
 						<ContentPresenter.Resources>
 							<DataTemplate DataType="{x:Type componentviewmodels:ImageViewModel}">
-								<componentviews:ImageView DataContext="{Binding}" Width="320" Height="320" />
+								<componentviews:ImageView DataContext="{Binding}" Width="160" Height="160" />
 							</DataTemplate>
 						</ContentPresenter.Resources>
 					</ContentPresenter>

@@ -39,7 +39,7 @@ namespace Node.Posts
 			return post.ToResponse();
 		}
 
-		public async Task<List<PostInfo>> GetList(DateTime start, PublicIdentity _)
+		public async Task<List<PostInfo>> GetList(DateTimeOffset start, PublicIdentity _)
 		{
 			var posts = await conn.Table<Post>().Where(x => start < x.TimePosted).ToListAsync();
 			return posts.Select(x => new PostInfo { ID = x.ID, TimePosted = x.TimePosted }).ToList();

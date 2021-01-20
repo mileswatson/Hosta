@@ -119,7 +119,7 @@ namespace Hosta.API
 			return Import<GetPostResponse>(str);
 		}
 
-		public override async Task<List<PostInfo>> GetPostList(DateTime start, PublicIdentity? _ = null)
+		public override async Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity? _ = null)
 		{
 			ThrowIfDisposed();
 			var str = await Call(nameof(GetPostList), Export(start));

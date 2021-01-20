@@ -134,10 +134,10 @@ namespace Hosta.API
 
 		public async Task<string> GetPostList(string args, PublicIdentity client)
 		{
-			DateTime start;
+			DateTimeOffset start;
 			try
 			{
-				start = API.Import<DateTime>(args);
+				start = API.Import<DateTimeOffset>(args);
 			}
 			catch
 			{
