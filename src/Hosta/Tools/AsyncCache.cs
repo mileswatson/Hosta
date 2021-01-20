@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ClientWPF.Models
+namespace Hosta.Tools
 {
 	/// <summary>
 	/// A simple thread-safe cache.
