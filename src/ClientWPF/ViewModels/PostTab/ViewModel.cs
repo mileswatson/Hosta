@@ -1,5 +1,6 @@
 ﻿using ClientWPF.ViewModels.Components;
 using Hosta.API;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using static ClientWPF.ApplicationEnvironment;
@@ -46,7 +47,7 @@ namespace ClientWPF.ViewModels.PostTab
 
 		public ICommand Post { get; init; }
 
-		public ViewModel()
+		public ViewModel(Action OnPosted)
 		{
 			RemoveImage = new RelayCommand((object? _) =>
 			{
@@ -59,8 +60,10 @@ namespace ClientWPF.ViewModels.PostTab
 				try
 				{
 					var id = await Resources!.AddPost(Content, avatarHash);
-					Env.Alert($"Posted! ID = {id}");
 					Content = "";
+					avatarHash = "";
+					Image = null;
+					OnPosted();
 				}
 				catch (APIException e)
 				{

@@ -16,6 +16,8 @@ namespace ClientWPF
 
 		//// Defaults
 
+		public string DefaultFolder { get; protected set; }
+
 		public virtual void Alert(string message) => Console.WriteLine(message);
 
 		public virtual bool Confirm(string message)
@@ -35,5 +37,10 @@ namespace ClientWPF
 		public virtual Task<byte[]> ReadFileRaw(string path) => File.ReadAllBytesAsync(path);
 
 		public virtual Task WriteFileRaw(string path, byte[] data) => File.WriteAllBytesAsync(path, data);
+
+		public ApplicationEnvironment()
+		{
+			DefaultFolder = "";
+		}
 	}
 }

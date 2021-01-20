@@ -37,10 +37,10 @@ namespace ClientWPF.ViewModels
 		public ConnectedViewModel(Action OnDisconnect)
 		{
 			homeTab = new();
-			postTab = new();
 			imagesTab = new();
 			profileTab = new();
-			settingsTab = new(() => OnDisconnect());
+			postTab = new(() => VM = profileTab);
+			settingsTab = new(OnDisconnect);
 
 			_vm = homeTab;
 			HomeTab = new RelayCommand((object? _) => { VM = homeTab; });

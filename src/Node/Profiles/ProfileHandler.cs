@@ -53,8 +53,8 @@ namespace Node.Profiles
 				throw new APIException($"Name used {r.Name.Length}/18 characters.");
 			if (r.Tagline.Length > 30)
 				throw new APIException($"Tagline used {r.Tagline.Length}/30 characters.");
-			if (r.Bio.Length > 200)
-				throw new APIException($"Bio used {r.Bio.Length}/200 characters.");
+			if (r.Bio.Length > 400)
+				throw new APIException($"Bio used {r.Bio.Length}/400 characters.");
 
 			await conn.InsertOrReplaceAsync(Profile.FromSetRequest(r, self));
 		}

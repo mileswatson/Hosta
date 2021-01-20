@@ -42,22 +42,21 @@
 			<StackPanel Grid.Column="1">
 				<DockPanel>
 					<Label Content="{Binding TimePosted}" DockPanel.Dock="Right"
-						   Style="{StaticResource FieldLabel}" Foreground="DimGray" VerticalAlignment="Bottom" Margin="5,0" />
+						   Style="{StaticResource FieldLabel}" Foreground="DimGray" VerticalAlignment="Bottom" Margin="0, 0, 5, 0" />
 					<Label Content="{Binding Profile.Name}" DockPanel.Dock="Left"
 						   Style="{StaticResource SubHeadingLabel}" FontSize="24" Padding="0" VerticalAlignment="Bottom" Margin="5,0" />
 				</DockPanel>
 
-				<DockPanel>
-					<ContentPresenter Content="{Binding Image}" DockPanel.Dock="Right">
-						<ContentPresenter.Resources>
-							<DataTemplate DataType="{x:Type componentviewmodels:ImageViewModel}">
-								<componentviews:ImageView DataContext="{Binding}" Width="160" Height="160" Padding="0,0,10,0" HorizontalAlignment="Left" />
-							</DataTemplate>
-						</ContentPresenter.Resources>
-					</ContentPresenter>
-					<TextBlock Text="{Binding Content}" TextWrapping="Wrap" DockPanel.Dock="Left"
+				<TextBlock Text="{Binding Content}" TextWrapping="Wrap"
 							   Style="{StaticResource TextBlock}" FontSize="16" Padding="5" />
-				</DockPanel>
+
+				<ContentPresenter Content="{Binding Image}">
+					<ContentPresenter.Resources>
+						<DataTemplate DataType="{x:Type componentviewmodels:ImageViewModel}">
+							<componentviews:ImageView DataContext="{Binding}" Width="320" Height="320" Padding="10, 0" HorizontalAlignment="Left" />
+						</DataTemplate>
+					</ContentPresenter.Resources>
+				</ContentPresenter>
 			</StackPanel>
 		</Grid>
 	</Border>
