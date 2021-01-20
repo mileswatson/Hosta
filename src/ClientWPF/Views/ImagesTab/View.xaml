@@ -39,7 +39,7 @@
 						<DataTemplate DataType="{x:Type componentviewmodels:ImageViewModel}">
 							<componentviews:ImageView DataContext="{Binding}" Width="160" Height="160" Margin="10">
 								<componentviews:ImageView.ContextMenu>
-									<ContextMenu StaysOpen="True">
+									<ContextMenu StaysOpen="True" Style="{StaticResource ContextMenu}">
 										<MenuItem Header="Copy" Click="CopyMenuItem_Clicked" Tag="{Binding Hash}" />
 										<MenuItem Header="Delete"
 												  Command="{Binding DataContext.Remove, Source={x:Reference items}}"

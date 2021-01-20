@@ -7,14 +7,15 @@
              xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
 			 xmlns:viewmodels="clr-namespace:ClientWPF.ViewModels"
              mc:Ignorable="d"
+			 Width="600"
              d:DesignHeight="300" d:DesignWidth="800">
 
 	<Border Background="WhiteSmoke" BorderBrush="DimGray" BorderThickness="3px" CornerRadius="5">
 		<Grid Background="WhiteSmoke" Margin="5">
 
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="100" />
-				<ColumnDefinition Width="*" MinWidth="320" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 
 			<componentviews:ProfileImageView Grid.Column="0" DataContext="{Binding Profile.Image}"
@@ -22,37 +23,37 @@
 
 			<StackPanel Grid.Column="1">
 				<DockPanel>
-					<Button Content="..." DockPanel.Dock="Right" Click="DropdownButton_Clicked" Style="{StaticResource Button}">
+					<Button Content="..." DockPanel.Dock="Right" Click="DropdownButton_Clicked"
+							Style="{StaticResource Button}" Height="24" Width="32">
 						<Button.ContextMenu>
-							<ContextMenu x:Name="DropdownMenu">
-								<ItemsControl ItemsSource="{Binding MenuItems}">
-									<ItemsControl.ItemTemplate>
-										<DataTemplate>
-											<MenuItem Header="{Binding Header}"
+							<ContextMenu x:Name="DropdownMenu" Style="{StaticResource ContextMenu}" ItemsSource="{Binding MenuItems}">
+								<ItemsControl.ItemTemplate>
+									<DataTemplate>
+										<MenuItem Header="{Binding Header}"
 													  Command="{Binding Command}"
-													  CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=componentviews:PostView}}" />
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-								</ItemsControl>
+													  CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=componentviews:PostView}}">
+										</MenuItem>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
 							</ContextMenu>
 						</Button.ContextMenu>
 					</Button>
 					<Label Content="{Binding TimePosted}" DockPanel.Dock="Right"
 						   Style="{StaticResource FieldLabel}" Foreground="DimGray" />
 					<Label Content="{Binding Profile.Name}" DockPanel.Dock="Left"
-						   Style="{StaticResource SubHeadingLabel}" />
+						   Style="{StaticResource SubHeadingLabel}" FontSize="24" />
 				</DockPanel>
 
 				<DockPanel>
 					<ContentPresenter Content="{Binding Image}" DockPanel.Dock="Right">
 						<ContentPresenter.Resources>
 							<DataTemplate DataType="{x:Type componentviewmodels:ImageViewModel}">
-								<componentviews:ImageView DataContext="{Binding}" Width="320" Height="320" Padding="10" HorizontalAlignment="Left" />
+								<componentviews:ImageView DataContext="{Binding}" Width="160" Height="160" Padding="0,0,20,20" HorizontalAlignment="Left" />
 							</DataTemplate>
 						</ContentPresenter.Resources>
 					</ContentPresenter>
 					<TextBlock Text="{Binding Content}" TextWrapping="Wrap" DockPanel.Dock="Left"
-							   Style="{StaticResource TextBlock}" />
+							   Style="{StaticResource TextBlock}" FontSize="16" />
 				</DockPanel>
 			</StackPanel>
 		</Grid>

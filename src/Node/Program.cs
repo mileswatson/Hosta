@@ -24,7 +24,7 @@ namespace Node
 			}
 
 			// Create and run node.
-			node = await Node.Create(path, Node.Binding.Local);
+			node = await Node.Create(path, Node.Binding.Loopback);
 			var running = node.Run();
 
 			// Capture cancel event
