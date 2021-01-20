@@ -14,9 +14,9 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="3*" />
+			<ColumnDefinition MinWidth="510" />
 			<ColumnDefinition Width="10" />
-			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="250" />
 		</Grid.ColumnDefinitions>
 
 		<Label Content="HOME"
