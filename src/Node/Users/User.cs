@@ -17,11 +17,14 @@ namespace Node.Users
 		[PrimaryKey]
 		public string UserID { get; init; }
 
+		public string Name { get; init; }
+
 		public Auth AuthLevel { get; init; }
 
 		public User()
 		{
 			UserID = "";
+			Name = "";
 			AuthLevel = Auth.NotBlocked;
 		}
 	}

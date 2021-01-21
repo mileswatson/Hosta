@@ -40,15 +40,15 @@ namespace HostaTests.API
 		[TestMethod]
 		public async Task SetGetFriends()
 		{
-			var friend = new FriendInfo { ID = "test", IsFavorite = false };
+			var friend = new FriendInfo { ID = "id", Name = "name", IsFavorite = false };
 			await remoteGateway.SetFriend(friend);
 			var list = await remoteGateway.GetFriendList();
 			Assert.AreEqual(list[0], friend);
-			friend = new FriendInfo { ID = "test", IsFavorite = true };
+			friend = new FriendInfo { ID = "id", Name = "othername", IsFavorite = true };
 			await remoteGateway.SetFriend(friend);
 			list = await remoteGateway.GetFriendList();
 			Assert.AreEqual(list[0], friend);
-			await remoteGateway.RemoveFriend("test");
+			await remoteGateway.RemoveFriend("id");
 			list = await remoteGateway.GetFriendList();
 			Assert.IsTrue(list.Count == 0);
 		}
