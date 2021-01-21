@@ -9,12 +9,12 @@ namespace ClientWPF.ViewModels.HomeTab
 	{
 		public PostFeedViewModel Feed { get; init; }
 
-		public FriendsViewModel Friends { get; init; }
+		public PeopleViewModel Friends { get; init; }
 
 		public ViewModel()
 		{
 			Feed = new PostFeedViewModel(Resources!.Self, new());
-			Friends = new FriendsViewModel();
+			Friends = new PeopleViewModel();
 		}
 
 		public override Task UpdateAsync(bool force)

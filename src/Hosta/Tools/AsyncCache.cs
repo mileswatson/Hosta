@@ -18,11 +18,11 @@ namespace Hosta.Tools
 
 		private readonly ItemChecker IsValidItem;
 
-		private ItemChecker DefaultChecker = task => true;
+		private readonly ItemChecker DefaultChecker = task => true;
 
 		private readonly ItemDisposer DisposeItem;
 
-		private ItemDisposer DefaultDisposer = task => { };
+		private readonly ItemDisposer DefaultDisposer = task => { };
 
 		/// <summary>
 		/// Creates a new AsyncCache.

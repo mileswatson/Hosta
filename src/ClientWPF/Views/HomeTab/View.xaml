@@ -24,7 +24,7 @@
 			   Grid.Row="0" Grid.Column="0"
 			   Style="{StaticResource TabHeadingLabel}" />
 
-		<Label Content="FRIENDS"
+		<Label Content="PEOPLE"
 			   Grid.Row="0" Grid.Column="2"
 			   Style="{StaticResource TabHeadingLabel}" />
 
@@ -33,7 +33,7 @@
 		</ScrollViewer>
 
 		<ScrollViewer Grid.Row="2" Grid.Column="2">
-			<local:FriendsView DataContext="{Binding Friends}" />
+			<local:PeopleView DataContext="{Binding Friends}" />
 		</ScrollViewer>
 	</Grid>
 </UserControl>

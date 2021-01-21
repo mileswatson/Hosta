@@ -51,7 +51,7 @@ namespace ClientWPF.Models
 			return await conn.GetFriendList();
 		}
 
-		public async Task SetFriend(string user, bool favorite, PublicIdentity client)
+		public async Task SetFriend(string user, bool favorite)
 		{
 			var conn = await connections.GetConnection(Self);
 			await conn.SetFriend(new FriendInfo
@@ -61,7 +61,7 @@ namespace ClientWPF.Models
 			});
 		}
 
-		public async Task RemoveFriend(string user, PublicIdentity client)
+		public async Task RemoveFriend(string user)
 		{
 			var conn = await connections.GetConnection(Self);
 			await conn.RemoveFriend(user);

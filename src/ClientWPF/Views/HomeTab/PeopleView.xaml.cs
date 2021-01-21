@@ -18,9 +18,9 @@ namespace ClientWPF.Views.HomeTab
 	/// <summary>
 	/// Interaction logic for FriendsView.xaml
 	/// </summary>
-	public partial class FriendsView : UserControl
+	public partial class PeopleView : UserControl
 	{
-		public FriendsView()
+		public PeopleView()
 		{
 			InitializeComponent();
 		}

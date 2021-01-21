@@ -6,6 +6,19 @@
              xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
              mc:Ignorable="d"
 			 Width="200" Height="60">
+	<UserControl.ContextMenu>
+		<ContextMenu Style="{StaticResource ContextMenu}" ItemsSource="{Binding MenuItems}">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<MenuItem Header="{Binding Header}"
+							  Command="{Binding Command}"
+							  CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=componentviews:PostView}}">
+					</MenuItem>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ContextMenu>
+	</UserControl.ContextMenu>
+
 	<Border Background="WhiteSmoke" BorderBrush="DimGray" BorderThickness="2px" CornerRadius="5">
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -13,11 +26,11 @@
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 
-			<componentviews:ProfileImageView DataContext="{Binding Image}" Grid.Column="0"
-										 Width="40" Height="40" Margin="10" />
+			<componentviews:ProfileImageView DataContext="{Binding Profile.Image}" Grid.Column="0"
+										 Width="40" Height="40" Margin="8" />
 
-			<TextBlock Text="{Binding Name}" Grid.Column="1" TextWrapping="WrapWithOverflow"
-			   Style="{StaticResource TextBlock}" FontWeight="Bold" Margin="5,0" FontSize="16" />
+			<TextBlock Text="{Binding Name}" Grid.Column="1" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"
+			   Style="{StaticResource TextBlock}" FontWeight="Bold" Margin="0,0,5,5" FontSize="16" Padding="0, 0, 5, 0" />
 		</Grid>
 	</Border>
 </UserControl>
