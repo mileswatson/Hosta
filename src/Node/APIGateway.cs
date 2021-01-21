@@ -1,8 +1,10 @@
 ﻿using Hosta.API;
+using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
+using Node.Users;
 using Node.Images;
 using Node.Posts;
 using Node.Profiles;
@@ -18,14 +20,17 @@ namespace Node
 	/// </summary>
 	internal class APIGateway : API
 	{
+		private readonly UserHandler users;
+
 		private readonly ImageHandler images;
 
 		private readonly PostHandler posts;
 
 		private readonly ProfileHandler profiles;
 
-		private APIGateway(ImageHandler images, PostHandler posts, ProfileHandler profiles)
+		private APIGateway(UserHandler users, ImageHandler images, PostHandler posts, ProfileHandler profiles)
 		{
+			this.users = users;
 			this.images = images;
 			this.posts = posts;
 			this.profiles = profiles;
@@ -35,13 +40,15 @@ namespace Node
 		{
 			var conn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
 
-			var images = await ImageHandler.Create(conn, self);
+			var users = await UserHandler.Create(conn, self);
 
-			var posts = await PostHandler.Create(conn, self);
+			var images = await ImageHandler.Create(conn, users);
 
-			var profiles = await ProfileHandler.Create(conn, self);
+			var posts = await PostHandler.Create(conn, users);
 
-			return new APIGateway(images, posts, profiles);
+			var profiles = await ProfileHandler.Create(conn, users);
+
+			return new APIGateway(users, images, posts, profiles);
 		}
 
 		public static async Task Call(Func<Task> action)
@@ -69,6 +76,15 @@ namespace Node
 		}
 
 		//// Implementations
+
+		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity client) =>
+			Call(() => users.GetFriendList(client));
+
+		public override Task SetFriend(FriendInfo info, PublicIdentity client) =>
+			Call(() => users.SetFriend(info, client));
+
+		public override Task RemoveFriend(string user, PublicIdentity client) =>
+			Call(() => users.RemoveFriend(user, client));
 
 		public override Task<string> AddImage(AddImageRequest request, PublicIdentity client) =>
 			Call(() => images.Add(request, client));
