@@ -1,4 +1,5 @@
 ﻿using Hosta.API;
+using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
@@ -7,6 +8,7 @@ using Hosta.Tools;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -33,6 +35,33 @@ namespace HostaTests.API
 			running = localGateway.Run();
 			var args = new APITranslatorClient.ConnectionArgs { Address = IPAddress.Loopback, Port = 12000, Self = client, ServerID = server.ID };
 			remoteGateway = APITranslatorClient.CreateAndConnect(args).Result;
+		}
+
+		[TestMethod]
+		public async Task SetGetFriends()
+		{
+			var friend = new FriendInfo { ID = "test", IsFavorite = false };
+			await remoteGateway.SetFriend(friend);
+			var list = await remoteGateway.GetFriendList();
+			Assert.AreEqual(list[0], friend);
+			friend = new FriendInfo { ID = "test", IsFavorite = true };
+			await remoteGateway.SetFriend(friend);
+			list = await remoteGateway.GetFriendList();
+			Assert.AreEqual(list[0], friend);
+			await remoteGateway.RemoveFriend("test");
+			list = await remoteGateway.GetFriendList();
+			Assert.IsTrue(list.Count == 0);
+		}
+
+		[TestMethod]
+		public async Task AddGetImage()
+		{
+			var data = new byte[] { 0, 1, 3, 255, 6, 0 };
+			var hash = Transcoder.HexFromBytes(SHA256.HashData(data));
+			await Assert.ThrowsExceptionAsync<APIException>(() => remoteGateway.GetImage(hash));
+			hash = await remoteGateway.AddImage(new AddImageRequest { Data = data });
+			var response = await remoteGateway.GetImage(hash);
+			CollectionAssert.AreEqual(data, response.Data);
 		}
 
 		[TestMethod]
@@ -67,17 +96,6 @@ namespace HostaTests.API
 			Assert.AreEqual((await remoteGateway.GetPost(id2)).Content, "2");
 		}
 
-		[TestMethod]
-		public async Task AddGetImage()
-		{
-			var data = new byte[] { 0, 1, 3, 255, 6, 0 };
-			var hash = Transcoder.HexFromBytes(SHA256.HashData(data));
-			await Assert.ThrowsExceptionAsync<APIException>(() => remoteGateway.GetImage(hash));
-			hash = await remoteGateway.AddImage(new AddImageRequest { Data = data });
-			var response = await remoteGateway.GetImage(hash);
-			CollectionAssert.AreEqual(data, response.Data);
-		}
-
 		[TestCleanup]
 		public async Task Cleanup()
 		{
@@ -94,6 +112,25 @@ namespace HostaTests.API
 		private readonly Dictionary<string, byte[]> images = new();
 
 		private readonly Dictionary<string, GetPostResponse> posts = new();
+
+		private readonly Dictionary<string, FriendInfo> friends = new();
+
+		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity _)
+		{
+			return Task.FromResult(friends.Select(kvp => kvp.Value).ToList());
+		}
+
+		public override Task RemoveFriend(string user, PublicIdentity _)
+		{
+			friends.Remove(user);
+			return Task.CompletedTask;
+		}
+
+		public override Task SetFriend(FriendInfo info, PublicIdentity _)
+		{
+			friends[info.ID] = info;
+			return Task.CompletedTask;
+		}
 
 		public override Task<string> AddImage(AddImageRequest request, PublicIdentity _)
 		{

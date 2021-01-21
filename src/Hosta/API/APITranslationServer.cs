@@ -1,4 +1,5 @@
-﻿using Hosta.API.Image;
+﻿using Hosta.API.Friend;
+using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
@@ -43,6 +44,9 @@ namespace Hosta.API
 			// Decides which handler to use.
 			ProcedureHandler handler = proc switch
 			{
+				nameof(GetFriendList) => GetFriendList,
+				nameof(RemoveFriend) => RemoveFriend,
+				nameof(SetFriend) => SetFriend,
 				nameof(AddImage) => AddImage,
 				nameof(GetImage) => GetImage,
 				nameof(GetImageList) => GetImageList,
@@ -80,6 +84,33 @@ namespace Hosta.API
 
 		//// Translators
 
+		public async Task<string> GetFriendList(string _, PublicIdentity client)
+		{
+			var response = await api.GetFriendList(client);
+			return API.Export(response);
+		}
+
+		public async Task<string> RemoveFriend(string args, PublicIdentity client)
+		{
+			await api.RemoveFriend(args, client);
+			return "";
+		}
+
+		public async Task<string> SetFriend(string args, PublicIdentity client)
+		{
+			FriendInfo info;
+			try
+			{
+				info = API.Import<FriendInfo>(args);
+			}
+			catch
+			{
+				throw new RPException("Arguments were formatted incorrectly!");
+			}
+			await api.SetFriend(info, client);
+			return "";
+		}
+
 		public async Task<string> AddImage(string args, PublicIdentity client)
 		{
 			AddImageRequest r;
@@ -100,7 +131,7 @@ namespace Hosta.API
 			return API.Export(response);
 		}
 
-		public async Task<string> GetImageList(string args, PublicIdentity client)
+		public async Task<string> GetImageList(string _, PublicIdentity client)
 		{
 			var response = await api.GetImageList(client);
 			return API.Export(response);
