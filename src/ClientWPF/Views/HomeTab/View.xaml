@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
 			 xmlns:componentviewmodels="clr-namespace:ClientWPF.Views.Components"
+			 xmlns:local="clr-namespace:ClientWPF.Views.HomeTab"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid Background="White">
@@ -23,67 +24,16 @@
 			   Grid.Row="0" Grid.Column="0"
 			   Style="{StaticResource TabHeadingLabel}" />
 
-		<Label Content="LEADERS "
+		<Label Content="FRIENDS"
 			   Grid.Row="0" Grid.Column="2"
 			   Style="{StaticResource TabHeadingLabel}" />
 
 		<ScrollViewer Grid.Row="2" Grid.Column="0">
-			<StackPanel>
-				<ItemsControl ItemsSource="{Binding Posts}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="{x:Type componentviewmodels:PostView}">
-							<componentviews:PostView DataContext="{Binding}" />
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-			</StackPanel>
+			<componentviews:PostFeedView DataContext="{Binding Feed}" />
 		</ScrollViewer>
 
 		<ScrollViewer Grid.Row="2" Grid.Column="2">
-			<StackPanel>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-				<TextBlock TextWrapping="Wrap">
-					Leader Leader Leader Leader Leader Leader
-				</TextBlock>
-			</StackPanel>
+			<local:FriendsView DataContext="{Binding Friends}" />
 		</ScrollViewer>
 	</Grid>
 </UserControl>
