@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientWPF.Views.HomeTab"
         mc:Ignorable="d"
-        Title="" Height="170" Width="400">
+        Title="" MinHeight="200" MaxHeight="200" MinWidth="400" MaxWidth="400">
 	<StackPanel Background="White">
 
 		<Label Content="Add a Friend" Style="{StaticResource TabHeadingLabel}" />

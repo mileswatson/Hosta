@@ -1,7 +1,9 @@
 ﻿using Hosta.API;
 using Hosta.API.Friend;
 using Hosta.Crypto;
+using Hosta.Tools;
 using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -86,6 +88,25 @@ namespace Node.Users
 		public async Task SetFriend(FriendInfo info, PublicIdentity client)
 		{
 			await Authenticate(client, User.Auth.Self);
+
+			try
+			{
+				var bytes = Transcoder.BytesFromHex(info.ID);
+				if (bytes.Length != 32) throw new Exception();
+			}
+			catch
+			{
+				throw new APIException("Invalid ID format.");
+			}
+
+			var num = await conn.Table<User>()
+			.Where(user => user.Name == info.Name)
+			.CountAsync();
+
+			if (num > 0)
+			{
+				throw new APIException("Name already taken.");
+			}
 
 			var friend = new User()
 			{
