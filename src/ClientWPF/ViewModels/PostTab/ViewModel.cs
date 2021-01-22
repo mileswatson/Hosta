@@ -59,7 +59,7 @@ namespace ClientWPF.ViewModels.PostTab
 				if (!Env.Confirm("Are you sure you want to post?")) return;
 				try
 				{
-					var id = await Resources!.AddPost(Content, avatarHash);
+					await Resources!.AddPost(Content, avatarHash);
 					Content = "";
 					avatarHash = "";
 					Image = null;

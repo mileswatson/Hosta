@@ -51,12 +51,13 @@ namespace ClientWPF.Models
 			return await conn.GetFriendList();
 		}
 
-		public async Task SetFriend(string user, bool favorite)
+		public async Task SetFriend(string user, string name, bool favorite)
 		{
 			var conn = await connections.GetConnection(Self);
 			await conn.SetFriend(new FriendInfo
 			{
 				ID = user,
+				Name = name,
 				IsFavorite = favorite
 			});
 		}

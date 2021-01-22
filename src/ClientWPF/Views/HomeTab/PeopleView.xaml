@@ -3,24 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:componentviewmodels="clr-namespace:ClientWPF.ViewModels.Components"
+			 xmlns:viewmodels="clr-namespace:ClientWPF.ViewModels.HomeTab"
              xmlns:local="clr-namespace:ClientWPF.Views.HomeTab"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="250">
 	<StackPanel Background="White">
 		<local:FriendView DataContext="{Binding Self}" Margin="0,10,0,5" />
 		<Label Content="Favorites" Style="{StaticResource SubHeadingLabel}" />
 		<ItemsControl ItemsSource="{Binding Favorites}">
 			<ItemsControl.ItemTemplate>
-				<DataTemplate DataType="{x:Type componentviewmodels:ProfileViewModel}">
+				<DataTemplate DataType="{x:Type viewmodels:FriendViewModel}">
 					<local:FriendView DataContext="{Binding}" Margin="0, 5" />
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
-		<Label Content="Friends" Style="{StaticResource SubHeadingLabel}" />
+		<DockPanel>
+			<Button Content="+" Click="AddFriendButton_Click"
+					DockPanel.Dock="Right" Width="24" Height="24" Margin="10, 0" />
+			<Label Content="Friends" Style="{StaticResource SubHeadingLabel}" />
+		</DockPanel>
+
 		<ItemsControl ItemsSource="{Binding Friends}">
 			<ItemsControl.ItemTemplate>
-				<DataTemplate DataType="{x:Type componentviewmodels:ProfileViewModel}">
+				<DataTemplate DataType="{x:Type viewmodels:FriendViewModel}">
 					<local:FriendView DataContext="{Binding}" Margin="0, 5" />
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>

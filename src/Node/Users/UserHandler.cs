@@ -59,7 +59,12 @@ namespace Node.Users
 			List<FriendInfo> friends = new();
 			foreach (var user in users)
 			{
-				friends.Add(new FriendInfo { ID = user.UserID, IsFavorite = (user.AuthLevel == User.Auth.Favorite) });
+				friends.Add(new FriendInfo
+				{
+					ID = user.UserID,
+					Name = user.Name,
+					IsFavorite = (user.AuthLevel == User.Auth.Favorite)
+				});
 			}
 			return friends;
 		}
@@ -85,6 +90,7 @@ namespace Node.Users
 			var friend = new User()
 			{
 				UserID = info.ID,
+				Name = info.Name,
 				AuthLevel = info.IsFavorite ? User.Auth.Favorite : User.Auth.Friend
 			};
 
