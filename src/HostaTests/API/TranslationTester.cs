@@ -115,6 +115,11 @@ namespace HostaTests.API
 
 		private readonly Dictionary<string, FriendInfo> friends = new();
 
+		public override Task InformAddress(IPEndPoint? _1 = null, PublicIdentity? _2 = null)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity _)
 		{
 			return Task.FromResult(friends.Select(kvp => kvp.Value).ToList());

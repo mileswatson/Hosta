@@ -6,12 +6,18 @@ using Hosta.Crypto;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Hosta.API
 {
 	public abstract class API
 	{
+		/// <summary>
+		/// Informs the node of the client node's address.
+		/// </summary>
+		public abstract Task InformAddress(IPEndPoint address = null, PublicIdentity client = null);
+
 		/// <summary>
 		/// Gets a list of the user's friends from the server.
 		/// </summary>

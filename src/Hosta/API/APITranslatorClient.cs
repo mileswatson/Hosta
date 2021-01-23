@@ -82,6 +82,11 @@ namespace Hosta.API
 
 		//// Translators
 
+		public override Task InformAddress(IPEndPoint? _1 = null, PublicIdentity? _2 = null)
+		{
+			return Call(nameof(InformAddress), "");
+		}
+
 		public override async Task<List<FriendInfo>> GetFriendList(PublicIdentity? _ = null)
 		{
 			var str = await Call(nameof(GetFriendList), "");

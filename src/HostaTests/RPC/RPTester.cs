@@ -99,7 +99,7 @@ namespace HostaTests.RPC
 			client.Dispose();
 		}
 
-		public async Task<string> Call(string proc, string args, PublicIdentity? _ = null)
+		public async Task<string> Call(string proc, string args, PublicIdentity? _1 = null, IPEndPoint? _2 = null)
 		{
 			Random r = new();
 			await Task.Delay(r.Next(10, 500));

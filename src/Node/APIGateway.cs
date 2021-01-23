@@ -12,6 +12,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace Node
 {
@@ -76,6 +77,11 @@ namespace Node
 		}
 
 		//// Implementations
+
+		public override Task InformAddress(IPEndPoint? address = null, PublicIdentity? client = null)
+		{
+			throw new NotImplementedException();
+		}
 
 		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity client) =>
 			Call(() => users.GetFriendList(client));

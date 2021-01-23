@@ -37,31 +37,32 @@ namespace Hosta.API
 		/// <summary>
 		/// Handles an RP call.
 		/// </summary>
-		public async Task<string> Call(string proc, string args, PublicIdentity client)
+		public async Task<string> Call(string proc, string args, PublicIdentity client, IPEndPoint address)
 		{
 			if (client is null) throw new Exception("Unknown identity!");
 
-			// Decides which handler to use.
-			ProcedureHandler handler = proc switch
-			{
-				nameof(GetFriendList) => GetFriendList,
-				nameof(RemoveFriend) => RemoveFriend,
-				nameof(SetFriend) => SetFriend,
-				nameof(AddImage) => AddImage,
-				nameof(GetImage) => GetImage,
-				nameof(GetImageList) => GetImageList,
-				nameof(RemoveImage) => RemoveImage,
-				nameof(AddPost) => AddPost,
-				nameof(GetPost) => GetPost,
-				nameof(GetPostList) => GetPostList,
-				nameof(RemovePost) => RemovePost,
-				nameof(GetProfile) => GetProfile,
-				nameof(SetProfile) => SetProfile,
-				_ => throw new Exception("Invalid procedure!"),
-			};
 			try
 			{
-				return await handler(args, client);
+				// Decides which handler to run.
+				Task<string> result = proc switch
+				{
+					nameof(InformAddress) => InformAddress(client, address),
+					nameof(GetFriendList) => GetFriendList(client),
+					nameof(RemoveFriend) => RemoveFriend(args, client),
+					nameof(SetFriend) => SetFriend(args, client),
+					nameof(AddImage) => AddImage(args, client),
+					nameof(GetImage) => GetImage(args, client),
+					nameof(GetImageList) => GetImageList(client),
+					nameof(RemoveImage) => RemoveImage(args, client),
+					nameof(AddPost) => AddPost(args, client),
+					nameof(GetPost) => GetPost(args, client),
+					nameof(GetPostList) => GetPostList(args, client),
+					nameof(RemovePost) => RemovePost(args, client),
+					nameof(GetProfile) => GetProfile(args, client),
+					nameof(SetProfile) => SetProfile(args, client),
+					_ => throw new Exception("Invalid procedure!"),
+				};
+				return await result;
 			}
 			catch (APIException e)
 			{
@@ -77,14 +78,15 @@ namespace Hosta.API
 			return server.ListenForClients();
 		}
 
-		/// <summary>
-		/// Represents an RPC to API translator.
-		/// </summary>
-		private delegate Task<string> ProcedureHandler(string args, PublicIdentity client);
-
 		//// Translators
 
-		public async Task<string> GetFriendList(string _, PublicIdentity client)
+		public async Task<string> InformAddress(PublicIdentity client, IPEndPoint address)
+		{
+			await api.InformAddress(address, client);
+			return "";
+		}
+
+		public async Task<string> GetFriendList(PublicIdentity client)
 		{
 			var response = await api.GetFriendList(client);
 			return API.Export(response);
@@ -131,7 +133,7 @@ namespace Hosta.API
 			return API.Export(response);
 		}
 
-		public async Task<string> GetImageList(string _, PublicIdentity client)
+		public async Task<string> GetImageList(PublicIdentity client)
 		{
 			var response = await api.GetImageList(client);
 			return API.Export(response);
