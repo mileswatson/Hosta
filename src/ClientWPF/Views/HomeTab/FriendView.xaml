@@ -4,23 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:componentviews="clr-namespace:ClientWPF.Views.Components"
+			 xmlns:local="clr-namespace:ClientWPF.Views.HomeTab"
              mc:Ignorable="d"
 			 Width="200" Height="60">
+
 	<UserControl.ContextMenu>
 		<ContextMenu Style="{StaticResource ContextMenu}" ItemsSource="{Binding MenuItems}">
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
 					<MenuItem Header="{Binding Header}"
 							  Command="{Binding Command}"
-							  CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=componentviews:PostView}}">
+							  CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=local:FriendView}}">
 					</MenuItem>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ContextMenu>
 	</UserControl.ContextMenu>
 
-	<Border Background="WhiteSmoke" BorderBrush="DimGray" BorderThickness="2px" CornerRadius="5">
-		<Grid>
+	<Button Background="WhiteSmoke" BorderThickness="2">
+		<Button.Resources>
+			<Style TargetType="{x:Type Border}">
+				<Setter Property="CornerRadius" Value="5" />
+			</Style>
+		</Button.Resources>
+		<Grid Width="194">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
@@ -32,5 +39,5 @@
 			<TextBlock Text="{Binding Name}" Grid.Column="1" TextWrapping="WrapWithOverflow" VerticalAlignment="Center"
 			   Style="{StaticResource TextBlock}" FontWeight="Bold" Margin="0,0,5,5" FontSize="16" Padding="0, 0, 5, 0" />
 		</Grid>
-	</Border>
+	</Button>
 </UserControl>

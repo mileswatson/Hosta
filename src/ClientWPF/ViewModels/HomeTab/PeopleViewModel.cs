@@ -1,10 +1,10 @@
-﻿using ClientWPF.ViewModels.Components;
+﻿using Hosta.API;
 using Hosta.API.Friend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.HomeTab
@@ -47,6 +47,48 @@ namespace ClientWPF.ViewModels.HomeTab
 			}, new());
 		}
 
+		public void MakeFavorite(FriendViewModel? friend) => SetFavoriteStatus(friend, true);
+
+		public void Unfavorite(FriendViewModel? friend) => SetFavoriteStatus(friend, false);
+
+		public async void SetFavoriteStatus(FriendViewModel? friend, bool isFavorite)
+		{
+			if (friend is null) throw new NullReferenceException();
+			try
+			{
+				await Resources!.SetFriend(friend.ID, friend.Name, isFavorite);
+				Env.Alert("Changed favorite status.");
+			}
+			catch (APIException e)
+			{
+				Env.Alert($"Could not change favorite status! {e.Message}");
+			}
+			catch
+			{
+				Env.Alert("Could not change favorite status!");
+			}
+			Update(false);
+		}
+
+		public async void RemoveFriend(FriendViewModel? friend)
+		{
+			if (friend is null) throw new NullReferenceException();
+			try
+			{
+				await Resources!.RemoveFriend(friend.ID);
+				Env.Alert("Removed friend.");
+			}
+			catch (APIException e)
+			{
+				Env.Alert($"Could not remove friend! {e.Message}");
+			}
+			catch
+			{
+				Env.Alert("Could not remove friend!");
+			}
+			Update(false);
+		}
+
 		public override async Task UpdateAsync(bool force)
 		{
 			Self.Update(force);
@@ -55,14 +97,25 @@ namespace ClientWPF.ViewModels.HomeTab
 
 			response.Sort(Compare);
 
+			var friendMenuItems = new List<ContextMenuItem<FriendViewModel>>
+			{
+				new("Make favorite", MakeFavorite),
+				new("Remove friend", RemoveFriend)
+			};
+
 			var friends = response.Select(info => new FriendViewModel(
 				info,
-				new()
+				friendMenuItems
 			)).ToList();
 
-			var favourites = friends.Where(friend => friend.IsFavorite).ToList();
+			var favorites = friends.Where(friend =>
+			{
+				if (!friend.IsFavorite) return false;
+				friend.MenuItems = new() { new("Remove favorite", Unfavorite) };
+				return true;
+			}).ToList();
 
-			Favorites = favourites;
+			Favorites = favorites;
 			Friends = friends;
 
 			foreach (var friend in Friends)

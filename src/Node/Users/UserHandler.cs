@@ -55,7 +55,7 @@ namespace Node.Users
 			await Authenticate(client, User.Auth.Self);
 
 			var users = await conn.Table<User>()
-				.Where(user => user.AuthLevel == User.Auth.Friend || user.AuthLevel == User.Auth.Self)
+				.Where(user => user.AuthLevel == User.Auth.Friend || user.AuthLevel == User.Auth.Favorite)
 				.ToListAsync();
 
 			List<FriendInfo> friends = new();
@@ -88,7 +88,7 @@ namespace Node.Users
 		public async Task SetFriend(FriendInfo info, PublicIdentity client)
 		{
 			await Authenticate(client, User.Auth.Self);
-
+			if (info.ID == Self) throw new APIException("You can't add yourself as a friend.");
 			try
 			{
 				var bytes = Transcoder.BytesFromHex(info.ID);
@@ -99,11 +99,13 @@ namespace Node.Users
 				throw new APIException("Invalid ID format.");
 			}
 
-			var num = await conn.Table<User>()
+			var existing = await conn.Table<User>()
 			.Where(user => user.Name == info.Name)
-			.CountAsync();
+			.ToListAsync();
 
-			if (num > 0)
+			// Checks that either no users exist with the same name, excluding the case
+			// where they have the same ID.
+			if (existing.Count > 0 && !(existing.Count == 1 && existing[0].UserID == info.ID))
 			{
 				throw new APIException("Name already taken.");
 			}
