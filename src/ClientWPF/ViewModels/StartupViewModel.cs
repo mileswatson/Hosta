@@ -11,7 +11,7 @@ namespace ClientWPF.ViewModels
 		public ICommand Continue { get; private set; }
 		public ICommand Quit { get; private set; }
 
-		private string folder = "folder path";
+		private string folder = Env.DefaultFolder;
 
 		public string Folder
 		{

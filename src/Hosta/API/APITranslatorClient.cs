@@ -1,4 +1,5 @@
-﻿using Hosta.API.Image;
+﻿using Hosta.API.Friend;
+using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
@@ -63,6 +64,7 @@ namespace Hosta.API
 		/// </summary>
 		private async Task<string> Call(string procedure, string args)
 		{
+			ThrowIfDisposed();
 			try
 			{
 				return await client.Call(procedure, args);
@@ -80,68 +82,74 @@ namespace Hosta.API
 
 		//// Translators
 
-		public override async Task<string> AddImage(AddImageRequest request, PublicIdentity? _ = null)
+		public override async Task<List<FriendInfo>> GetFriendList(PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
-			return await Call(nameof(AddImage), Export(request));
+			var str = await Call(nameof(GetFriendList), "");
+			return Import<List<FriendInfo>>(str);
+		}
+
+		public override Task RemoveFriend(string user, PublicIdentity? _ = null)
+		{
+			return Call(nameof(RemoveFriend), user);
+		}
+
+		public override Task SetFriend(FriendInfo info, PublicIdentity? _ = null)
+		{
+			return Call(nameof(SetFriend), Export(info));
+		}
+
+		public override Task<string> AddImage(AddImageRequest request, PublicIdentity? _ = null)
+		{
+			return Call(nameof(AddImage), Export(request));
 		}
 
 		public override async Task<GetImageResponse> GetImage(string hash, PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
 			var str = await Call(nameof(GetImage), hash);
 			return Import<GetImageResponse>(str);
 		}
 
 		public override async Task<List<ImageInfo>> GetImageList(PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
 			var str = await Call(nameof(GetImageList), "");
 			return Import<List<ImageInfo>>(str);
 		}
 
-		public override async Task RemoveImage(string hash, PublicIdentity? _ = null)
+		public override Task RemoveImage(string hash, PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
-			await Call(nameof(RemoveImage), hash);
+			return Call(nameof(RemoveImage), hash);
 		}
 
-		public override async Task<string> AddPost(AddPostRequest request, PublicIdentity? _ = null)
+		public override Task<string> AddPost(AddPostRequest request, PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
-			return await Call(nameof(AddPost), Export(request));
+			return Call(nameof(AddPost), Export(request));
 		}
 
 		public override async Task<GetPostResponse> GetPost(string id, PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
 			var str = await Call(nameof(GetPost), id);
 			return Import<GetPostResponse>(str);
 		}
 
 		public override async Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
 			var str = await Call(nameof(GetPostList), Export(start));
 			return Import<List<PostInfo>>(str);
 		}
 
 		public override async Task<GetProfileResponse> GetProfile(PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
 			var str = await Call(nameof(GetProfile), "");
 			return Import<GetProfileResponse>(str);
 		}
 
-		public override async Task RemovePost(string id, PublicIdentity? _ = null)
+		public override Task RemovePost(string id, PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
-			await Call(nameof(RemovePost), id);
+			return Call(nameof(RemovePost), id);
 		}
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? _ = null)
 		{
-			ThrowIfDisposed();
 			return Call(nameof(SetProfile), Export(request));
 		}
 

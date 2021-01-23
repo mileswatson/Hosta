@@ -1,4 +1,5 @@
-﻿using Hosta.API.Image;
+﻿using Hosta.API.Friend;
+using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
@@ -11,6 +12,24 @@ namespace Hosta.API
 {
 	public abstract class API
 	{
+		/// <summary>
+		/// Gets a list of the user's friends from the server.
+		/// </summary>
+		public abstract Task<List<FriendInfo>> GetFriendList(PublicIdentity client = null);
+
+		/// <summary>
+		/// Removes a friend.
+		/// </summary>
+		public abstract Task RemoveFriend(string user, PublicIdentity client = null);
+
+		/// <summary>
+		/// Adds a friend, or updates it if the friend already exists.
+		/// </summary>
+		public abstract Task SetFriend(FriendInfo info, PublicIdentity client = null);
+
+		/// <summary>
+		/// Add an image to the image library.
+		/// </summary>
 		public abstract Task<string> AddImage(AddImageRequest request, PublicIdentity client = null);
 
 		/// <summary>

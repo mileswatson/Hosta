@@ -1,5 +1,6 @@
 ﻿using ClientWPF.Models.Data;
 using Hosta.API;
+using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
@@ -23,20 +24,11 @@ namespace ClientWPF.Models
 
 		private readonly ConnectionManager connections;
 
-		private readonly AsyncCache<Profile> Profiles = new AsyncCache<Profile>(
-			(Task<Profile> t) => true,
-			(Task<Profile> t) => { }
-		);
+		private readonly AsyncCache<Profile> Profiles = new();
 
-		private readonly AsyncCache<BitmapImage> Images = new AsyncCache<BitmapImage>(
-			(Task<BitmapImage> t) => true,
-			(Task<BitmapImage> t) => { }
-		);
+		private readonly AsyncCache<BitmapImage> Images = new();
 
-		private readonly AsyncCache<Post> Posts = new AsyncCache<Post>(
-			(Task<Post> t) => true,
-			(Task<Post> t) => { }
-		);
+		private readonly AsyncCache<Post> Posts = new();
 
 		/// <summary>
 		/// Creates a new instance of a ResourceManager.
@@ -52,6 +44,29 @@ namespace ClientWPF.Models
 		}
 
 		//// Implementation
+
+		public async Task<List<FriendInfo>> GetFriendList()
+		{
+			var conn = await connections.GetConnection(Self);
+			return await conn.GetFriendList();
+		}
+
+		public async Task SetFriend(string user, string name, bool favorite)
+		{
+			var conn = await connections.GetConnection(Self);
+			await conn.SetFriend(new FriendInfo
+			{
+				ID = user,
+				Name = name,
+				IsFavorite = favorite
+			});
+		}
+
+		public async Task RemoveFriend(string user)
+		{
+			var conn = await connections.GetConnection(Self);
+			await conn.RemoveFriend(user);
+		}
 
 		public async Task<string> AddImage(byte[] data)
 		{

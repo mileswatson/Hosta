@@ -9,7 +9,7 @@ namespace ClientWPF
 	{
 		protected override void OnStartup(StartupEventArgs e)
 		{
-			ApplicationEnvironment.Env = new WindowEnvironment();
+			ApplicationEnvironment.Env = new WindowEnvironment(e.Args.Length == 1 ? e.Args[0] : "");
 		}
 
 		private class WindowEnvironment : ApplicationEnvironment
@@ -23,6 +23,11 @@ namespace ClientWPF
 			{
 				var result = MessageBox.Show(message, "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
 				return result == MessageBoxResult.Yes;
+			}
+
+			public WindowEnvironment(string defaultFolder) : base()
+			{
+				DefaultFolder = defaultFolder;
 			}
 		}
 	}

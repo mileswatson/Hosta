@@ -49,6 +49,11 @@ namespace ClientWPF.ViewModels.Components
 			}
 		}
 
+		public bool ShowMenu
+		{
+			get => MenuItems.Count > 0;
+		}
+
 		public List<ContextMenuItem<PostViewModel>> MenuItems { get; init; }
 
 		public PostViewModel(string user, string id)

@@ -1,35 +1,26 @@
 ﻿using ClientWPF.ViewModels.Components;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static ClientWPF.Models.ResourceManager;
 
 namespace ClientWPF.ViewModels.HomeTab
 {
 	public class ViewModel : ObservableObject
 	{
-		private List<ObservableObject> _posts = new();
+		public PostFeedViewModel Feed { get; init; }
 
-		public List<ObservableObject> Posts
-		{
-			get => _posts;
-			set
-			{
-				_posts = value;
-				NotifyPropertyChanged(nameof(Posts));
-			}
-		}
+		public PeopleViewModel Friends { get; init; }
 
 		public ViewModel()
 		{
-			var newList = new List<ObservableObject>();
-			for (int i = 0; i < 100; i++)
-			{
-				newList.Add(new PostViewModel("", ""));
-			}
-			Posts = newList;
+			Feed = new PostFeedViewModel(Resources!.Self, new());
+			Friends = new PeopleViewModel();
 		}
 
 		public override Task UpdateAsync(bool force)
 		{
+			Feed.Update(force);
+			Friends.Update(force);
 			return Task.CompletedTask;
 		}
 	}

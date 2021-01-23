@@ -18,17 +18,21 @@ namespace Hosta.Tools
 
 		private readonly ItemChecker IsValidItem;
 
+		private readonly ItemChecker DefaultChecker = task => true;
+
 		private readonly ItemDisposer DisposeItem;
+
+		private readonly ItemDisposer DefaultDisposer = task => { };
 
 		/// <summary>
 		/// Creates a new AsyncCache.
 		/// </summary>
 		/// <param name="itemChecker">Returns true if an item is valid, else false.</param>
 		/// <param name="itemDisposer">Cleans up an item before removal.</param>
-		public AsyncCache(ItemChecker itemChecker, ItemDisposer itemDisposer)
+		public AsyncCache(ItemChecker? itemChecker = null, ItemDisposer? itemDisposer = null)
 		{
-			IsValidItem = itemChecker;
-			DisposeItem = itemDisposer;
+			IsValidItem = itemChecker ?? DefaultChecker;
+			DisposeItem = itemDisposer ?? DefaultDisposer;
 		}
 
 		/// <summary>

@@ -4,6 +4,7 @@
 			 StartupUri="MainWindow.xaml">
 	<Application.Resources>
 		<ResourceDictionary>
+			<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Styles/ButtonStyles.xaml" />
 				<ResourceDictionary Source="Styles/ContextMenuStyles.xaml" />
