@@ -5,6 +5,7 @@ using Hosta.API.Profile;
 using Hosta.Crypto;
 using Hosta.RPC;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -46,6 +47,7 @@ namespace Hosta.API
 				// Decides which handler to run.
 				Task<string> result = proc switch
 				{
+					nameof(GetAddresses) => GetAddresses(args, client),
 					nameof(InformAddress) => InformAddress(client, address),
 					nameof(GetFriendList) => GetFriendList(client),
 					nameof(RemoveFriend) => RemoveFriend(args, client),
@@ -79,6 +81,13 @@ namespace Hosta.API
 		}
 
 		//// Translators
+
+		public async Task<string> GetAddresses(string args, PublicIdentity client)
+		{
+			var request = API.Import<List<string>>(args);
+			var response = await api.GetAddresses(request, client);
+			return API.Export(response);
+		}
 
 		public async Task<string> InformAddress(PublicIdentity client, IPEndPoint address)
 		{

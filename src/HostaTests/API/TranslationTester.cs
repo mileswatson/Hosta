@@ -1,4 +1,5 @@
 ﻿using Hosta.API;
+using Hosta.API.Address;
 using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
@@ -35,6 +36,17 @@ namespace HostaTests.API
 			running = localGateway.Run();
 			var args = new APITranslatorClient.ConnectionArgs { Address = IPAddress.Loopback, Port = 12000, Self = client, ServerID = server.ID };
 			remoteGateway = APITranslatorClient.CreateAndConnect(args).Result;
+		}
+
+		[TestMethod]
+		public async Task InformGetAddress()
+		{
+			var response = await remoteGateway.GetAddresses(new List<string> { client.ID });
+			Assert.IsTrue(response.Count == 0);
+			await remoteGateway.InformAddress();
+			response = await remoteGateway.GetAddresses(new List<string> { client.ID });
+			Assert.IsTrue(response.ContainsKey(client.ID));
+			IPAddress.Parse(response[client.ID].IP);
 		}
 
 		[TestMethod]
@@ -115,9 +127,25 @@ namespace HostaTests.API
 
 		private readonly Dictionary<string, FriendInfo> friends = new();
 
-		public override Task InformAddress(IPEndPoint? _1 = null, PublicIdentity? _2 = null)
+		private readonly Dictionary<string, AddressInfo> addresses = new();
+
+		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity _)
 		{
-			throw new NotImplementedException();
+			var response = new Dictionary<string, AddressInfo>();
+			foreach (var user in users)
+			{
+				if (addresses.ContainsKey(user))
+				{
+					response[user] = addresses[user];
+				}
+			}
+			return Task.FromResult(response);
+		}
+
+		public override Task InformAddress(IPEndPoint address, PublicIdentity client)
+		{
+			addresses[client.ID] = new AddressInfo { IP = address.Address.ToString(), Port = address.Port };
+			return Task.CompletedTask;
 		}
 
 		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity _)

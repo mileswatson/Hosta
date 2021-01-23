@@ -1,4 +1,5 @@
-﻿using Hosta.API.Friend;
+﻿using Hosta.API.Address;
+using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
@@ -81,6 +82,12 @@ namespace Hosta.API
 		}
 
 		//// Translators
+
+		public override async Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity? _ = null)
+		{
+			var str = await Call(nameof(GetAddresses), Export(users));
+			return Import<Dictionary<string, AddressInfo>>(str);
+		}
 
 		public override Task InformAddress(IPEndPoint? _1 = null, PublicIdentity? _2 = null)
 		{

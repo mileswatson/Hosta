@@ -1,4 +1,5 @@
-﻿using Hosta.API.Friend;
+﻿using Hosta.API.Address;
+using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
@@ -13,6 +14,11 @@ namespace Hosta.API
 {
 	public abstract class API
 	{
+		/// <summary>
+		/// Gets the addresses that the server knows from the list.
+		/// </summary>
+		public abstract Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity client = null);
+
 		/// <summary>
 		/// Informs the node of the client node's address.
 		/// </summary>
