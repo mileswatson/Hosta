@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net;
+using Node.Addresses;
+using Hosta.API.Address;
 
 namespace Node
 {
@@ -29,12 +31,16 @@ namespace Node
 
 		private readonly ProfileHandler profiles;
 
-		private APIGateway(UserHandler users, ImageHandler images, PostHandler posts, ProfileHandler profiles)
+		private readonly AddressHandler addresses;
+
+		private APIGateway(UserHandler users, ImageHandler images, PostHandler posts, ProfileHandler profiles, AddressHandler addresses)
+
 		{
 			this.users = users;
 			this.images = images;
 			this.posts = posts;
 			this.profiles = profiles;
+			this.addresses = addresses;
 		}
 
 		public static async Task<APIGateway> Create(string path, string self)
@@ -49,7 +55,9 @@ namespace Node
 
 			var profiles = await ProfileHandler.Create(conn, users);
 
-			return new APIGateway(users, images, posts, profiles);
+			var addresses = await AddressHandler.Create(conn, users);
+
+			return new APIGateway(users, images, posts, profiles, addresses);
 		}
 
 		public static async Task Call(Func<Task> action)
@@ -78,10 +86,11 @@ namespace Node
 
 		//// Implementations
 
-		public override Task InformAddress(IPEndPoint? address = null, PublicIdentity? client = null)
-		{
-			throw new NotImplementedException();
-		}
+		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity client) =>
+			Call(() => addresses.GetAddresses(users, client));
+
+		public override Task InformAddress(IPEndPoint address, PublicIdentity client) =>
+			Call(() => addresses.InformAddress(address, client));
 
 		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity client) =>
 			Call(() => users.GetFriendList(client));
