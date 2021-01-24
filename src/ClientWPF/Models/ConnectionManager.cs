@@ -2,6 +2,8 @@
 using Hosta.Crypto;
 using Hosta.Tools;
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ClientWPF.Models
@@ -51,8 +53,27 @@ namespace ClientWPF.Models
 		public Task<APITranslatorClient> GetConnection(string id, bool forceRefresh = false)
 		{
 			ThrowIfDisposed();
-			// Throw an error if not cached - DNS not implemented
-			return connections.LazyGet(id, () => Task.FromException<APITranslatorClient>(new NotImplementedException("IDAR has not been implemented!")), TimeSpan.FromHours(1), forceRefresh);
+			// Attempt to fetch cached connection, otherwise query the node.
+			return connections.LazyGet(id, async () =>
+			{
+				var response = await node.GetAddresses(new List<string> { id });
+				try
+				{
+					var info = response[id];
+					var conn = await APITranslatorClient.CreateAndConnect(new APITranslatorClient.ConnectionArgs
+					{
+						Address = IPAddress.Parse(info.IP),
+						Port = info.Port,
+						Self = self,
+						ServerID = id
+					});
+					return conn;
+				}
+				catch
+				{
+					throw new Exception("Could not connect!");
+				}
+			}, TimeSpan.FromHours(1), forceRefresh);
 		}
 
 		//// Disposal

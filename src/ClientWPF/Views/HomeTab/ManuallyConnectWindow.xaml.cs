@@ -20,7 +20,7 @@ namespace ClientWPF.Views.HomeTab
 	/// </summary>
 	public partial class ManuallyConnectWindow : Window
 	{
-		private Action<ManuallyConnectWindow> submit;
+		private readonly Action<ManuallyConnectWindow> submit;
 
 		public ManuallyConnectWindow(Action<ManuallyConnectWindow> submit)
 		{
