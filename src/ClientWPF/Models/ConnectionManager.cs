@@ -3,6 +3,7 @@ using Hosta.Crypto;
 using Hosta.Tools;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -56,9 +57,9 @@ namespace ClientWPF.Models
 			// Attempt to fetch cached connection, otherwise query the node.
 			return connections.LazyGet(id, async () =>
 			{
-				var response = await node.GetAddresses(new List<string> { id });
 				try
 				{
+					var response = await node.GetAddresses(new List<string> { id });
 					var info = response[id];
 					var conn = await APITranslatorClient.CreateAndConnect(new APITranslatorClient.ConnectionArgs
 					{

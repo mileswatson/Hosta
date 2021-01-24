@@ -40,14 +40,20 @@ namespace ClientWPF.ViewModels.HomeTab
 			}
 		}
 
-		public PeopleViewModel()
+		private Action<FriendViewModel> clicked;
+
+		public PeopleViewModel(Action<string> userClick)
 		{
+			clicked = (FriendViewModel friend) =>
+			{
+				userClick(friend.ID);
+			};
 			Self = new FriendViewModel(new FriendInfo
 			{
 				ID = Resources!.Self,
 				Name = "You",
-				IsFavorite = true
-			}, new());
+				IsFavorite = true,
+			}, new(), clicked);
 		}
 
 		private void MakeFavorite(FriendViewModel? friend) => SetFavoriteStatus(friend, true);
@@ -155,7 +161,8 @@ namespace ClientWPF.ViewModels.HomeTab
 
 			var friends = response.Select(info => new FriendViewModel(
 				info,
-				friendMenuItems
+				friendMenuItems,
+				clicked
 			)).ToList();
 
 			var favorites = friends.Where(friend =>

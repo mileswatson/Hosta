@@ -21,7 +21,7 @@
 		</ContextMenu>
 	</UserControl.ContextMenu>
 
-	<Button Background="WhiteSmoke" BorderThickness="2">
+	<Button Background="WhiteSmoke" BorderThickness="2" Command="{Binding Click}" CommandParameter="{Binding}">
 		<Button.Resources>
 			<Style TargetType="{x:Type Border}">
 				<Setter Property="CornerRadius" Value="5" />
