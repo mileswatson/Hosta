@@ -86,10 +86,8 @@ namespace Node
 
 		//// Implementations
 
-		public override Task AddAddress(Tuple<string, AddressInfo> addresses, PublicIdentity client)
-		{
-			throw new NotImplementedException();
-		}
+		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity client) =>
+			Call(() => addresses.AddAddress(address.Item1, IPAddress.Parse(address.Item2.IP), address.Item2.Port, client));
 
 		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity client) =>
 			Call(() => addresses.GetAddresses(users, client));

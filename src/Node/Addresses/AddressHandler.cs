@@ -1,4 +1,5 @@
-﻿using Hosta.API.Address;
+﻿using Hosta.API;
+using Hosta.API.Address;
 using Hosta.Crypto;
 using Node.Users;
 using SQLite;
@@ -15,6 +16,8 @@ namespace Node.Addresses
 
 		readonly private UserHandler users;
 
+		readonly private PrivateIdentity tempIdentity = PrivateIdentity.Create();
+
 		private AddressHandler(SQLiteAsyncConnection conn, UserHandler users)
 		{
 			this.conn = conn;
@@ -27,9 +30,43 @@ namespace Node.Addresses
 			return new AddressHandler(conn, users);
 		}
 
-		public Task AddAddress(string user, IPAddress address, int port)
+		private async Task VerifyAddress(string user, IPAddress address, int port)
 		{
-			throw new NotImplementedException();
+			var args = new APITranslatorClient.ConnectionArgs
+			{
+				Address = address,
+				Port = port,
+				Self = tempIdentity,
+				ServerID = user
+			};
+			try
+			{
+				var connection = await APITranslatorClient.CreateAndConnect(args);
+				connection.Dispose();
+			}
+			catch
+			{
+				throw new APIException("Could not connect...");
+			}
+		}
+
+		public async Task AddAddress(string user, IPAddress address, int port, PublicIdentity client)
+		{
+			await users.Authenticate(client, User.Auth.Self);
+
+			await AddAddress(user, address, port);
+		}
+
+		private async Task AddAddress(string user, IPAddress address, int port)
+		{
+			await VerifyAddress(user, address, port);
+
+			await conn.InsertOrReplaceAsync(new Address
+			{
+				UserID = user,
+				IP = address.ToString(),
+				Port = port,
+			});
 		}
 
 		public async Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> requested, PublicIdentity client)
@@ -57,12 +94,7 @@ namespace Node.Addresses
 		{
 			await users.Authenticate(client, User.Auth.Friend);
 
-			await conn.InsertOrReplaceAsync(new Address
-			{
-				UserID = client.ID,
-				IP = address.ToString(),
-				Port = port
-			});
+			await AddAddress(client.ID, address, port);
 		}
 	}
 }
