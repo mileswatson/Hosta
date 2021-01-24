@@ -27,7 +27,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Informs the node of the client node's address.
 		/// </summary>
-		public abstract Task InformAddress(IPEndPoint address = null, PublicIdentity client = null);
+		public abstract Task InformAddress(int port, IPAddress address = null, PublicIdentity client = null);
 
 		/// <summary>
 		/// Gets a list of the user's friends from the server.

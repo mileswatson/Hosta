@@ -50,7 +50,7 @@ namespace Hosta.API
 				{
 					nameof(AddAddresses) => AddAddresses(args, client),
 					nameof(GetAddresses) => GetAddresses(args, client),
-					nameof(InformAddress) => InformAddress(client, address),
+					nameof(InformAddress) => InformAddress(args, client, address),
 					nameof(GetFriendList) => GetFriendList(client),
 					nameof(RemoveFriend) => RemoveFriend(args, client),
 					nameof(SetFriend) => SetFriend(args, client),
@@ -98,9 +98,11 @@ namespace Hosta.API
 			return API.Export(response);
 		}
 
-		public async Task<string> InformAddress(PublicIdentity client, IPEndPoint address)
+		public async Task<string> InformAddress(string args, PublicIdentity client, IPEndPoint address)
 		{
-			await api.InformAddress(address, client);
+			var port = API.Import<int>(args);
+			if (port == -1) port = address.Port;
+			await api.InformAddress(port, address.Address, client);
 			return "";
 		}
 

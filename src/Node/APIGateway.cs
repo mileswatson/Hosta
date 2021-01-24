@@ -86,11 +86,16 @@ namespace Node
 
 		//// Implementations
 
+		public override Task AddAddresses(Dictionary<string, AddressInfo> addresses, PublicIdentity client)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity client) =>
 			Call(() => addresses.GetAddresses(users, client));
 
-		public override Task InformAddress(IPEndPoint address, PublicIdentity client) =>
-			Call(() => addresses.InformAddress(address, client));
+		public override Task InformAddress(int port, IPAddress address, PublicIdentity client) =>
+			Call(() => addresses.InformAddress(port, address, client));
 
 		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity client) =>
 			Call(() => users.GetFriendList(client));

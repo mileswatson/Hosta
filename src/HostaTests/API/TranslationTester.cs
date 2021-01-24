@@ -43,7 +43,7 @@ namespace HostaTests.API
 		{
 			var response = await remoteGateway.GetAddresses(new List<string> { client.ID });
 			Assert.IsTrue(response.Count == 0);
-			await remoteGateway.InformAddress();
+			await remoteGateway.InformAddress(-1);
 			response = await remoteGateway.GetAddresses(new List<string> { client.ID });
 			Assert.IsTrue(response.ContainsKey(client.ID));
 			IPAddress.Parse(response[client.ID].IP);
@@ -162,9 +162,9 @@ namespace HostaTests.API
 			return Task.FromResult(response);
 		}
 
-		public override Task InformAddress(IPEndPoint address, PublicIdentity client)
+		public override Task InformAddress(int port, IPAddress address, PublicIdentity client)
 		{
-			addresses[client.ID] = new AddressInfo { IP = address.Address.ToString(), Port = address.Port };
+			addresses[client.ID] = new AddressInfo { IP = address.ToString(), Port = port };
 			return Task.CompletedTask;
 		}
 

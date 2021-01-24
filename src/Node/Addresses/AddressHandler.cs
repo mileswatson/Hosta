@@ -50,15 +50,15 @@ namespace Node.Addresses
 			return response;
 		}
 
-		public async Task InformAddress(IPEndPoint address, PublicIdentity client)
+		public async Task InformAddress(int port, IPAddress address, PublicIdentity client)
 		{
 			await users.Authenticate(client, User.Auth.Friend);
 
 			await conn.InsertOrReplaceAsync(new Address
 			{
 				UserID = client.ID,
-				IP = address.Address.ToString(),
-				Port = address.Port
+				IP = address.ToString(),
+				Port = port
 			});
 		}
 	}

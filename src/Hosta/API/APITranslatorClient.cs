@@ -94,9 +94,9 @@ namespace Hosta.API
 			return Import<Dictionary<string, AddressInfo>>(str);
 		}
 
-		public override Task InformAddress(IPEndPoint? _1 = null, PublicIdentity? _2 = null)
+		public override Task InformAddress(int port, IPAddress? _1 = null, PublicIdentity? _2 = null)
 		{
-			return Call(nameof(InformAddress), "");
+			return Call(nameof(InformAddress), Export(port));
 		}
 
 		public override async Task<List<FriendInfo>> GetFriendList(PublicIdentity? _ = null)
