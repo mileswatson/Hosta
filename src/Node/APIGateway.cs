@@ -86,7 +86,7 @@ namespace Node
 
 		//// Implementations
 
-		public override Task AddAddresses(Dictionary<string, AddressInfo> addresses, PublicIdentity client)
+		public override Task AddAddress(Tuple<string, AddressInfo> addresses, PublicIdentity client)
 		{
 			throw new NotImplementedException();
 		}

@@ -48,11 +48,9 @@ namespace HostaTests.API
 			Assert.IsTrue(response.ContainsKey(client.ID));
 			IPAddress.Parse(response[client.ID].IP);
 
-			var request = new Dictionary<string, AddressInfo>();
 			var address = new AddressInfo { IP = "string here", Port = 8080 };
-			request.Add("testkey", address);
 
-			await remoteGateway.AddAddresses(request);
+			await remoteGateway.AddAddress(new("testkey", address));
 
 			response = await remoteGateway.GetAddresses(new List<string> { client.ID, "testkey" });
 
@@ -140,12 +138,9 @@ namespace HostaTests.API
 
 		private readonly Dictionary<string, AddressInfo> addresses = new();
 
-		public override Task AddAddresses(Dictionary<string, AddressInfo> items, PublicIdentity _)
+		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity _)
 		{
-			foreach (var kvp in items)
-			{
-				addresses[kvp.Key] = kvp.Value;
-			}
+			addresses[address.Item1] = address.Item2;
 			return Task.CompletedTask;
 		}
 

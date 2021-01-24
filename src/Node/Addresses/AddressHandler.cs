@@ -4,9 +4,7 @@ using Node.Users;
 using SQLite;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Node.Addresses
@@ -27,6 +25,11 @@ namespace Node.Addresses
 		{
 			await conn.CreateTableAsync<Address>();
 			return new AddressHandler(conn, users);
+		}
+
+		public Task AddAddress(string user, IPAddress address, int port)
+		{
+			throw new NotImplementedException();
 		}
 
 		public async Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> requested, PublicIdentity client)

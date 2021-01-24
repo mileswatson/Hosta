@@ -17,7 +17,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Manually adds the address of a friend.
 		/// </summary>
-		public abstract Task AddAddresses(Dictionary<string, AddressInfo> addresses, PublicIdentity client = null);
+		public abstract Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity client = null);
 
 		/// <summary>
 		/// Gets the addresses that the server knows from the list.

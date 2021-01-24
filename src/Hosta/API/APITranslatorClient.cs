@@ -83,9 +83,9 @@ namespace Hosta.API
 
 		//// Translators
 
-		public override Task AddAddresses(Dictionary<string, AddressInfo> addresses, PublicIdentity? _ = null)
+		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity? _ = null)
 		{
-			return Call(nameof(AddAddresses), Export(addresses));
+			return Call(nameof(AddAddress), Export(address));
 		}
 
 		public override async Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity? _ = null)
