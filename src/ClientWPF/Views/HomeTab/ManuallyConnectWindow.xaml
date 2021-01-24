@@ -1,0 +1,30 @@
+﻿<Window x:Class="ClientWPF.Views.HomeTab.ManuallyConnectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClientWPF.Views.HomeTab"
+        mc:Ignorable="d"
+        Title="" MinHeight="200" MaxHeight="200" MinWidth="400" MaxWidth="400">
+	<StackPanel Background="White">
+
+		<Label Content="Connect" Style="{StaticResource TabHeadingLabel}" />
+
+		<DockPanel>
+			<Label Content="IP Address" Style="{StaticResource FieldLabel}" />
+			<TextBox x:Name="IP" Style="{StaticResource TextBox}" />
+		</DockPanel>
+
+		<DockPanel>
+			<Label Content="Port" Style="{StaticResource FieldLabel}" />
+			<TextBox x:Name="Port" Style="{StaticResource TextBox}" />
+		</DockPanel>
+
+		<StackPanel Orientation="Horizontal">
+			<Button Content="Submit" Click="SubmitButton_Clicked"
+					Style="{StaticResource Button}" />
+			<Button Content="Cancel" Click="CancelButton_Clicked"
+					Style="{StaticResource Button}" />
+		</StackPanel>
+	</StackPanel>
+</Window>

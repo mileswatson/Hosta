@@ -1,5 +1,6 @@
 ﻿using ClientWPF.Models.Data;
 using Hosta.API;
+using Hosta.API.Address;
 using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
@@ -9,6 +10,7 @@ using Hosta.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -44,6 +46,17 @@ namespace ClientWPF.Models
 		}
 
 		//// Implementation
+
+		public async Task AddAddress(string user, IPAddress address, int port)
+		{
+			var conn = await connections.GetConnection(Self);
+			var request = new AddressInfo
+			{
+				IP = address.ToString(),
+				Port = port
+			};
+			await conn.AddAddress(new(user, request));
+		}
 
 		public async Task<List<FriendInfo>> GetFriendList()
 		{

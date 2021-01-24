@@ -3,7 +3,6 @@ using Hosta.API.Address;
 using Hosta.Crypto;
 using Node.Users;
 using SQLite;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -46,7 +45,7 @@ namespace Node.Addresses
 			}
 			catch
 			{
-				throw new APIException("Could not connect...");
+				throw new APIException("Could not verify node.");
 			}
 		}
 

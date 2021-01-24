@@ -1,9 +1,12 @@
-﻿using Hosta.API;
+﻿using ClientWPF.Views.HomeTab;
+using Hosta.API;
 using Hosta.API.Friend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
 using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
 
@@ -47,11 +50,11 @@ namespace ClientWPF.ViewModels.HomeTab
 			}, new());
 		}
 
-		public void MakeFavorite(FriendViewModel? friend) => SetFavoriteStatus(friend, true);
+		private void MakeFavorite(FriendViewModel? friend) => SetFavoriteStatus(friend, true);
 
-		public void Unfavorite(FriendViewModel? friend) => SetFavoriteStatus(friend, false);
+		private void Unfavorite(FriendViewModel? friend) => SetFavoriteStatus(friend, false);
 
-		public async void SetFavoriteStatus(FriendViewModel? friend, bool isFavorite)
+		private async void SetFavoriteStatus(FriendViewModel? friend, bool isFavorite)
 		{
 			if (friend is null) throw new NullReferenceException();
 			try
@@ -68,6 +71,52 @@ namespace ClientWPF.ViewModels.HomeTab
 				Env.Alert("Could not change favorite status!");
 			}
 			Update(false);
+		}
+
+		private void ManuallyConnect(FriendViewModel? friend)
+		{
+			if (friend is null) throw new NullReferenceException();
+
+			var model = new ManuallyConnectWindow(async (window) =>
+			{
+				IPAddress address;
+				try
+				{
+					address = IPAddress.Parse(window.IP.Text);
+				}
+				catch
+				{
+					Env.Alert("Invalid IP format!");
+					return;
+				}
+
+				int port;
+				try
+				{
+					port = int.Parse(window.Port.Text);
+				}
+				catch
+				{
+					Env.Alert("Invalid port format!");
+					return;
+				}
+
+				try
+				{
+					await Resources!.AddAddress(friend.ID, address, port);
+					window.Close();
+					Update(false);
+				}
+				catch (APIException e)
+				{
+					Env.Alert($"Could not manually connect! {e.Message}");
+				}
+				catch
+				{
+					Env.Alert($"Could not manually connect!");
+				}
+			});
+			model.ShowDialog();
 		}
 
 		public async void RemoveFriend(FriendViewModel? friend)
@@ -100,6 +149,7 @@ namespace ClientWPF.ViewModels.HomeTab
 			var friendMenuItems = new List<ContextMenuItem<FriendViewModel>>
 			{
 				new("Make favorite", MakeFavorite),
+				new("Manually connect", ManuallyConnect),
 				new("Remove friend", RemoveFriend)
 			};
 
