@@ -95,6 +95,7 @@ namespace Hosta.Net
 			while (offset < buffer.Length)
 			{
 				var numBytes = await ReadIntoBuffer(buffer, offset).ConfigureAwait(false);
+				if (numBytes == 0) throw new Exception("Connection was closed.");
 				offset += numBytes;
 			}
 
