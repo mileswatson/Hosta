@@ -1,4 +1,5 @@
-﻿using Hosta.API.Friend;
+﻿using Hosta.API.Address;
+using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
@@ -47,6 +48,7 @@ namespace Hosta.API
 				// Decides which handler to run.
 				Task<string> result = proc switch
 				{
+					nameof(AddAddresses) => AddAddresses(args, client),
 					nameof(GetAddresses) => GetAddresses(args, client),
 					nameof(InformAddress) => InformAddress(client, address),
 					nameof(GetFriendList) => GetFriendList(client),
@@ -81,6 +83,13 @@ namespace Hosta.API
 		}
 
 		//// Translators
+
+		public async Task<string> AddAddresses(string args, PublicIdentity client)
+		{
+			var request = API.Import<Dictionary<string, AddressInfo>>(args);
+			await api.AddAddresses(request, client);
+			return "";
+		}
 
 		public async Task<string> GetAddresses(string args, PublicIdentity client)
 		{

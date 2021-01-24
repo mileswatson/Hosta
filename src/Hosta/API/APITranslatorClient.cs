@@ -83,6 +83,11 @@ namespace Hosta.API
 
 		//// Translators
 
+		public override Task AddAddresses(Dictionary<string, AddressInfo> addresses, PublicIdentity? _ = null)
+		{
+			return Call(nameof(AddAddresses), Export(addresses));
+		}
+
 		public override async Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity? _ = null)
 		{
 			var str = await Call(nameof(GetAddresses), Export(users));

@@ -47,6 +47,17 @@ namespace HostaTests.API
 			response = await remoteGateway.GetAddresses(new List<string> { client.ID });
 			Assert.IsTrue(response.ContainsKey(client.ID));
 			IPAddress.Parse(response[client.ID].IP);
+
+			var request = new Dictionary<string, AddressInfo>();
+			var address = new AddressInfo { IP = "string here", Port = 8080 };
+			request.Add("testkey", address);
+
+			await remoteGateway.AddAddresses(request);
+
+			response = await remoteGateway.GetAddresses(new List<string> { client.ID, "testkey" });
+
+			Assert.IsTrue(response.Count == 2);
+			Assert.AreEqual(response["testkey"], address);
 		}
 
 		[TestMethod]
@@ -128,6 +139,15 @@ namespace HostaTests.API
 		private readonly Dictionary<string, FriendInfo> friends = new();
 
 		private readonly Dictionary<string, AddressInfo> addresses = new();
+
+		public override Task AddAddresses(Dictionary<string, AddressInfo> items, PublicIdentity _)
+		{
+			foreach (var kvp in items)
+			{
+				addresses[kvp.Key] = kvp.Value;
+			}
+			return Task.CompletedTask;
+		}
 
 		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity _)
 		{
