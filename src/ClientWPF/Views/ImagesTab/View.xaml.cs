@@ -1,6 +1,5 @@
 ﻿using ClientWPF.ViewModels.ImagesTab;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -18,7 +17,6 @@ namespace ClientWPF.Views.ImagesTab
 
 		public void CopyMenuItem_Clicked(object sender, RoutedEventArgs e)
 		{
-			Debug.WriteLine("here!");
 			var menuItem = sender as MenuItem;
 			var hash = (menuItem?.Tag ?? "") as string;
 			Clipboard.SetText(hash);

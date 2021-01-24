@@ -29,7 +29,10 @@
 			   Style="{StaticResource TabHeadingLabel}" />
 
 		<ScrollViewer Grid.Row="2" Grid.Column="0">
-			<componentviews:PostFeedView DataContext="{Binding Feed}" />
+			<StackPanel>
+				<componentviews:Profile DataContext="{Binding Profile}" />
+				<componentviews:PostFeedView DataContext="{Binding Feed}" />
+			</StackPanel>
 		</ScrollViewer>
 
 		<ScrollViewer Grid.Row="2" Grid.Column="2">

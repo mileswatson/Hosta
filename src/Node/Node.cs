@@ -29,8 +29,7 @@ namespace Node
 		public enum Binding
 		{
 			Loopback,
-			Local,
-			Public
+			Local
 		}
 
 		/// <summary>
@@ -46,14 +45,13 @@ namespace Node
 		/// Creates a new node, loading the database and server identity
 		/// from the provided path.
 		/// </summary>
-		public static async Task<Node> Create(string folder, Binding binding)
+		public static async Task<Node> Create(string folder, Binding binding, int port)
 		{
 			if (!Directory.Exists(folder)) throw new Exception("Path is not a folder!");
 
 			var privateIdentity = await LoadIdentity(folder);
 
 			var address = await AddressFromBinding(binding);
-			var port = 12000;
 
 			var databaseHandler = await APIGateway.Create(Path.Combine(folder, "hostanode.db"), privateIdentity.ID);
 
@@ -108,12 +106,6 @@ namespace Node
 					// The IP address of the device on the LAN
 					var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
 					return hostEntry.AddressList[0];
-
-				case Binding.Public:
-					// Gets the public IP of the router
-					var webclient = new WebClient();
-					var externalip = await webclient.DownloadStringTaskAsync("http://icanhazip.com");
-					return IPAddress.Parse(externalip.Trim());
 
 				default:
 					throw new Exception("Invalid binding!");

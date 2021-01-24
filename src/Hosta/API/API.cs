@@ -1,4 +1,5 @@
-﻿using Hosta.API.Friend;
+﻿using Hosta.API.Address;
+using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
@@ -6,12 +7,28 @@ using Hosta.Crypto;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Hosta.API
 {
 	public abstract class API
 	{
+		/// <summary>
+		/// Manually adds the address of a friend.
+		/// </summary>
+		public abstract Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity client = null);
+
+		/// <summary>
+		/// Gets the addresses that the server knows from the list.
+		/// </summary>
+		public abstract Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity client = null);
+
+		/// <summary>
+		/// Informs the node of the client node's address.
+		/// </summary>
+		public abstract Task InformAddress(int port, IPAddress address = null, PublicIdentity client = null);
+
 		/// <summary>
 		/// Gets a list of the user's friends from the server.
 		/// </summary>

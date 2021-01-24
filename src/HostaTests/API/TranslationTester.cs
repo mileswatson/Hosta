@@ -1,4 +1,5 @@
 ﻿using Hosta.API;
+using Hosta.API.Address;
 using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
@@ -35,6 +36,26 @@ namespace HostaTests.API
 			running = localGateway.Run();
 			var args = new APITranslatorClient.ConnectionArgs { Address = IPAddress.Loopback, Port = 12000, Self = client, ServerID = server.ID };
 			remoteGateway = APITranslatorClient.CreateAndConnect(args).Result;
+		}
+
+		[TestMethod]
+		public async Task InformGetAddress()
+		{
+			var response = await remoteGateway.GetAddresses(new List<string> { client.ID });
+			Assert.IsTrue(response.Count == 0);
+			await remoteGateway.InformAddress(-1);
+			response = await remoteGateway.GetAddresses(new List<string> { client.ID });
+			Assert.IsTrue(response.ContainsKey(client.ID));
+			IPAddress.Parse(response[client.ID].IP);
+
+			var address = new AddressInfo { IP = "string here", Port = 8080 };
+
+			await remoteGateway.AddAddress(new("testkey", address));
+
+			response = await remoteGateway.GetAddresses(new List<string> { client.ID, "testkey" });
+
+			Assert.IsTrue(response.Count == 2);
+			Assert.AreEqual(response["testkey"], address);
 		}
 
 		[TestMethod]
@@ -114,6 +135,33 @@ namespace HostaTests.API
 		private readonly Dictionary<string, GetPostResponse> posts = new();
 
 		private readonly Dictionary<string, FriendInfo> friends = new();
+
+		private readonly Dictionary<string, AddressInfo> addresses = new();
+
+		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity _)
+		{
+			addresses[address.Item1] = address.Item2;
+			return Task.CompletedTask;
+		}
+
+		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity _)
+		{
+			var response = new Dictionary<string, AddressInfo>();
+			foreach (var user in users)
+			{
+				if (addresses.ContainsKey(user))
+				{
+					response[user] = addresses[user];
+				}
+			}
+			return Task.FromResult(response);
+		}
+
+		public override Task InformAddress(int port, IPAddress address, PublicIdentity client)
+		{
+			addresses[client.ID] = new AddressInfo { IP = address.ToString(), Port = port };
+			return Task.CompletedTask;
+		}
 
 		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity _)
 		{

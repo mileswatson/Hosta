@@ -126,7 +126,7 @@ namespace Hosta.RPC
 		/// <summary>
 		/// Remotely calls a function on the other end and receives a response.
 		/// </summary>
-		public async Task<string> Call(string procedure, string args, PublicIdentity? _ = null)
+		public async Task<string> Call(string procedure, string args, PublicIdentity? _1 = null, IPEndPoint? _2 = null)
 		{
 			ThrowIfDisposed();
 

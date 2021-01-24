@@ -1,6 +1,7 @@
 ﻿using Hosta.Crypto;
 using Hosta.Tools;
 using System;
+using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -44,6 +45,11 @@ namespace Hosta.Net
 		/// A unique conversation ID derived from the key.
 		/// </summary>
 		public readonly byte[] ID;
+
+		public IPEndPoint RemoteEndPoint
+		{
+			get => socketMessenger.RemoteEndPoint;
+		}
 
 		/// <summary>
 		/// Creates a new instance of a SecureMessenger

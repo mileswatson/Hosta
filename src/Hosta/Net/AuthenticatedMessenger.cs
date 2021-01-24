@@ -1,6 +1,7 @@
 ﻿using Hosta.Crypto;
 using Hosta.Tools;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Hosta.Net
@@ -18,7 +19,12 @@ namespace Hosta.Net
 		/// <summary>
 		/// Identity of the correspondent.
 		/// </summary>
-		public readonly PublicIdentity otherIdentity;
+		public readonly PublicIdentity PeerIdentity;
+
+		public IPEndPoint RemoteEndPoint
+		{
+			get => protectedMessenger.RemoteEndPoint;
+		}
 
 		/// <summary>
 		/// Creates a new authenticated messenger, given a protected messenger and a public identity.
@@ -26,7 +32,7 @@ namespace Hosta.Net
 		public AuthenticatedMessenger(ProtectedMessenger secureMessenger, PublicIdentity otherIdentity)
 		{
 			this.protectedMessenger = secureMessenger;
-			this.otherIdentity = otherIdentity;
+			this.PeerIdentity = otherIdentity;
 		}
 
 		/// <summary>

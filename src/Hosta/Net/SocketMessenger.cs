@@ -31,7 +31,10 @@ namespace Hosta.Net
 		/// </summary>
 		private const int MaxLength = 1 << 16;
 
-		private const int ChunkSize = 8000;
+		public IPEndPoint RemoteEndPoint
+		{
+			get => socket.RemoteEndPoint as IPEndPoint ?? throw new Exception("Remote endpoint was null!");
+		}
 
 		/// <summary>
 		/// Constructs a new SocketMessenger from a connected socket.
@@ -92,6 +95,7 @@ namespace Hosta.Net
 			while (offset < buffer.Length)
 			{
 				var numBytes = await ReadIntoBuffer(buffer, offset).ConfigureAwait(false);
+				if (numBytes == 0) throw new Exception("Connection was closed.");
 				offset += numBytes;
 			}
 

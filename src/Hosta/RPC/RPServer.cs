@@ -176,7 +176,11 @@ namespace Hosta.RPC
 			bool success;
 			try
 			{
-				returnValues = await callHandler.Call(call.Procedure, call.ProcedureArgs, messenger.otherIdentity).ConfigureAwait(false);
+				returnValues = await callHandler.Call(
+					call.Procedure,
+					call.ProcedureArgs,
+					messenger.PeerIdentity,
+					messenger.RemoteEndPoint).ConfigureAwait(false);
 				success = true;
 			}
 			catch (RPException e)

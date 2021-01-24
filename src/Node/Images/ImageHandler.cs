@@ -20,10 +20,10 @@ namespace Node.Images
 			this.users = users;
 		}
 
-		public static async Task<ImageHandler> Create(SQLiteAsyncConnection conn, UserHandler self)
+		public static async Task<ImageHandler> Create(SQLiteAsyncConnection conn, UserHandler users)
 		{
 			await conn.CreateTableAsync<Image>();
-			return new ImageHandler(conn, self);
+			return new ImageHandler(conn, users);
 		}
 
 		public async Task<string> Add(AddImageRequest request, PublicIdentity client)

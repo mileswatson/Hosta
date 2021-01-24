@@ -12,7 +12,8 @@ namespace Node
 		/// </summary>
 		public static async Task Main(string[] args)
 		{
-			// Ensure that directory path is given.
+			// Ensure that directory path and port are given.
+
 			string path;
 			try
 			{
@@ -23,8 +24,18 @@ namespace Node
 				throw new Exception("Directory path required!");
 			}
 
+			int port;
+			try
+			{
+				port = int.Parse(args[1]);
+			}
+			catch
+			{
+				throw new Exception("Port required!");
+			}
+
 			// Create and run node.
-			node = await Node.Create(path, Node.Binding.Loopback);
+			node = await Node.Create(path, Node.Binding.Local, port);
 			var running = node.Run();
 
 			// Capture cancel event
