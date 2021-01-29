@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows;
 using static ClientWPF.ApplicationEnvironment;
 using static ClientWPF.Models.ResourceManager;
 
@@ -111,7 +110,8 @@ namespace ClientWPF.ViewModels.HomeTab
 				{
 					await Resources!.AddAddress(friend.ID, address, port);
 					window.Close();
-					Update(false);
+					friend.Click.Execute(friend);
+					Update(true);
 				}
 				catch (APIException e)
 				{

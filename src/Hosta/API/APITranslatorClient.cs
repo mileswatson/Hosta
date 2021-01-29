@@ -22,12 +22,15 @@ namespace Hosta.API
 		/// </summary>
 		private readonly RPClient client;
 
+		public string ServerID { get; init; }
+
 		/// <summary>
 		/// Creates a new instance of a RemoteAPIGateway.
 		/// </summary>
-		private APITranslatorClient(RPClient client)
+		private APITranslatorClient(RPClient client, string server)
 		{
 			this.client = client;
+			ServerID = server;
 		}
 
 		/// <summary>
@@ -40,7 +43,7 @@ namespace Hosta.API
 				new IPEndPoint(args.Address, args.Port),
 				args.Self ?? throw new NullReferenceException("Self should not be null!")
 			).ConfigureAwait(false);
-			return new APITranslatorClient(client);
+			return new APITranslatorClient(client, args.ServerID);
 		}
 
 		public record ConnectionArgs
