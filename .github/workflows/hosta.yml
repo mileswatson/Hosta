@@ -1,4 +1,4 @@
-name: Library Build/Test (.NET Core)
+name: Hosta Core Library
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
