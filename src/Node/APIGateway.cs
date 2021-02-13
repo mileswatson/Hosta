@@ -1,20 +1,20 @@
 ﻿using Hosta.API;
+using Hosta.API.Address;
 using Hosta.API.Friend;
 using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
-using Node.Users;
+using Node.Addresses;
 using Node.Images;
 using Node.Posts;
 using Node.Profiles;
+using Node.Users;
 using SQLite;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Net;
-using Node.Addresses;
-using Hosta.API.Address;
+using System.Threading.Tasks;
 
 namespace Node
 {
@@ -43,11 +43,11 @@ namespace Node
 			this.addresses = addresses;
 		}
 
-		public static async Task<APIGateway> Create(string path, string self)
+		public static async Task<APIGateway> Create(string path, PrivateIdentity self, int port)
 		{
 			var conn = new SQLiteAsyncConnection(path, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex);
 
-			var users = await UserHandler.Create(conn, self);
+			var users = await UserHandler.Create(conn, self.ID);
 
 			var images = await ImageHandler.Create(conn, users);
 
@@ -55,7 +55,7 @@ namespace Node
 
 			var profiles = await ProfileHandler.Create(conn, users);
 
-			var addresses = await AddressHandler.Create(conn, users);
+			var addresses = await AddressHandler.Create(conn, users, port, self);
 
 			return new APIGateway(users, images, posts, profiles, addresses);
 		}

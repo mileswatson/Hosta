@@ -53,7 +53,7 @@ namespace Node
 
 			var address = await AddressFromBinding(binding);
 
-			var databaseHandler = await APIGateway.Create(Path.Combine(folder, "hostanode.db"), privateIdentity.ID);
+			var databaseHandler = await APIGateway.Create(Path.Combine(folder, "hostanode.db"), privateIdentity, port);
 
 			Console.WriteLine($"Creating node with location {privateIdentity.ID}:{address}:{port}");
 

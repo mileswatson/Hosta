@@ -1,0 +1,7 @@
+version: '3.3'    
+services:
+  hostatests:
+    container_name: HostaTests
+    build:
+      context: ../
+      dockerfile: HostaTests/Dockerfile

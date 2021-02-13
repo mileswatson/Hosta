@@ -47,6 +47,11 @@ namespace ClientWPF.Models
 
 		//// Implementation
 
+		public async Task UpdateAddress(string user)
+		{
+			await connections.GetConnection(user, true);
+		}
+
 		public async Task AddAddress(string user, IPAddress address, int port)
 		{
 			var conn = await connections.GetConnection(Self);
@@ -56,6 +61,7 @@ namespace ClientWPF.Models
 				Port = port
 			};
 			await conn.AddAddress(new(user, request));
+			await UpdateAddress(user);
 		}
 
 		public async Task<List<FriendInfo>> GetFriendList()
