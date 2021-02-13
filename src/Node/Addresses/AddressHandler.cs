@@ -88,6 +88,7 @@ namespace Node.Addresses
 
 			foreach (var connection in connections)
 			{
+                if (connection is null) continue;
 				if (missingFriends.Count > 0) await GetFriends(connection, missingFriends);
 				connection.Dispose();
 			}
