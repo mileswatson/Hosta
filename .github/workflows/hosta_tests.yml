@@ -12,14 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.100
-    - name: Install dependencies
-      run: dotnet restore HostaTests
-    - name: Build
-      run: dotnet build HostaTests --configuration Release --no-restore
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
+    - name: Checkout latest repo
+      uses: actions/checkout@v2
+
+    - name: Run tests
+      run: docker-compose -f src/HostaTests/docker-compose.yml up
