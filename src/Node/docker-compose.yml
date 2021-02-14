@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  node:
+    container_name: Node
+    build:
+      context: ../
+      dockerfile: Node/Dockerfile
+    environment:
+      - PORT=${NODE_PORT}
+    ports:
+      - ${NODE_PORT}:${NODE_PORT}
+    volumes:
+      - ${NODE_DATA}:/app/data
