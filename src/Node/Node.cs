@@ -3,6 +3,7 @@ using Hosta.Crypto;
 using Hosta.Tools;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -105,7 +106,9 @@ namespace Node
 				case Binding.Local:
 					// The IP address of the device on the LAN
 					var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
-					return hostEntry.AddressList[0];
+					return hostEntry.AddressList
+                        .Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        .FirstOrDefault() ?? IPAddress.Loopback;
 
 				default:
 					throw new Exception("Invalid binding!");

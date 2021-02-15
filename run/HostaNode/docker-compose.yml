@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+  node:
+    container_name: HostaNode
+    image: mileswatson/hosta:node
+    environment:
+      - PORT=${PORT}
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ${NODE_PATH}:/app/data

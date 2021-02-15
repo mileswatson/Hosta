@@ -30,7 +30,7 @@
 <h3 align="center">
   <a href="https://github.com/mileswatson/Hosta/tree/master/src">Source</a>
   <span> · </span>
-  <a href="#documentation-">Docs</a>
+  <a href="https://github.com/mileswatson/Hosta/wiki/Documentation">Docs</a>
   <span> · </span>
   <a href="!https://github.com/mileswatson/Hosta/discussions/21">Feature Requests</a>
   <span> · </span>
@@ -68,151 +68,101 @@ Each user should have an always-on device (called a *node*) to host their conten
 
 They can use a *client* program to view the posts, comments, and profiles of users on the network. At the moment, only a **Windows 10** client is in the works - however, more platforms may be supported in the future.
 
-# Documentation 📃
+# Run 🏃
 
-This sections explains the inner workings of the project.
+## Node
 
-### Contents
+This section will guide you through the process of running a Hosta node. It is recommended to use a Raspberry Pi running Ubuntu.
 
- - [Technologies](#technologies-)
- - [Network Architecture](#network-architecture-)
- - [Solution Structure](#solution-structure-)
- - [Hosta (Core Library)](#hosta-core-library-)
-   - [Crypto](#crypto)
-   - [Tools](#tools)
-   - [Net](#net)
-   - [RPC](#rpc)
-   - [API](#api)
+### 1. Install Dependencies
 
+ - Linux: Install [Docker Engine](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04) and [Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04#prerequisites)
+ - Windows / MacOS: Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-## Technologies 🚀
+### 2. Download the configuration folder
 
-This project using the following languages / frameworks:
- - [**C# 9**](https://docs.microsoft.com/en-us/dotnet/csharp/)
- - [**.NET 5**](https://devblogs.microsoft.com/dotnet/introducing-net-5/)
- - [**WPF**](https://docs.microsoft.com/en-us/visualstudio/designers/getting-started-with-wpf?view=vs-2019) (desktop client)
- - [**SQLite**](https://sqlite.org/index.html) (node)
+Download the latest `node.zip` file, unzip it to a directory of your choosing, and `cd` into the `node` folder. Running `dir` (Windows) or `ls -a` (Linux) should show three files in the current directory:
+ - `.env`
+ - `docker-compose.yml`
+ - `README.md`
 
-It also uses the following NuGet packages:
- - [**Json.NET**](https://www.newtonsoft.com/json) - fast and reliable JSON serialization
- - [**sqlite-net**](https://github.com/praeclarum/sqlite-net) - a simple, cross platform ORM for SQLite
+### 3. Run
 
-Many thanks to the library maintainers for making this project possible!
+Run the following command:
 
-## Network Architecture 🏰
+`docker-compose up`
 
-As mentioned earlier, there are two classes of device on the Hosta network.
+You can stop the service with `Ctrl+C`.
 
-1. **Nodes** - always-on servers, responsible for controlling the data of a user
-2. **Clients** - user interfaces, responsible for fetching and displaying data from nodes
+### 4. Update
 
-A sample architecture is shown below, with each user having a node and a single client.
+Update the node at any time by running `docker pull mileswatson/hosta:node` and then restarting the container.
 
-![](img/network_structure.png)
+## Client
 
-### User IDs
+This section will guide you through the process of running a Hosta node. Currently, the client can only be run on Windows.
 
-Each user is identified by a unique hex ID, generated from the hash of their public key.
+### 1. Download the executable
 
-### IDAR
+Download the latest `client.zip` file, and unzip it to a directory of your choosing.
 
-> **Id**entity **A**ddress **R**esolver
-> 
->  Responsible for finding the node address of a given ID (a replacement for traditional DNS)
+### 2. Run
 
-As nodes have a high uptime, they help power the IDAR service. When a client wishes to get the location of a friend's node, they will ask their own node for the address. Their own node will then resolve the query, returning the address to the client.
+Run the executable through a terminal, or by double clicking it in the file explorer.
+If running through the terminal, the default save folder can be provided with `./ClientWPF.exe PATH_TO_DATA_FOLDER`.
 
-There are five main mechanisms that IDAR could use, in order of increasing complexity:
- - [x] Manual IP entry (impractical)
- - [ ] Full mesh broadcasting (heavy on storage)
- - [ ] Friend broadcasting w/ recursive lookup (light on storage, but very vulnerable to partitions)
- - [ ] Blockchain (less vulnerable to partitions, but heavy on the CPU)
- - [ ] Distributed hash table (light on storage, efficient queries, but hard to implement)
+In order to connect the client to your node, you must select a folder that has a `client.identity` file identical to that of the `node.identity`.
+You can do this by copying the `node.identity` file from the node folder over to the client folder (perhaps using a USB), before renaming it to `client.identity`).
 
-The ones that have been implemented have been ticked off.
+You must also enter the IP address of your node - if running on the same computer, you can leave this as `127.0.0.1`.
 
-## Solution Structure 🔧
+### 3. Update
 
-The solution is divided into 3 main projects - a client application, a node program, and a core library (used by both the client and the node).
+Currently, the client program must be updated manually - replace the current executable with the executable from the latest `client.zip` release.
 
-<img src="img/namespace-structure.jpg" width=500px/>
+# Build and Test
 
-> Note: Consider "x->y" to mean "x is dependant on y and y is not dependant on x".
-> 
-> "x->y->z" => "x->z"
+Building and testing is currently only supported on Windows x64 - however, some functionalities may also work on Linux or ARM.
 
-## Hosta (Core Library) 🍀
+### 1. Install Dependencies
 
-The core library is responsible for definining the communication between devices on the network. Using it, anyone can create their own node or client!
+First, install the [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0).
 
-Below is a diagram that outlines the structure:
+Next, install Docker:
 
-![](img/hosta-structure.jpg)
+ - Linux: Install [Docker Engine](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04) and [Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04#prerequisites)
+ - Windows / MacOS: Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-> Note: The diagram has simplifications to prevent visual clutter - the actual workings are a little less nice to look at!
+### 2. Clone the repo
 
-### Crypto
+`git clone https://github.com/mileswatson/hosta.git`
 
-The `Hosta.Crypto` sub-namespace handles the common cryptographic operations across the namespace. It uses the following primitives from `System.Security.Cryptography`:
- - [AesGcm](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.aesgcm?view=net-5.0) - symmetric encryption
- - [RandomNumberGenerator](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.randomnumbergenerator?view=net-5.0) - CSPRNG
- - [ECDH](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.ecdiffiehellman?view=net-5.0) - key exchanging
- - [ECDsa](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.ecdsa?view=net-5.0) - digital signatures
- - [HMACSHA512](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hmacsha512?view=net-5.0) - symmetric ratcheting
- - [SHA256](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.sha256?view=net-5.0) - hashing
+### 3. Unit Tests
 
-### Tools
+In the root directory of the project (`/Hosta`), run the following command.
 
-The `Hosta.API` sub-namespace provides commonly used tools. At the moment, these include:
- - `AccessQueue`
-   - an asynchronous queue, used to control access to a resource
- - `Transcoder`
-   - provides text encoding / decoding functionality
+`./scripts/test.cmd`
 
-### Net
+### 4. Build
 
-The `Hosta.Net` sub-namespace builds upon `System.Net.Sockets` to allow secure, authenticated, message-based (as opposed to stream-based) communication.
+In the root directory of the project, run the following command.
 
-It uses a "layer" structure:
- - `Socket[Client/Server/Messenger]`
-   - wraps the default `Socket` APM functions with TAP functions
-   - splits the socket stream into messages (using length prefixing)
- - `Protected[Client/Server/Messenger]`
-   - performs an ECDH key exchange
-   - encrypts the connection using AES GCM
-   - provides backwards secrecy with KDF Ratchets (forwards secrecy may yet be implemented)
- - `Authenticated[Client/Server/Messenger]`
-   - allows a client and server to authenticate each other
-   - translates between strings and byte arrays
+`./scripts/build.cmd`
 
-This layer structure allows resilient and reliable communications, without relying on tradional methods (such as certificate authorities or 2WSSL).
+### 6. Run
 
-> Disclaimer: Don't use the Protected or Authenticated classes for anything serious. I understand enough about cryptography to realise I know nothing :)
+To start the node, run the following commands from the root directory of the project. Replace `YOURPATH` with a path to a folder to store the node data, and `YOURPORT` with a port to bind the server to (12001 recommended).
 
-### RPC
+`docker run -v YOURPATH:/app/data -p YOURPORT:12000 mileswatson/hosta:node-dev`
 
-The `Hosta.RPC` sub-namespace builds upon `Hosta.NET` to allow for remote procedure calls in the form of `Call(string proc, string args)`.
+To start the client, run the following command from the root directory of the project.
 
-It consists of two main classes:
- - `RPServer`
-   - receives `RPCall`s and forwards them to a given ICallable
-   - sends back an `RPResponse` when the call has finished
- - `RPClient`
-   - allows a client to send an `RPCall` to the server
-   - returns the result from an `RPResponse` when the call has finished (or throws an exception if remote execution failed)
+`./src/ClientWPF/bin/HostaClient/ClientWPF.exe`
 
-### API
+You can append a path to set as the default directory.
 
-The `Hosta.API` sub-namespace provides the main functionality for the library, by building off `Hosta.RPC`.
+### 7. Publish
 
-There are three main classes:
- - `API`
-   - an abstract class which acts specifies the remote procedures which can be called on the node
- - `RemoteAPIGateway`
-   - translates any incoming `RPCall` into an `API` function call
-   - returns the result to the `RPServer`
- - `LocalAPIGateway`
-   - translates `API` function calls into `RPClient` calls
-   - translates the response from the `RPClient` into meaningful data
+To publish zip files to the `/publish` directory, run the following command in the root directory of the project.
 
-There is also a `Hosta.API.Data` sub-namespace which specifies the data structures for API requests and responses.
+`./scripts/publish.cmd`
