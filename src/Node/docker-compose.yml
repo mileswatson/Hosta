@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   node:
-    container_name: Node
+    container_name: HostaNode
     build:
       context: ../
       dockerfile: Node/Dockerfile
