@@ -19,14 +19,14 @@
 	<ItemGroup>
 		<None Update="Assets\Icons\hosta-icon.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</None>
 		<None Update="Assets\Images\default-avatar.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Assets\Images\" />
 	</ItemGroup>
 	
 </Project>

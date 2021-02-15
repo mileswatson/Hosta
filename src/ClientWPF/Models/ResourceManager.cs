@@ -198,7 +198,8 @@ namespace ClientWPF.Models
 			image.BeginInit();
 			image.DecodePixelWidth = 160;
 			image.CacheOption = BitmapCacheOption.OnLoad;
-			image.UriSource = new Uri("Assets/Images/default-avatar.png", UriKind.Relative);
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/Images/default-avatar.png");
+			image.UriSource = new Uri(path, UriKind.Absolute);
 			image.EndInit();
 			DefaultImage = image;
 		}
