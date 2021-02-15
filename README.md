@@ -72,7 +72,7 @@ They can use a *client* program to view the posts, comments, and profiles of use
 
 ## Node
 
-This section will guide you through the process of running a Hosta node. It is recommended to use a Raspberry Pi running Ubuntu or Linux Mint.
+This section will guide you through the process of running a Hosta node. It is recommended to use a Raspberry Pi running Ubuntu.
 
 ### 1. Install Dependencies
 
@@ -94,6 +94,23 @@ Run the following command:
 
 You can stop the service with `Ctrl+C`.
 
+### 4. Update
+
+Update the node at any time by running `docker pull mileswatson/hosta:node` and then restarting the container.
+
 ## Client
 
-This section will guide you through the process of running a Hosta node. It is recommended to use a Raspberry Pi running Ubuntu or Linux Mint.
+This section will guide you through the process of running a Hosta node. Currently, the client can only be run on Windows.
+
+### 1. Download the executable
+
+Download the latest `client.zip` file, and unzip it to a directory of your choosing.
+
+### 2. Run
+
+Run the executable through a terminal, or by double clicking it in the file explorer.
+If running through the terminal, the default save folder can be provided with `./ClientWPF.exe PATH_TO_DATA_FOLDER`.
+
+### 3. Update
+
+Currently, the client program must be updated manually - replace the current executable with the executable from the latest `client.zip` release.
