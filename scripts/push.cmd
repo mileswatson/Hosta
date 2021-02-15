@@ -8,4 +8,4 @@ pause
 
 powershell write-host -fore Cyan "Building and pushing..."
 cd src
-docker buildx build -f Node/Dockerfile --platform linux/amd64,linux/arm64,linux/arm -t mileswatson/hosta:node -t mileswatson/hosta:node-v%1 . --push
+docker buildx build -f Node/Dockerfile --platform linux/amd64,linux/arm64,linux/arm -t mileswatson/hosta:node mileswatson/hosta:node-v%1 . --push
