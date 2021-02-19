@@ -33,12 +33,12 @@ namespace ClientWPF.ViewModels.Components
 
 		public override async Task UpdateAsync(bool force)
 		{
-			var infoList = await Resources!.GetImageList();
+			var infoList = await Resources.GetImageList();
 			infoList.Sort(Comparer);
 			var imageList = new List<ImageViewModel>();
 			foreach (var info in infoList)
 			{
-				var img = new ImageViewModel(Resources!.Self, info.Hash);
+				var img = new ImageViewModel(Resources.Self, info.Hash);
 				img.Update(force);
 				imageList.Add(img);
 			}

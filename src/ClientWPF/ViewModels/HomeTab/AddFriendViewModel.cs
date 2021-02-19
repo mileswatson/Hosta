@@ -44,7 +44,7 @@ namespace ClientWPF.ViewModels.HomeTab
 			{
 				try
 				{
-					await Resources!.SetFriend(ID, Name, false);
+					await Resources.SetFriend(ID, Name, false);
 					done();
 				}
 				catch (APIException e)

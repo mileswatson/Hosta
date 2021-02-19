@@ -34,8 +34,8 @@ namespace HostaTests.Net
 		public async Task TestValid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			var sent = a!.Send(bytes);
-			var message = await b!.Receive();
+			var sent = a.Send(bytes);
+			var message = await b.Receive();
 			await sent;
 			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message));
 		}
@@ -47,11 +47,11 @@ namespace HostaTests.Net
 			Echo(iter);
 			for (int i = 0; i < iter; i++)
 			{
-				_ = a!.Send(BitConverter.GetBytes(i));
+				_ = a.Send(BitConverter.GetBytes(i));
 			}
 			for (int i = 0; i < iter; i++)
 			{
-				Assert.AreEqual(BitConverter.ToInt32(await a!.Receive()), i);
+				Assert.AreEqual(BitConverter.ToInt32(await a.Receive()), i);
 			}
 		}
 
@@ -59,7 +59,7 @@ namespace HostaTests.Net
 		{
 			for (int i = 0; i < iter; i++)
 			{
-				_ = b!.Send(await b.Receive());
+				_ = b.Send(await b.Receive());
 			}
 		}
 
@@ -69,14 +69,14 @@ namespace HostaTests.Net
 		public async Task TestInvalid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a!.Send(bytes));
+			await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a.Send(bytes));
 		}
 
 		[TestCleanup]
 		public void CleanUp()
 		{
-			a!.Dispose();
-			b!.Dispose();
+			a.Dispose();
+			b.Dispose();
 		}
 	}
 }

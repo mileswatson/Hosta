@@ -190,7 +190,12 @@ namespace ClientWPF.Models
 
 		//// Static
 
-		public static ResourceManager? Resources { get; set; }
+        private static ResourceManager? _resources = null;
+
+		public static ResourceManager Resources {
+            get => _resources ?? throw new NullReferenceException();
+            set => _resources = _resources is null ? value : throw new Exception("Resources has already been set!");
+        }
 
 		static ResourceManager()
 		{

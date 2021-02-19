@@ -39,7 +39,7 @@ namespace ClientWPF.ViewModels.PostTab
 		public void SetImageHash(string hash)
 		{
 			avatarHash = hash;
-			Image = new ImageViewModel(Resources!.Self, hash);
+			Image = new ImageViewModel(Resources.Self, hash);
 			Image.Update(false);
 		}
 
@@ -59,7 +59,7 @@ namespace ClientWPF.ViewModels.PostTab
 				if (!Env.Confirm("Are you sure you want to post?")) return;
 				try
 				{
-					await Resources!.AddPost(Content, avatarHash);
+					await Resources.AddPost(Content, avatarHash);
 					Content = "";
 					avatarHash = "";
 					Image = null;

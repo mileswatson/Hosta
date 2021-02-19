@@ -32,7 +32,7 @@ namespace ClientWPF.ViewModels.Components
 
 		public override async Task UpdateAsync(bool force = false)
 		{
-			var infoList = await Resources!.GetPostList(user, DateTime.MinValue);
+			var infoList = await Resources.GetPostList(user, DateTime.MinValue);
 			infoList.Sort(Compare);
 			var newList = new List<PostViewModel>();
 			foreach (var info in infoList)

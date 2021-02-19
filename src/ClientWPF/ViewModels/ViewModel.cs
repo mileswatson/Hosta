@@ -80,7 +80,7 @@ namespace ClientWPF.ViewModels
 		public void OnDisconnect()
 		{
 			VM = startup;
-			Resources?.Dispose();
+            Resources.Dispose();
 		}
 
 		public override Task UpdateAsync(bool force)

@@ -64,7 +64,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 
 		public void SetAvatarHash(string hash)
 		{
-			Avatar = new ImageViewModel(Resources!.Self, hash);
+			Avatar = new ImageViewModel(Resources.Self, hash);
 			Avatar.Update(false);
 		}
 
@@ -78,7 +78,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 			{
 				try
 				{
-					await Resources!.SetProfile(Name, Tagline, Bio, Avatar.Hash);
+					await Resources.SetProfile(Name, Tagline, Bio, Avatar.Hash);
 					OnDone(true);
 				}
 				catch (APIException e)
