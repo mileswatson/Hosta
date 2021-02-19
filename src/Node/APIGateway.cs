@@ -5,6 +5,7 @@ using Hosta.API.Image;
 using Hosta.API.Post;
 using Hosta.API.Profile;
 using Hosta.Crypto;
+using Hosta.Tools;
 using Node.Addresses;
 using Node.Images;
 using Node.Posts;
@@ -87,51 +88,51 @@ namespace Node
 		//// Implementations
 
 		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity? client) =>
-			Call(() => addresses.AddAddress(address.Item1, IPAddress.Parse(address.Item2.IP), address.Item2.Port, client!));
+			Call(() => addresses.AddAddress(address.Item1, IPAddress.Parse(address.Item2.IP), address.Item2.Port, client.GuardNull()));
 
 		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity? client) =>
-			Call(() => addresses.GetAddresses(users, client!));
+			Call(() => addresses.GetAddresses(users, client.GuardNull()));
 
 		public override Task InformAddress(int port, IPAddress? address, PublicIdentity? client) =>
-			Call(() => addresses.InformAddress(port, address!, client!));
+			Call(() => addresses.InformAddress(port, address.GuardNull(), client.GuardNull()));
 
 		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity? client) =>
-			Call(() => users.GetFriendList(client!));
+			Call(() => users.GetFriendList(client.GuardNull()));
 
 		public override Task SetFriend(FriendInfo info, PublicIdentity? client) =>
-			Call(() => users.SetFriend(info, client!));
+			Call(() => users.SetFriend(info, client.GuardNull()));
 
 		public override Task RemoveFriend(string user, PublicIdentity? client) =>
-			Call(() => users.RemoveFriend(user, client!));
+			Call(() => users.RemoveFriend(user, client.GuardNull()));
 
 		public override Task<string> AddImage(AddImageRequest request, PublicIdentity? client) =>
-			Call(() => images.Add(request, client!));
+			Call(() => images.Add(request, client.GuardNull()));
 
 		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity? client) =>
-			Call(() => images.Get(hash, client!));
+			Call(() => images.Get(hash, client.GuardNull()));
 
 		public override Task<List<ImageInfo>> GetImageList(PublicIdentity? client) =>
-			Call(() => images.GetList(client!));
+			Call(() => images.GetList(client.GuardNull()));
 
 		public override Task RemoveImage(string hash, PublicIdentity? client) =>
-			Call(() => images.Remove(hash, client!));
+			Call(() => images.Remove(hash, client.GuardNull()));
 
 		public override Task<string> AddPost(AddPostRequest request, PublicIdentity? client) =>
-			Call(() => posts.Add(request, client!));
+			Call(() => posts.Add(request, client.GuardNull()));
 
 		public override Task<GetPostResponse> GetPost(string id, PublicIdentity? client) =>
-			Call(() => posts.Get(id, client!));
+			Call(() => posts.Get(id, client.GuardNull()));
 
 		public override Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity? client) =>
-			Call(() => posts.GetList(start, client!));
+			Call(() => posts.GetList(start, client.GuardNull()));
 
 		public override Task RemovePost(string id, PublicIdentity? client) =>
-			Call(() => posts.RemovePost(id, client!));
+			Call(() => posts.RemovePost(id, client.GuardNull()));
 
 		public override Task<GetProfileResponse> GetProfile(PublicIdentity? client) =>
-			Call(() => profiles.Get(client!));
+			Call(() => profiles.Get(client.GuardNull()));
 
 		public override Task SetProfile(SetProfileRequest request, PublicIdentity? client) =>
-			Call(() => profiles.Set(request, client!));
+			Call(() => profiles.Set(request, client.GuardNull()));
 	}
 }
