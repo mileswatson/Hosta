@@ -86,52 +86,52 @@ namespace Node
 
 		//// Implementations
 
-		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity client) =>
-			Call(() => addresses.AddAddress(address.Item1, IPAddress.Parse(address.Item2.IP), address.Item2.Port, client));
+		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity? client) =>
+			Call(() => addresses.AddAddress(address.Item1, IPAddress.Parse(address.Item2.IP), address.Item2.Port, client!));
 
-		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity client) =>
-			Call(() => addresses.GetAddresses(users, client));
+		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity? client) =>
+			Call(() => addresses.GetAddresses(users, client!));
 
-		public override Task InformAddress(int port, IPAddress address, PublicIdentity client) =>
-			Call(() => addresses.InformAddress(port, address, client));
+		public override Task InformAddress(int port, IPAddress? address, PublicIdentity? client) =>
+			Call(() => addresses.InformAddress(port, address!, client!));
 
-		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity client) =>
-			Call(() => users.GetFriendList(client));
+		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity? client) =>
+			Call(() => users.GetFriendList(client!));
 
-		public override Task SetFriend(FriendInfo info, PublicIdentity client) =>
-			Call(() => users.SetFriend(info, client));
+		public override Task SetFriend(FriendInfo info, PublicIdentity? client) =>
+			Call(() => users.SetFriend(info, client!));
 
-		public override Task RemoveFriend(string user, PublicIdentity client) =>
-			Call(() => users.RemoveFriend(user, client));
+		public override Task RemoveFriend(string user, PublicIdentity? client) =>
+			Call(() => users.RemoveFriend(user, client!));
 
-		public override Task<string> AddImage(AddImageRequest request, PublicIdentity client) =>
-			Call(() => images.Add(request, client));
+		public override Task<string> AddImage(AddImageRequest request, PublicIdentity? client) =>
+			Call(() => images.Add(request, client!));
 
-		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity client) =>
-			Call(() => images.Get(hash, client));
+		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity? client) =>
+			Call(() => images.Get(hash, client!));
 
-		public override Task<List<ImageInfo>> GetImageList(PublicIdentity client) =>
-			Call(() => images.GetList(client));
+		public override Task<List<ImageInfo>> GetImageList(PublicIdentity? client) =>
+			Call(() => images.GetList(client!));
 
-		public override Task RemoveImage(string hash, PublicIdentity client) =>
-			Call(() => images.Remove(hash, client));
+		public override Task RemoveImage(string hash, PublicIdentity? client) =>
+			Call(() => images.Remove(hash, client!));
 
-		public override Task<string> AddPost(AddPostRequest request, PublicIdentity client) =>
-			Call(() => posts.Add(request, client));
+		public override Task<string> AddPost(AddPostRequest request, PublicIdentity? client) =>
+			Call(() => posts.Add(request, client!));
 
-		public override Task<GetPostResponse> GetPost(string id, PublicIdentity client) =>
-			Call(() => posts.Get(id, client));
+		public override Task<GetPostResponse> GetPost(string id, PublicIdentity? client) =>
+			Call(() => posts.Get(id, client!));
 
-		public override Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity client) =>
-			Call(() => posts.GetList(start, client));
+		public override Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity? client) =>
+			Call(() => posts.GetList(start, client!));
 
-		public override Task RemovePost(string id, PublicIdentity client) =>
-			Call(() => posts.RemovePost(id, client));
+		public override Task RemovePost(string id, PublicIdentity? client) =>
+			Call(() => posts.RemovePost(id, client!));
 
-		public override Task<GetProfileResponse> GetProfile(PublicIdentity client) =>
-			Call(() => profiles.Get(client));
+		public override Task<GetProfileResponse> GetProfile(PublicIdentity? client) =>
+			Call(() => profiles.Get(client!));
 
-		public override Task SetProfile(SetProfileRequest request, PublicIdentity client) =>
-			Call(() => profiles.Set(request, client));
+		public override Task SetProfile(SetProfileRequest request, PublicIdentity? client) =>
+			Call(() => profiles.Set(request, client!));
 	}
 }
