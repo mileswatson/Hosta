@@ -9,6 +9,6 @@ namespace Hosta.RPC
 	/// </summary>
 	public interface ICallable
 	{
-		public Task<string> Call(string procedure, string args, PublicIdentity client = null, IPEndPoint address = null);
+		public Task<string> Call(string procedure, string args, PublicIdentity? client = null, IPEndPoint? address = null);
 	}
 }
