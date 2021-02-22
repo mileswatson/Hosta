@@ -124,6 +124,8 @@ Currently, the client program must be updated manually - replace the current exe
 
 Building and testing is currently only supported on Windows x64 - however, some functionalities may also work on Linux or ARM.
 
+All commands should be run from the root directory of the project (`/Hosta`).
+
 ### 1. Install Dependencies
 
 First, install the [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0).
@@ -137,29 +139,35 @@ Next, install Docker:
 
 `git clone https://github.com/mileswatson/hosta.git`
 
-### 3. Unit Tests
-
-In the root directory of the project (`/Hosta`), run either:
+### 3. Unit Test
 
 `./scripts/test.cmd` or `dotnet test src`
 
 ### 4. Build
 
-In the root directory of the project, run either:
-
 `./scripts/build.cmd` or `dotnet build src`
 
 ### 6. Run
 
+#### Node: Dotnet (auto rebuild)
+
+`dotnet run -p src/Node YOURPATH YOURPORT`
+
+#### Node: Docker (build first)
+
 To start the node, run the following commands from the root directory of the project. Replace `YOURPATH` with a path to a folder to store the node data, and `YOURPORT` with a port to bind the server to (12001 recommended).
 
-`docker run -v YOURPATH:/app/data -p YOURPORT:12000 mileswatson/hosta:node-dev`
+`docker run --name node-dev -v YOURPATH:/app/data -p YOURPORT:12000 mileswatson/hosta:node-dev`
 
-To start the client, run the following command from the root directory of the project.
+You can exit from the docker terminal with `Ctrl+C`, and then use `docker stop node-dev` to halt the node.
+
+#### Client (build first)
+
+Ensure that the client build is up to date.
 
 `./src/ClientWPF/bin/HostaClient/ClientWPF.exe`
 
-You can append a path to set as the default directory.
+You can append a path to be used as the default directory.
 
 ### 7. Publish
 
