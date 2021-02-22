@@ -70,26 +70,23 @@ namespace Node
 			// If file doesn't exist, create and save a new identity.
 			if (!File.Exists(file))
 			{
-				var privateIdentity = PrivateIdentity.Create();
-				var bytes = Transcoder.HexFromBytes(PrivateIdentity.Export(privateIdentity));
+				var identity = PrivateIdentity.Create();
+				var bytes = Transcoder.HexFromBytes(PrivateIdentity.Export(identity));
 				await File.WriteAllTextAsync(file, bytes);
-				Console.WriteLine($"No identity found at {file}, so identity {privateIdentity.ID} was created.");
-				return privateIdentity;
+				Console.WriteLine($"No identity found at {file}, so identity {identity.ID} was created.");
+				return identity;
 			}
 
 			// Otherwise, attempt to load the identity from the file.
-			try
-			{
-				var hex = await File.ReadAllTextAsync(file);
-				var privateIdentity = PrivateIdentity.Import(Transcoder.BytesFromHex(hex));
-				Console.WriteLine($"Found identity {privateIdentity.ID} at {file}, loaded successfully.");
-				return privateIdentity;
-			}
-			catch
-			{
-				Console.WriteLine($"Failed to load identity at {file}.");
-				throw;
-			}
+            var hex = await File.ReadAllTextAsync(file);
+            var importedIdentity = PrivateIdentity.Import(Transcoder.BytesFromHex(hex));
+            if (importedIdentity.IsError) {
+                Console.WriteLine($"Failed to load identity at {file}.");
+                throw new Exception(importedIdentity.Error.GetType().ToString());
+            }
+            Console.WriteLine($"Found identity {importedIdentity.Value.ID} at {file}, loaded successfully.");
+            return importedIdentity.Value;
+
 		}
 
 		/// <summary>

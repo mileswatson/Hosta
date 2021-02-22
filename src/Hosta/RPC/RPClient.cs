@@ -19,7 +19,7 @@ namespace Hosta.RPC
 		private readonly AuthenticatedMessenger messenger;
 
 		/// <summary>
-		/// Keeps track of all unanswered requests.
+		/// Keeps track of all unanswered requests. TODO replace with concurrent
 		/// </summary>
 		private readonly Dictionary<Guid, TaskCompletionSource<string>> awaitedResponses = new();
 

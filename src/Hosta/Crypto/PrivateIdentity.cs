@@ -1,4 +1,6 @@
 ﻿using System.Security.Cryptography;
+using RustyResults;
+using static RustyResults.Helpers;
 
 namespace Hosta.Crypto
 {
@@ -15,13 +17,8 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Returns the PublicIdentityInfo
 		/// </summary>
-		public byte[] PublicIdentityInfo
-		{
-			get
-			{
-				return privateKey.ExportSubjectPublicKeyInfo();
-			}
-		}
+		public byte[] PublicIdentityInfo => privateKey.ExportSubjectPublicKeyInfo();
+
 
 		/// <summary>
 		/// The ID of the PrivateIdentity.
@@ -57,10 +54,17 @@ namespace Hosta.Crypto
 		/// <summary>
 		/// Imports a private identity from a byte array.
 		/// </summary>
-		public static PrivateIdentity Import(byte[] source)
+		public static Result<PrivateIdentity, CryptographicError> Import(byte[] source)
 		{
 			var privateKey = ECDsa.Create(ECCurve.NamedCurves.nistP521);
-			privateKey.ImportECPrivateKey(source, out int _);
+            try 
+            {
+                privateKey.ImportECPrivateKey(source, out int _);
+            }
+			catch
+            {
+                return Error(new CryptographicError());
+            }
 			return new PrivateIdentity(privateKey);
 		}
 
@@ -71,5 +75,7 @@ namespace Hosta.Crypto
 		{
 			return identity.privateKey.ExportECPrivateKey();
 		}
+
+        public struct CryptographicError {}
 	}
 }
