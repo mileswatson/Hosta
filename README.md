@@ -139,15 +139,15 @@ Next, install Docker:
 
 ### 3. Unit Tests
 
-In the root directory of the project (`/Hosta`), run the following command.
+In the root directory of the project (`/Hosta`), run either:
 
-`./scripts/test.cmd`
+`./scripts/test.cmd` or `dotnet test src`
 
 ### 4. Build
 
-In the root directory of the project, run the following command.
+In the root directory of the project, run either:
 
-`./scripts/build.cmd`
+`./scripts/build.cmd` or `dotnet build src`
 
 ### 6. Run
 
