@@ -98,7 +98,9 @@ namespace Hosta.Net
 			try
 			{
 				var package = await socketMessenger.Receive().ConfigureAwait(false);
-				return crypter.Decrypt(package, receiveRatchet.Turn(clicks));
+				var result = crypter.Decrypt(package, receiveRatchet.Turn(clicks));
+                if (result) return result.Value;
+                else throw new Exception(result.Error.GetType().ToString());
 			}
 			finally
 			{
