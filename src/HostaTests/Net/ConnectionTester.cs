@@ -41,7 +41,7 @@ namespace HostaTests.Net
 			var sent = a.Send(bytes);
 			var message = await b.Receive();
 			await sent;
-			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message));
+			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message.Value));
 		}
 
 		[TestMethod]
@@ -60,7 +60,7 @@ namespace HostaTests.Net
 			}
 			for (int i = 0; i < iter; i++)
 			{
-				var num = BitConverter.ToInt32(await a.Receive());
+				var num = BitConverter.ToInt32((await a.Receive()).Value);
 				var found = numbers.Remove(num);
 				if (!found) throw new KeyNotFoundException();
 			}
@@ -70,7 +70,7 @@ namespace HostaTests.Net
 		{
 			var received = await b.Receive();
 			await Task.Delay(r.Next(10, 500));
-			await b.Send(received);
+			await b.Send(received.Value);
 		}
 
 		[DataTestMethod]

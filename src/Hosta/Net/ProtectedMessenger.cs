@@ -97,11 +97,12 @@ namespace Hosta.Net
 			ThrowIfDisposed();
 			var pass = await receiveQueue.GetPass().ConfigureAwait(false);
 			if (pass.IsError) throw new Exception(pass.Error.GetType().ToString());
-			byte[] package;
 			try
 			{
-				package = await socketMessenger.Receive().ConfigureAwait(false);
-				var decryptResult = crypter.Decrypt(package, receiveRatchet.Turn(clicks));
+				var received = await socketMessenger.Receive().ConfigureAwait(false);
+                if (received.IsError) throw new Exception(received.Error.GetType().ToString());
+
+				var decryptResult = crypter.Decrypt(received.Value, receiveRatchet.Turn(clicks));
 				if (decryptResult) return decryptResult.Value;
 				else throw new Exception(decryptResult.Error.GetType().ToString());
 			}

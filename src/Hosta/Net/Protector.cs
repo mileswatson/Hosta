@@ -21,7 +21,8 @@ namespace Hosta.Net
 			var exchanger = new KeyExchanger();
 			var sent = socketMessenger.Send(exchanger.Token);
 			var token = await socketMessenger.Receive().ConfigureAwait(false);
-			var key = exchanger.KeyFromToken(token);
+            if (token.IsError) throw new Exception(token.Error.GetType().ToString());
+			var key = exchanger.KeyFromToken(token.Value);
 			await sent;
 
 			// Send test data.
