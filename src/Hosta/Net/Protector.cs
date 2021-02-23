@@ -23,7 +23,9 @@ namespace Hosta.Net
 			var token = await socketMessenger.Receive().ConfigureAwait(false);
             if (token.IsError) throw new Exception(token.Error.GetType().ToString());
 			var key = exchanger.KeyFromToken(token.Value);
-			await sent;
+            
+			var result = await sent;
+            if (result.IsError) throw new Exception(result.Error.GetType().ToString());
 
 			// Send test data.
 			var protectedMessenger = new ProtectedMessenger(socketMessenger, key, initiator);

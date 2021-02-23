@@ -118,37 +118,46 @@ namespace Hosta.Net
 		/// </summary>
 		private Task<Result<int>> ReadIntoBuffer(byte[] buffer, int offset)
 		{
-			var tcs = new TaskCompletionSource<Result<int>>();
+            try
+            {
+                var tcs = new TaskCompletionSource<Result<int>>();
 
-			// Read data into fixed length buffer.
-			socket.BeginReceive(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
-			{
-				try
-				{
-					var numBytesRead = socket.EndReceive(ar);
-					tcs.SetResult(numBytesRead);
-				}
-				catch (Exception e)
-				{
-                    Debug.WriteLine(e);
-					tcs.SetResult(Error());
-				}
-			}, null);
-			return tcs.Task;
+                // Read data into fixed length buffer.
+                socket.BeginReceive(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
+                {
+                    try
+                    {
+                        var numBytesRead = socket.EndReceive(ar);
+                        tcs.SetResult(numBytesRead);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        tcs.SetResult(Error());
+                    }
+                }, null);
+                return tcs.Task;
+            }
+			catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return Task.FromResult<Result<int>>(Error());
+            }
 		}
 
-		/// <summary>
-		/// Asynchronously sends a message over a TCP stream.
-		/// </summary>
-		public async Task Send(byte[] message)
+        /// <summary>
+        /// Asynchronously sends a message over a TCP stream.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">If the message length is <= 0 or >= MaxLength.</exception>
+		public async Task<Status<ConnectionError, DisposedError>> Send(byte[] message)
 		{
-			ThrowIfDisposed();
+			if (disposed) return Error(new DisposedError());
 
 			// Checks length before attempting to send.
 			if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException(nameof(message));
 
 			var pass = await writeQueue.GetPass().ConfigureAwait(false);
-			if (pass.IsError) throw new Exception(pass.Error.GetType().ToString());
+			if (pass.IsError) return Error(new DisposedError());
 
 			try
 			{
@@ -158,12 +167,7 @@ namespace Hosta.Net
 
 				// Write the message to the stream
 				await WriteUntilDone(message).ConfigureAwait(false);
-			}
-			catch
-			{
-				// Any exception is fatal.
-				Dispose();
-				throw;
+                return Ok();
 			}
 			finally
 			{
@@ -171,7 +175,7 @@ namespace Hosta.Net
 			}
 		}
 
-		private async Task WriteUntilDone(byte[] buffer)
+		private async Task<Status> WriteUntilDone(byte[] buffer)
 		{
 			// Reading the full message may require multiple calls, so store
 			// an offset to keep track of the number of bytes read.
@@ -179,31 +183,43 @@ namespace Hosta.Net
 			while (offset < buffer.Length)
 			{
 				var numBytes = await WriteFromBuffer(buffer, offset).ConfigureAwait(false);
-				offset += numBytes;
+                if (numBytes.IsError) return Error();
+				offset += numBytes.Value;
 			}
+            return Ok();
 		}
 
 		/// <summary>
 		/// A TAP to APM wrapper for reading a message from a stream.
 		/// </summary>
-		private Task<int> WriteFromBuffer(byte[] buffer, int offset)
+		private Task<Result<int>> WriteFromBuffer(byte[] buffer, int offset)
 		{
-			var tcs = new TaskCompletionSource<int>();
+            try 
+            {
+                var tcs = new TaskCompletionSource<Result<int>>();
 
-			// Read data into fixed length buffer.
-			socket.BeginSend(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
-			{
-				try
-				{
-					var numBytesWritten = socket.EndSend(ar);
-					tcs.SetResult(numBytesWritten);
-				}
-				catch (Exception e)
-				{
-					tcs.SetException(e);
-				}
-			}, null);
-			return tcs.Task;
+                // Read data into fixed length buffer.
+                socket.BeginSend(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
+                {
+                    try
+                    {
+                        var numBytesWritten = socket.EndSend(ar);
+                        tcs.SetResult(numBytesWritten);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        tcs.SetResult(Error());
+                    }
+                }, null);
+
+                return tcs.Task;
+            }
+			catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                return Task.FromResult<Result<int>>(Error());
+            }
 		}
 
 		/// <summary>

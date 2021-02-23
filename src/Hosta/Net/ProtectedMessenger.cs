@@ -81,7 +81,8 @@ namespace Hosta.Net
 			try
 			{
 				var package = crypter.Encrypt(message, sendRatchet.Turn(clicks));
-				await socketMessenger.Send(package).ConfigureAwait(false);
+				var sent = await socketMessenger.Send(package).ConfigureAwait(false);
+                if (sent.IsError) throw new Exception(sent.Error.GetType().ToString());
 			}
 			finally
 			{

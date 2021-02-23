@@ -40,7 +40,7 @@ namespace HostaTests.Net
 			var bytes = SecureRandomGenerator.GetBytes(length);
 			var sent = a.Send(bytes);
 			var message = await b.Receive();
-			await sent;
+            Assert.IsTrue(await sent);
 			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message.Value));
 		}
 
@@ -55,7 +55,8 @@ namespace HostaTests.Net
 			}
 			for (int i = 0; i < iter; i++)
 			{
-				_ = a.Send(BitConverter.GetBytes(i));
+				var sent = a.Send(BitConverter.GetBytes(i));
+                Assert.IsTrue(await sent);
 				numbers.Add(i);
 			}
 			for (int i = 0; i < iter; i++)
