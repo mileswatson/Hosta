@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Diagnostics;
+using System.Security.Cryptography;
 using RustyResults;
 using static RustyResults.Helpers;
 
@@ -61,8 +63,9 @@ namespace Hosta.Crypto
             {
                 privateKey.ImportECPrivateKey(source, out int _);
             }
-			catch
+			catch (Exception e)
             {
+                Debug.WriteLine(e);
                 return Error(new CryptographicError());
             }
 			return new PrivateIdentity(privateKey);

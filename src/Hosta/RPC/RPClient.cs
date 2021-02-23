@@ -3,6 +3,7 @@ using Hosta.Net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -69,21 +70,28 @@ namespace Hosta.RPC
 		/// </summary>
 		private async void ListenForResponses()
 		{
-			try
+			while (true)
 			{
-				while (true)
+				string received;
+				try
 				{
-					string received = await messenger.Receive().ConfigureAwait(false);
+					received = await messenger.Receive().ConfigureAwait(false);
+				}
+				catch (Exception e)
+				{
+					Debug.WriteLine(e);
+					// Clean-up at the end
+					Dispose();
+					return;
+				}
+				try
+				{
 					HandleResponse(received);
 				}
-			}
-			catch
-			{
-			}
-			finally
-			{
-				// Clean-up at the end
-				Dispose();
+				catch (Exception e)
+				{
+					Debug.WriteLine(e);
+				}
 			}
 		}
 
@@ -93,24 +101,34 @@ namespace Hosta.RPC
 		/// </summary>
 		private void HandleResponse(string received)
 		{
+			Debug.WriteLine(received);
 			RPResponse response;
 			try
 			{
 				var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
 				response = JsonConvert.DeserializeObject<RPResponse>(received, settings) ?? throw new Exception();
 			}
-			catch
+			catch (Exception e)
 			{
+				Debug.WriteLine(e);
 				// Any exception is fatal.
 				return;
 			}
 
-			// Checks to see whether the request is still valid.
-			if (!awaitedResponses.ContainsKey(response.ID)) return;
+			TaskCompletionSource<string> awaitedResponse;
+			lock (awaitedResponses)
+			{
+				// Checks to see whether the request is still valid.
+				if (!awaitedResponses.ContainsKey(response.ID))
+				{
+					Debug.WriteLine("Key not found!");
+					return;
+				}
 
-			var awaitedResponse = awaitedResponses[response.ID];
+				awaitedResponse = awaitedResponses[response.ID];
 
-			awaitedResponses.Remove(response.ID);
+				awaitedResponses.Remove(response.ID);
+			}
 
 			// Check if an exception was thrown or not.
 			if (response.Success)
@@ -135,7 +153,10 @@ namespace Hosta.RPC
 
 			// Allow for asynchronous return.
 			var tcs = new TaskCompletionSource<string>();
-			awaitedResponses.Add(call.ID, tcs);
+			lock (awaitedResponses)
+			{
+				awaitedResponses.Add(call.ID, tcs);
+			}
 
 			// Send the call object.
 			await messenger.Send(JsonConvert.SerializeObject(call)).ConfigureAwait(false);
@@ -169,8 +190,11 @@ namespace Hosta.RPC
 				messenger.Dispose();
 
 				// Signal awaited responses
-				foreach (var kvp in awaitedResponses) kvp.Value.TrySetException(new ObjectDisposedException("RPClient has been disposed!"));
-				awaitedResponses.Clear();
+				lock (awaitedResponses)
+				{
+					foreach (var kvp in awaitedResponses) kvp.Value.TrySetException(new ObjectDisposedException("RPClient has been disposed!"));
+					awaitedResponses.Clear();
+				}
 			}
 
 			disposed = true;

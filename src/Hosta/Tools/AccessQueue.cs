@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using RustyResults;
+using static RustyResults.Helpers;
 
 namespace Hosta.Tools
 {
@@ -13,24 +15,24 @@ namespace Hosta.Tools
 		/// <summary>
 		/// Enforces order of the queue.
 		/// </summary>
-		private readonly LinkedList<TaskCompletionSource> waitingTasks = new();
+		private readonly LinkedList<TaskCompletionSource<Status<DisposedError>>> waitingTasks = new();
 
-		private int available = 1;
+		private bool available = true;
 
 		/// <summary>
 		/// Queues for access to the resource.
 		/// </summary>
 		/// <returns>An awaitable task.</returns>
-		public Task GetPass()
+		public async Task<Status<DisposedError>> GetPass()
 		{
-			ThrowIfDisposed();
-			var tcs = new TaskCompletionSource();
+			if (disposed) return Error(new DisposedError());
+			var tcs = new TaskCompletionSource<Status<DisposedError>>();
 			lock (waitingTasks)
 			{
 				waitingTasks.AddLast(tcs);
 			}
 			CheckForSpace();
-			return tcs.Task;
+			return await tcs.Task;
 		}
 
 		/// <summary>
@@ -38,11 +40,11 @@ namespace Hosta.Tools
 		/// </summary>
 		public void ReturnPass()
 		{
-			if (available == 1)
+			lock (waitingTasks)
 			{
-				throw new SemaphoreFullException("All passes have been returned!");
+				if (available) throw new InvalidOperationException();
+				available = true;
 			}
-			available++;
 			CheckForSpace();
 		}
 
@@ -53,26 +55,21 @@ namespace Hosta.Tools
 		{
 			lock (waitingTasks)
 			{
-				var currentNode = waitingTasks.First;
-				while (currentNode != null && available > 0)
-				{
-					var tcs = currentNode.Value;
-					available--;
-					waitingTasks.Remove(currentNode);
-					tcs.SetResult();
-					currentNode = currentNode.Next;
-				}
+				if (!available) return;
+				var first = waitingTasks.First;
+				if (first is null) return;
+				available = false;
+				waitingTasks.RemoveFirst();
+				var tcs = first.Value;
+				tcs.SetResult(Ok());
 			}
 		}
+
+		public struct DisposedError { }
 
 		//// Implements IDisposable
 
 		private bool disposed = false;
-
-		private void ThrowIfDisposed()
-		{
-			if (disposed) throw new ObjectDisposedException("AccessQueue has been disposed!");
-		}
 
 		public void Dispose()
 		{
@@ -83,6 +80,8 @@ namespace Hosta.Tools
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed) return;
+
+			disposed = true;
 
 			if (disposing)
 			{
@@ -95,14 +94,11 @@ namespace Hosta.Tools
 					{
 						var tcs = currentNode.Value;
 						waitingTasks.Remove(currentNode);
-						tcs.SetException(
-							new ObjectDisposedException("AccessQueue has been disposed!"));
+						tcs.SetResult(Error(new DisposedError()));
 						currentNode = currentNode.Next;
 					}
 				}
 			}
-
-			disposed = true;
 		}
 	}
 }

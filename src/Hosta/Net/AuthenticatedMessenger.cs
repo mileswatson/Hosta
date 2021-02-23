@@ -1,6 +1,7 @@
 ﻿using Hosta.Crypto;
 using Hosta.Tools;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -55,8 +56,9 @@ namespace Hosta.Net
 			{
 				return Transcoder.TextFromBytes(message);
 			}
-			catch
+			catch (Exception e)
 			{
+                Debug.WriteLine(e);
 				Dispose();
 				throw new ObjectDisposedException("Attempted post-disposal use!");
 			}

@@ -76,7 +76,8 @@ namespace Hosta.Net
 		public async Task Send(byte[] message)
 		{
 			ThrowIfDisposed();
-			await sendQueue.GetPass().ConfigureAwait(false);
+			var pass = await sendQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) throw new Exception(pass.Error.GetType().ToString());
 			try
 			{
 				var package = crypter.Encrypt(message, sendRatchet.Turn(clicks));
@@ -94,13 +95,15 @@ namespace Hosta.Net
 		public async Task<byte[]> Receive()
 		{
 			ThrowIfDisposed();
-			await receiveQueue.GetPass().ConfigureAwait(false);
+			var pass = await receiveQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) throw new Exception(pass.Error.GetType().ToString());
+			byte[] package;
 			try
 			{
-				var package = await socketMessenger.Receive().ConfigureAwait(false);
-				var result = crypter.Decrypt(package, receiveRatchet.Turn(clicks));
-                if (result) return result.Value;
-                else throw new Exception(result.Error.GetType().ToString());
+				package = await socketMessenger.Receive().ConfigureAwait(false);
+				var decryptResult = crypter.Decrypt(package, receiveRatchet.Turn(clicks));
+				if (decryptResult) return decryptResult.Value;
+				else throw new Exception(decryptResult.Error.GetType().ToString());
 			}
 			finally
 			{

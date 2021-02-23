@@ -1,5 +1,6 @@
 ﻿using Hosta.Tools;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -52,7 +53,8 @@ namespace Hosta.Net
 			ThrowIfDisposed();
 
 			// Enforce order.
-			await readQueue.GetPass().ConfigureAwait(false);
+			var pass = await readQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) throw new Exception(pass.Error.GetType().ToString());
 
 			ThrowIfDisposed();
 			try
@@ -136,7 +138,8 @@ namespace Hosta.Net
 			// Checks length before attempting to send.
 			if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException(nameof(message));
 
-			await writeQueue.GetPass().ConfigureAwait(false);
+			var pass = await writeQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) throw new Exception(pass.Error.GetType().ToString());
 
 			try
 			{
@@ -244,7 +247,6 @@ namespace Hosta.Net
 			if (disposing)
 			{
 				// Dispose of waiting reads and writes.
-
 				if (readQueue != null) readQueue.Dispose();
 				if (writeQueue != null) writeQueue.Dispose();
 

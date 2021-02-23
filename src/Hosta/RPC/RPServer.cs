@@ -3,6 +3,7 @@ using Hosta.Net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,7 +74,10 @@ namespace Hosta.RPC
 						var socketMessenger = await accepted.ConfigureAwait(false);
 						Handshake(socketMessenger);
 					}
-					catch { }
+					catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                    }
 
 					try
 					{
@@ -81,8 +85,9 @@ namespace Hosta.RPC
 						// regardless of whether the previous once failed.
 						accepted = listener.Accept();
 					}
-					catch
+					catch (Exception e)
 					{
+                        Debug.WriteLine(e);
 						break;
 					}
 				}
@@ -111,8 +116,9 @@ namespace Hosta.RPC
 
 				messenger = await authenticator.AuthenticateClient(protectedMessenger).ConfigureAwait(false);
 			}
-			catch
+			catch (Exception e)
 			{
+                Debug.WriteLine(e);
 				// Clean up any mess
 				if (protectedMessenger is not null)
 				{
@@ -143,7 +149,10 @@ namespace Hosta.RPC
 					HandleRequest(messenger, received);
 				}
 			}
-			catch { }
+			catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
 			finally
 			{
 				// Ensure the messenger is disposed of at the end.
@@ -163,8 +172,9 @@ namespace Hosta.RPC
 				var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
 				call = JsonConvert.DeserializeObject<RPCall>(message, settings) ?? throw new Exception();
 			}
-			catch
+			catch (Exception e)
 			{
+                Debug.WriteLine(e);
 				// Fatal exception
 				messenger.Dispose();
 				connections.Remove(messenger);
@@ -188,8 +198,9 @@ namespace Hosta.RPC
 				returnValues = e.Message;
 				success = false;
 			}
-			catch
+			catch (Exception e)
 			{
+                Debug.WriteLine(e);
 				returnValues = "Something went wrong!";
 				success = false;
 			}
@@ -201,8 +212,9 @@ namespace Hosta.RPC
 				string serialized = JsonConvert.SerializeObject(response);
 				await messenger.Send(serialized).ConfigureAwait(false);
 			}
-			catch
+			catch (Exception e)
 			{
+				Debug.WriteLine(e);
 				if (connections.Contains(messenger))
 				{
 					messenger.Dispose();

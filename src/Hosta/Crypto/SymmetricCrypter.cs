@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using RustyResults;
@@ -77,16 +78,15 @@ namespace Hosta.Crypto
 				aes.Decrypt(nonce, cipherblob, tag, plainblob);
 				return plainblob;
 			}
-			catch
+			catch (Exception e)
 			{
+				Debug.WriteLine(e);
 				return Error(new TamperedMessageError());
 			}
 		}
 
-        public struct MessageTooShortError{}
+		public struct MessageTooShortError { }
 
-        public struct TamperedMessageError{}
+		public struct TamperedMessageError { }
 	}
-
-    
 }

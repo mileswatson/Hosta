@@ -2,6 +2,7 @@
 using Hosta.RPC;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -102,10 +103,10 @@ namespace HostaTests.RPC
 		public async Task<string> Call(string proc, string args, PublicIdentity? _1 = null, IPEndPoint? _2 = null)
 		{
 			Random r = new();
-			await Task.Delay(r.Next(10, 500));
+			await Task.Delay(r.Next(10, 200));
 			if (proc == "ValidProc")
 			{
-				if (args == "InvalidArgs")
+				if (args.StartsWith("InvalidArgs"))
 				{
 					throw new RPException("InvalidArgsException");
 				}

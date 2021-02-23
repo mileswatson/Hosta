@@ -2,6 +2,8 @@
 using Hosta.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -13,6 +15,8 @@ namespace HostaTests.Net
 	{
 		public SocketMessenger a;
 		public SocketMessenger b;
+
+		private Random r = new Random();
 
 		public ConnectionTester()
 		{
@@ -43,24 +47,30 @@ namespace HostaTests.Net
 		[TestMethod]
 		public async Task TestLoad()
 		{
+			HashSet<int> numbers = new();
 			var iter = 1000;
-			Echo(iter);
+			for (int i = 0; i < iter; i++)
+			{
+				Echo();
+			}
 			for (int i = 0; i < iter; i++)
 			{
 				_ = a.Send(BitConverter.GetBytes(i));
+				numbers.Add(i);
 			}
 			for (int i = 0; i < iter; i++)
 			{
-				Assert.AreEqual(BitConverter.ToInt32(await a.Receive()), i);
+				var num = BitConverter.ToInt32(await a.Receive());
+				var found = numbers.Remove(num);
+				if (!found) throw new KeyNotFoundException();
 			}
 		}
 
-		public async void Echo(int iter)
+		public async void Echo()
 		{
-			for (int i = 0; i < iter; i++)
-			{
-				_ = b.Send(await b.Receive());
-			}
+			var received = await b.Receive();
+			await Task.Delay(r.Next(10, 500));
+			await b.Send(received);
 		}
 
 		[DataTestMethod]

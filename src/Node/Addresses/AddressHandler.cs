@@ -5,6 +5,7 @@ using Node.Users;
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -147,7 +148,7 @@ namespace Node.Addresses
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);
+				Debug.WriteLine(e);
 				return null;
 			}
 
@@ -157,8 +158,9 @@ namespace Node.Addresses
 				{
 					await messenger.InformAddress(port);
 				}
-				catch
+				catch (Exception e)
 				{
+                    Debug.WriteLine(e);
 				}
 			}
 

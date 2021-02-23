@@ -52,7 +52,8 @@ namespace Hosta.Net
 		{
 			ThrowIfDisposed();
 
-			await acceptQueue.GetPass().ConfigureAwait(false);
+			var pass = await acceptQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) throw new Exception(pass.Error.GetType().ToString());
 			ThrowIfDisposed();
 
 			var tcs = new TaskCompletionSource<Socket>();
