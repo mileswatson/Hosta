@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hosta", "Hosta\Hosta.csproj", "{122738E1-EB26-4CD2-809F-4448E1A28D33}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Program", "Program\Program.csproj", "{620BDBD2-91A8-4937-997F-BAB097435240}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HostaTests", "HostaTests\HostaTests.csproj", "{9856F930-01C0-425E-8BEF-68A9076E16F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Node", "Node\Node.csproj", "{DC72D040-46AC-419D-9531-39EF8B68AEFA}"

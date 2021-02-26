@@ -23,7 +23,7 @@ namespace HostaTests.Net
 
 			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
-			var socket1 = server.Accept().Result;
+			var socket1 = server.Accept().Result.Value;
 			var socket2 = connected.Result;
 
 			var a = Protector.Protect(socket1, false);

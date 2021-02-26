@@ -69,27 +69,13 @@ namespace Hosta.RPC
 				await Task.WhenAny(accepted, timeout).ConfigureAwait(false);
 				if (accepted.IsCompleted)
 				{
-					try
-					{
-						var socketMessenger = await accepted.ConfigureAwait(false);
-						Handshake(socketMessenger);
-					}
-					catch (Exception e)
-					{
-						Debug.WriteLine(e);
-					}
+					var result = await accepted.ConfigureAwait(false);
+					if (result) Handshake(result.Value);
+					else Debug.WriteLine(result.Error.GetType().ToString());
 
-					try
-					{
-						// Always ensure to get accept a new connection,
-						// regardless of whether the previous once failed.
-						accepted = listener.Accept();
-					}
-					catch (Exception e)
-					{
-						Debug.WriteLine(e);
-						break;
-					}
+					// Always ensure to get accept a new connection,
+					// regardless of whether the previous once failed.
+					accepted = listener.Accept();
 				}
 				cts.Cancel();
 			}

@@ -26,7 +26,7 @@ namespace HostaTests.Net
 
 			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
-			a = server.Accept().Result;
+			a = server.Accept().Result.Value;
 
 			b = connected.Result;
 		}
