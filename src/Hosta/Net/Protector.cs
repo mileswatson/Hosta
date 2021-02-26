@@ -21,11 +21,11 @@ namespace Hosta.Net
 			var exchanger = new KeyExchanger();
 			var sent = socketMessenger.Send(exchanger.Token);
 			var token = await socketMessenger.Receive().ConfigureAwait(false);
-            if (token.IsError) throw new Exception(token.Error.GetType().ToString());
+			if (token.IsError) throw new Exception(token.Error.GetType().ToString());
 			var key = exchanger.KeyFromToken(token.Value);
-            
+
 			var result = await sent;
-            if (result.IsError) throw new Exception(result.Error.GetType().ToString());
+			if (result.IsError) throw new Exception(result.Error.GetType().ToString());
 
 			// Send test data.
 			var protectedMessenger = new ProtectedMessenger(socketMessenger, key, initiator);

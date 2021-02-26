@@ -75,9 +75,9 @@ namespace Hosta.RPC
 						Handshake(socketMessenger);
 					}
 					catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                    }
+					{
+						Debug.WriteLine(e);
+					}
 
 					try
 					{
@@ -87,7 +87,7 @@ namespace Hosta.RPC
 					}
 					catch (Exception e)
 					{
-                        Debug.WriteLine(e);
+						Debug.WriteLine(e);
 						break;
 					}
 				}
@@ -118,7 +118,7 @@ namespace Hosta.RPC
 			}
 			catch (Exception e)
 			{
-                Debug.WriteLine(e);
+				Debug.WriteLine(e);
 				// Clean up any mess
 				if (protectedMessenger is not null)
 				{
@@ -150,9 +150,9 @@ namespace Hosta.RPC
 				}
 			}
 			catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
+			{
+				Debug.WriteLine(e);
+			}
 			finally
 			{
 				// Ensure the messenger is disposed of at the end.
@@ -174,7 +174,7 @@ namespace Hosta.RPC
 			}
 			catch (Exception e)
 			{
-                Debug.WriteLine(e);
+				Debug.WriteLine(e);
 				// Fatal exception
 				messenger.Dispose();
 				connections.Remove(messenger);
@@ -200,7 +200,7 @@ namespace Hosta.RPC
 			}
 			catch (Exception e)
 			{
-                Debug.WriteLine(e);
+				Debug.WriteLine(e);
 				returnValues = "Something went wrong!";
 				success = false;
 			}

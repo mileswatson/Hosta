@@ -5,7 +5,7 @@ namespace Node
 {
 	internal class Program
 	{
-        private static Node? node;
+		private static Node? node;
 
 		/// <summary>
 		/// Program entrypoint.

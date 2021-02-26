@@ -82,7 +82,7 @@ namespace Hosta.Net
 			{
 				var package = crypter.Encrypt(message, sendRatchet.Turn(clicks));
 				var sent = await socketMessenger.Send(package).ConfigureAwait(false);
-                if (sent.IsError) throw new Exception(sent.Error.GetType().ToString());
+				if (sent.IsError) throw new Exception(sent.Error.GetType().ToString());
 			}
 			finally
 			{
@@ -101,7 +101,7 @@ namespace Hosta.Net
 			try
 			{
 				var received = await socketMessenger.Receive().ConfigureAwait(false);
-                if (received.IsError) throw new Exception(received.Error.GetType().ToString());
+				if (received.IsError) throw new Exception(received.Error.GetType().ToString());
 
 				var decryptResult = crypter.Decrypt(received.Value, receiveRatchet.Turn(clicks));
 				if (decryptResult) return decryptResult.Value;

@@ -59,15 +59,15 @@ namespace Hosta.Crypto
 		public static Result<PrivateIdentity, CryptographicError> Import(byte[] source)
 		{
 			var privateKey = ECDsa.Create(ECCurve.NamedCurves.nistP521);
-            try 
-            {
-                privateKey.ImportECPrivateKey(source, out int _);
-            }
+			try
+			{
+				privateKey.ImportECPrivateKey(source, out int _);
+			}
 			catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                return Error(new CryptographicError());
-            }
+			{
+				Debug.WriteLine(e);
+				return Error(new CryptographicError());
+			}
 			return new PrivateIdentity(privateKey);
 		}
 
@@ -79,6 +79,6 @@ namespace Hosta.Crypto
 			return identity.privateKey.ExportECPrivateKey();
 		}
 
-        public struct CryptographicError {}
+		public struct CryptographicError { }
 	}
 }

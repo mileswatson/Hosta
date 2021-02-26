@@ -78,14 +78,15 @@ namespace Node
 			}
 
 			// Otherwise, attempt to load the identity from the file.
-            var hex = await File.ReadAllTextAsync(file);
-            var importedIdentity = PrivateIdentity.Import(Transcoder.BytesFromHex(hex));
-            if (importedIdentity.IsError) {
-                Console.WriteLine($"Failed to load identity at {file}.");
-                throw new Exception(importedIdentity.Error.GetType().ToString());
-            }
-            Console.WriteLine($"Found identity {importedIdentity.Value.ID} at {file}, loaded successfully.");
-            return importedIdentity.Value;
+			var hex = await File.ReadAllTextAsync(file);
+			var importedIdentity = PrivateIdentity.Import(Transcoder.BytesFromHex(hex));
+			if (importedIdentity.IsError)
+			{
+				Console.WriteLine($"Failed to load identity at {file}.");
+				throw new Exception(importedIdentity.Error.GetType().ToString());
+			}
+			Console.WriteLine($"Found identity {importedIdentity.Value.ID} at {file}, loaded successfully.");
+			return importedIdentity.Value;
 
 		}
 
@@ -104,8 +105,8 @@ namespace Node
 					// The IP address of the device on the LAN
 					var hostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
 					return hostEntry.AddressList
-                        .Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        .FirstOrDefault() ?? IPAddress.Loopback;
+						.Where(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+						.FirstOrDefault() ?? IPAddress.Loopback;
 
 				default:
 					throw new Exception("Invalid binding!");

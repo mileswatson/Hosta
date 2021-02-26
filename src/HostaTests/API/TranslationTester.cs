@@ -159,8 +159,8 @@ namespace HostaTests.API
 
 		public override Task InformAddress(int port, IPAddress? address, PublicIdentity? client)
 		{
-            if (address is null) throw new ArgumentNullException(nameof(client));
-            if (client is null) throw new ArgumentNullException(nameof(address));
+			if (address is null) throw new ArgumentNullException(nameof(client));
+			if (client is null) throw new ArgumentNullException(nameof(address));
 			addresses[client.ID] = new AddressInfo { IP = address.ToString(), Port = port };
 			return Task.CompletedTask;
 		}

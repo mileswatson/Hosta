@@ -58,7 +58,7 @@ namespace Hosta.Net
 			}
 			catch (Exception e)
 			{
-                Debug.WriteLine(e);
+				Debug.WriteLine(e);
 				Dispose();
 				throw new ObjectDisposedException("Attempted post-disposal use!");
 			}

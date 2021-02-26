@@ -59,12 +59,12 @@ namespace Hosta.Net
 			{
 				// Read the length from the stream
 				var lengthBytes = await ReadUntilDone(4);
-                
-                if (lengthBytes.IsError)
-                {
-                    Dispose();
-                    return Error(new ConnectionError());
-                }
+
+				if (lengthBytes.IsError)
+				{
+					Dispose();
+					return Error(new ConnectionError());
+				}
 
 				// Convert the length to an integer and check that it's valid.
 				int length = BitConverter.ToInt32(lengthBytes.Value, 0);
@@ -73,11 +73,11 @@ namespace Hosta.Net
 				// Read the message from the stream, and return it
 				var message = await ReadUntilDone(length).ConfigureAwait(false);
 
-                if (message.IsError)
-                {
-                    Dispose();
-                    return Error(new ConnectionError());
-                }
+				if (message.IsError)
+				{
+					Dispose();
+					return Error(new ConnectionError());
+				}
 
 				return message.Value;
 			}
@@ -101,9 +101,9 @@ namespace Hosta.Net
 			while (offset < buffer.Length)
 			{
 				var result = await ReadIntoBuffer(buffer, offset).ConfigureAwait(false);
-                if (result.IsError) return Error();
+				if (result.IsError) return Error();
 
-                var numBytes = result.Value;
+				var numBytes = result.Value;
 				if (numBytes == 0) return Error();
 
 				offset += numBytes;
@@ -118,37 +118,37 @@ namespace Hosta.Net
 		/// </summary>
 		private Task<Result<int>> ReadIntoBuffer(byte[] buffer, int offset)
 		{
-            try
-            {
-                var tcs = new TaskCompletionSource<Result<int>>();
+			try
+			{
+				var tcs = new TaskCompletionSource<Result<int>>();
 
-                // Read data into fixed length buffer.
-                socket.BeginReceive(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
-                {
-                    try
-                    {
-                        var numBytesRead = socket.EndReceive(ar);
-                        tcs.SetResult(numBytesRead);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        tcs.SetResult(Error());
-                    }
-                }, null);
-                return tcs.Task;
-            }
+				// Read data into fixed length buffer.
+				socket.BeginReceive(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
+				{
+					try
+					{
+						var numBytesRead = socket.EndReceive(ar);
+						tcs.SetResult(numBytesRead);
+					}
+					catch (Exception e)
+					{
+						Debug.WriteLine(e);
+						tcs.SetResult(Error());
+					}
+				}, null);
+				return tcs.Task;
+			}
 			catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                return Task.FromResult<Result<int>>(Error());
-            }
+			{
+				Debug.WriteLine(e);
+				return Task.FromResult<Result<int>>(Error());
+			}
 		}
 
-        /// <summary>
-        /// Asynchronously sends a message over a TCP stream.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">If the message length is <= 0 or >= MaxLength.</exception>
+		/// <summary>
+		/// Asynchronously sends a message over a TCP stream.
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException">If the message length is <= 0 or >= MaxLength.</exception>
 		public async Task<Status<ConnectionError, DisposedError>> Send(byte[] message)
 		{
 			if (disposed) return Error(new DisposedError());
@@ -167,7 +167,7 @@ namespace Hosta.Net
 
 				// Write the message to the stream
 				await WriteUntilDone(message).ConfigureAwait(false);
-                return Ok();
+				return Ok();
 			}
 			finally
 			{
@@ -183,10 +183,10 @@ namespace Hosta.Net
 			while (offset < buffer.Length)
 			{
 				var numBytes = await WriteFromBuffer(buffer, offset).ConfigureAwait(false);
-                if (numBytes.IsError) return Error();
+				if (numBytes.IsError) return Error();
 				offset += numBytes.Value;
 			}
-            return Ok();
+			return Ok();
 		}
 
 		/// <summary>
@@ -194,32 +194,32 @@ namespace Hosta.Net
 		/// </summary>
 		private Task<Result<int>> WriteFromBuffer(byte[] buffer, int offset)
 		{
-            try 
-            {
-                var tcs = new TaskCompletionSource<Result<int>>();
+			try
+			{
+				var tcs = new TaskCompletionSource<Result<int>>();
 
-                // Read data into fixed length buffer.
-                socket.BeginSend(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
-                {
-                    try
-                    {
-                        var numBytesWritten = socket.EndSend(ar);
-                        tcs.SetResult(numBytesWritten);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine(e);
-                        tcs.SetResult(Error());
-                    }
-                }, null);
+				// Read data into fixed length buffer.
+				socket.BeginSend(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
+				{
+					try
+					{
+						var numBytesWritten = socket.EndSend(ar);
+						tcs.SetResult(numBytesWritten);
+					}
+					catch (Exception e)
+					{
+						Debug.WriteLine(e);
+						tcs.SetResult(Error());
+					}
+				}, null);
 
-                return tcs.Task;
-            }
+				return tcs.Task;
+			}
 			catch (Exception e)
-            {
-                Debug.WriteLine(e);
-                return Task.FromResult<Result<int>>(Error());
-            }
+			{
+				Debug.WriteLine(e);
+				return Task.FromResult<Result<int>>(Error());
+			}
 		}
 
 		/// <summary>
@@ -250,8 +250,8 @@ namespace Hosta.Net
 			return tcs.Task;
 		}
 
-        public struct DisposedError {}
-        public struct ConnectionError {}
+		public struct DisposedError { }
+		public struct ConnectionError { }
 
 		//// Implements IDisposable
 
