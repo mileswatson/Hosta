@@ -1,8 +1,11 @@
-﻿using Hosta.Tools;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Hosta.Tools;
+using RustyResults;
+using static RustyResults.Helpers;
 
 namespace Hosta.Net
 {
@@ -31,15 +34,12 @@ namespace Hosta.Net
 		/// </summary>
 		private const int MaxLength = 1 << 16;
 
-		public IPEndPoint RemoteEndPoint
-		{
-			get => socket.RemoteEndPoint as IPEndPoint ?? throw new Exception("Remote endpoint was null!");
-		}
+		public IPEndPoint RemoteEndPoint => socket.RemoteEndPoint as IPEndPoint ?? throw new NullReferenceException();
 
 		/// <summary>
 		/// Constructs a new SocketMessenger from a connected socket.
 		/// </summary>
-		public SocketMessenger(Socket connectedSocket)
+		internal SocketMessenger(Socket connectedSocket)
 		{
 			socket = connectedSocket;
 		}
@@ -47,33 +47,39 @@ namespace Hosta.Net
 		/// <summary>
 		/// An APM to TAP wrapper for reading a message from the stream.
 		/// </summary>
-		public async Task<byte[]> Receive()
+		public async Task<Result<byte[], ConnectionError, DisposedError>> Receive()
 		{
-			ThrowIfDisposed();
+			if (disposed) return Error(new DisposedError());
 
 			// Enforce order.
-			await readQueue.GetPass().ConfigureAwait(false);
+			var pass = await readQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) return Error(new DisposedError());
 
-			ThrowIfDisposed();
 			try
 			{
 				// Read the length from the stream
 				var lengthBytes = await ReadUntilDone(4);
 
+				if (lengthBytes.IsError)
+				{
+					Dispose();
+					return Error(new ConnectionError());
+				}
+
 				// Convert the length to an integer and check that it's valid.
-				int length = BitConverter.ToInt32(lengthBytes, 0);
+				int length = BitConverter.ToInt32(lengthBytes.Value, 0);
 				if (length <= 0 || length > MaxLength) throw new Exception("Message was an invalid length!");
 
 				// Read the message from the stream, and return it
 				var message = await ReadUntilDone(length).ConfigureAwait(false);
 
-				return message;
-			}
-			catch
-			{
-				// Any exception is fatal.
-				Dispose();
-				throw;
+				if (message.IsError)
+				{
+					Dispose();
+					return Error(new ConnectionError());
+				}
+
+				return message.Value;
 			}
 			finally
 			{
@@ -84,7 +90,7 @@ namespace Hosta.Net
 		/// <summary>
 		/// Reads the given number of bytes into a buffer.
 		/// </summary>
-		private async Task<byte[]> ReadUntilDone(int length)
+		private async Task<Result<byte[]>> ReadUntilDone(int length)
 		{
 			// Create a buffer to store the result
 			var buffer = new byte[length];
@@ -94,8 +100,12 @@ namespace Hosta.Net
 			var offset = 0;
 			while (offset < buffer.Length)
 			{
-				var numBytes = await ReadIntoBuffer(buffer, offset).ConfigureAwait(false);
-				if (numBytes == 0) throw new Exception("Connection was closed.");
+				var result = await ReadIntoBuffer(buffer, offset).ConfigureAwait(false);
+				if (result.IsError) return Error();
+
+				var numBytes = result.Value;
+				if (numBytes == 0) return Error();
+
 				offset += numBytes;
 			}
 
@@ -106,37 +116,48 @@ namespace Hosta.Net
 		/// <summary>
 		/// A TAP to APM wrapper for reading a message from a stream.
 		/// </summary>
-		private Task<int> ReadIntoBuffer(byte[] buffer, int offset)
+		private Task<Result<int>> ReadIntoBuffer(byte[] buffer, int offset)
 		{
-			var tcs = new TaskCompletionSource<int>();
-
-			// Read data into fixed length buffer.
-			socket.BeginReceive(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
+			try
 			{
-				try
+				var tcs = new TaskCompletionSource<Result<int>>();
+
+				// Read data into fixed length buffer.
+				socket.BeginReceive(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
 				{
-					var numBytesRead = socket.EndReceive(ar);
-					tcs.SetResult(numBytesRead);
-				}
-				catch (Exception e)
-				{
-					tcs.SetException(e);
-				}
-			}, null);
-			return tcs.Task;
+					try
+					{
+						var numBytesRead = socket.EndReceive(ar);
+						tcs.SetResult(numBytesRead);
+					}
+					catch (Exception e)
+					{
+						Debug.WriteLine(e);
+						tcs.SetResult(Error());
+					}
+				}, null);
+				return tcs.Task;
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine(e);
+				return Task.FromResult<Result<int>>(Error());
+			}
 		}
 
 		/// <summary>
 		/// Asynchronously sends a message over a TCP stream.
 		/// </summary>
-		public async Task Send(byte[] message)
+		/// <exception cref="ArgumentOutOfRangeException">If the message length is <= 0 or >= MaxLength.</exception>
+		public async Task<Status<ConnectionError, DisposedError>> Send(byte[] message)
 		{
-			ThrowIfDisposed();
+			if (disposed) return Error(new DisposedError());
 
 			// Checks length before attempting to send.
 			if (message.Length <= 0 || message.Length > MaxLength) throw new ArgumentOutOfRangeException(nameof(message));
 
-			await writeQueue.GetPass().ConfigureAwait(false);
+			var pass = await writeQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) return Error(new DisposedError());
 
 			try
 			{
@@ -146,12 +167,7 @@ namespace Hosta.Net
 
 				// Write the message to the stream
 				await WriteUntilDone(message).ConfigureAwait(false);
-			}
-			catch
-			{
-				// Any exception is fatal.
-				Dispose();
-				throw;
+				return Ok();
 			}
 			finally
 			{
@@ -159,7 +175,7 @@ namespace Hosta.Net
 			}
 		}
 
-		private async Task WriteUntilDone(byte[] buffer)
+		private async Task<Status> WriteUntilDone(byte[] buffer)
 		{
 			// Reading the full message may require multiple calls, so store
 			// an offset to keep track of the number of bytes read.
@@ -167,31 +183,43 @@ namespace Hosta.Net
 			while (offset < buffer.Length)
 			{
 				var numBytes = await WriteFromBuffer(buffer, offset).ConfigureAwait(false);
-				offset += numBytes;
+				if (numBytes.IsError) return Error();
+				offset += numBytes.Value;
 			}
+			return Ok();
 		}
 
 		/// <summary>
 		/// A TAP to APM wrapper for reading a message from a stream.
 		/// </summary>
-		private Task<int> WriteFromBuffer(byte[] buffer, int offset)
+		private Task<Result<int>> WriteFromBuffer(byte[] buffer, int offset)
 		{
-			var tcs = new TaskCompletionSource<int>();
-
-			// Read data into fixed length buffer.
-			socket.BeginSend(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
+			try
 			{
-				try
+				var tcs = new TaskCompletionSource<Result<int>>();
+
+				// Read data into fixed length buffer.
+				socket.BeginSend(buffer, offset, buffer.Length - offset, SocketFlags.None, ar =>
 				{
-					var numBytesWritten = socket.EndSend(ar);
-					tcs.SetResult(numBytesWritten);
-				}
-				catch (Exception e)
-				{
-					tcs.SetException(e);
-				}
-			}, null);
-			return tcs.Task;
+					try
+					{
+						var numBytesWritten = socket.EndSend(ar);
+						tcs.SetResult(numBytesWritten);
+					}
+					catch (Exception e)
+					{
+						Debug.WriteLine(e);
+						tcs.SetResult(Error());
+					}
+				}, null);
+
+				return tcs.Task;
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine(e);
+				return Task.FromResult<Result<int>>(Error());
+			}
 		}
 
 		/// <summary>
@@ -222,6 +250,9 @@ namespace Hosta.Net
 			return tcs.Task;
 		}
 
+		public struct DisposedError { }
+		public struct ConnectionError { }
+
 		//// Implements IDisposable
 
 		private bool disposed = false;
@@ -244,7 +275,6 @@ namespace Hosta.Net
 			if (disposing)
 			{
 				// Dispose of waiting reads and writes.
-
 				if (readQueue != null) readQueue.Dispose();
 				if (writeQueue != null) writeQueue.Dispose();
 

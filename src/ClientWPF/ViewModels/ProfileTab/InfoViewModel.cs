@@ -33,7 +33,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 		public InfoViewModel(Action<Profile> OnEdit)
 		{
 			Refresh = new RelayCommand((object? _) => Update(true));
-			Profile = new ProfileViewModel(Resources!.Self);
+			Profile = new ProfileViewModel(Resources.Self);
 			StartEditing = new RelayCommand((object? _) => OnEdit(Profile.Profile));
 
 			var menuItems = new List<ContextMenuItem<PostViewModel>>
@@ -43,7 +43,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 					if (p is null) return;
 					try
 					{
-						await Resources!.RemovePost(p.ID);
+						await Resources.RemovePost(p.ID);
 						Env.Alert("Post removed.");
 						Update(false);
 					}
@@ -58,7 +58,7 @@ namespace ClientWPF.ViewModels.ProfileTab
 				})
 			};
 
-			_feed = new PostFeedViewModel(Resources!.Self, menuItems);
+			_feed = new PostFeedViewModel(Resources.Self, menuItems);
 		}
 
 		public override Task UpdateAsync(bool force)

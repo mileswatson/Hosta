@@ -3,6 +3,7 @@ using Hosta.Net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,23 +69,13 @@ namespace Hosta.RPC
 				await Task.WhenAny(accepted, timeout).ConfigureAwait(false);
 				if (accepted.IsCompleted)
 				{
-					try
-					{
-						var socketMessenger = await accepted.ConfigureAwait(false);
-						Handshake(socketMessenger);
-					}
-					catch { }
+					var result = await accepted.ConfigureAwait(false);
+					if (result) Handshake(result.Value);
+					else Debug.WriteLine(result.Error.GetType().ToString());
 
-					try
-					{
-						// Always ensure to get accept a new connection,
-						// regardless of whether the previous once failed.
-						accepted = listener.Accept();
-					}
-					catch
-					{
-						break;
-					}
+					// Always ensure to get accept a new connection,
+					// regardless of whether the previous once failed.
+					accepted = listener.Accept();
 				}
 				cts.Cancel();
 			}
@@ -111,8 +102,9 @@ namespace Hosta.RPC
 
 				messenger = await authenticator.AuthenticateClient(protectedMessenger).ConfigureAwait(false);
 			}
-			catch
+			catch (Exception e)
 			{
+				Debug.WriteLine(e);
 				// Clean up any mess
 				if (protectedMessenger is not null)
 				{
@@ -143,7 +135,10 @@ namespace Hosta.RPC
 					HandleRequest(messenger, received);
 				}
 			}
-			catch { }
+			catch (Exception e)
+			{
+				Debug.WriteLine(e);
+			}
 			finally
 			{
 				// Ensure the messenger is disposed of at the end.
@@ -163,8 +158,9 @@ namespace Hosta.RPC
 				var settings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Error };
 				call = JsonConvert.DeserializeObject<RPCall>(message, settings) ?? throw new Exception();
 			}
-			catch
+			catch (Exception e)
 			{
+				Debug.WriteLine(e);
 				// Fatal exception
 				messenger.Dispose();
 				connections.Remove(messenger);
@@ -188,8 +184,9 @@ namespace Hosta.RPC
 				returnValues = e.Message;
 				success = false;
 			}
-			catch
+			catch (Exception e)
 			{
+				Debug.WriteLine(e);
 				returnValues = "Something went wrong!";
 				success = false;
 			}
@@ -201,8 +198,9 @@ namespace Hosta.RPC
 				string serialized = JsonConvert.SerializeObject(response);
 				await messenger.Send(serialized).ConfigureAwait(false);
 			}
-			catch
+			catch (Exception e)
 			{
+				Debug.WriteLine(e);
 				if (connections.Contains(messenger))
 				{
 					messenger.Dispose();

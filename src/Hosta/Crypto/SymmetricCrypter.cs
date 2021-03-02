@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
+using RustyResults;
+using static RustyResults.Helpers;
 
 namespace Hosta.Crypto
 {
@@ -58,10 +61,10 @@ namespace Hosta.Crypto
 		/// <param name="package">The secure package to open.</param>
 		/// <param name="overrideKey">An optional key to override the default key.</param>
 		/// <returns>The decrypted message.</returns>
-		public byte[] Decrypt(byte[] package, byte[]? overrideKey = null)
+		public Result<byte[], MessageTooShortError, TamperedMessageError> Decrypt(byte[] package, byte[]? overrideKey = null)
 		{
 			var messageLength = package.Length - NONCE_SIZE - TAG_SIZE;
-			if (messageLength < 0) throw new Exception("Package too small!");
+			if (messageLength < 0) return Error(new MessageTooShortError());
 
 			var nonce = new ArraySegment<byte>(package, 0, NONCE_SIZE);
 			var tag = new ArraySegment<byte>(package, NONCE_SIZE, TAG_SIZE);
@@ -75,10 +78,15 @@ namespace Hosta.Crypto
 				aes.Decrypt(nonce, cipherblob, tag, plainblob);
 				return plainblob;
 			}
-			catch
+			catch (Exception e)
 			{
-				throw new Exception("Message could not be decrypted!");
+				Debug.WriteLine(e);
+				return Error(new TamperedMessageError());
 			}
 		}
+
+		public struct MessageTooShortError { }
+
+		public struct TamperedMessageError { }
 	}
 }

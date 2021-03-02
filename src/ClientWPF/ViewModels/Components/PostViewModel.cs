@@ -72,7 +72,7 @@ namespace ClientWPF.ViewModels.Components
 		public override async Task UpdateAsync(bool force = false)
 		{
 			Profile.Update(force);
-			var newPost = await Resources!.GetPost(User, ID, force);
+			var newPost = await Resources.GetPost(User, ID, force);
 			if (newPost.Content != Content) Content = newPost.Content;
 			if (newPost.TimePosted != TimePosted) TimePosted = newPost.TimePosted;
 			if (newPost.ImageHash == "") Image = null;

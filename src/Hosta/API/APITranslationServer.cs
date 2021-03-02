@@ -39,7 +39,7 @@ namespace Hosta.API
 		/// <summary>
 		/// Handles an RP call.
 		/// </summary>
-		public async Task<string> Call(string proc, string args, PublicIdentity client, IPEndPoint address)
+		public async Task<string> Call(string proc, string args, PublicIdentity? client, IPEndPoint? address)
 		{
 			if (client is null) throw new Exception("Unknown identity!");
 
@@ -50,7 +50,7 @@ namespace Hosta.API
 				{
 					nameof(AddAddress) => AddAddress(args, client),
 					nameof(GetAddresses) => GetAddresses(args, client),
-					nameof(InformAddress) => InformAddress(args, client, address),
+					nameof(InformAddress) => InformAddress(args, client, address ?? throw new ArgumentNullException(nameof(address))),
 					nameof(GetFriendList) => GetFriendList(client),
 					nameof(RemoveFriend) => RemoveFriend(args, client),
 					nameof(SetFriend) => SetFriend(args, client),

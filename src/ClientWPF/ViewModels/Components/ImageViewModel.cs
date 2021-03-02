@@ -36,7 +36,7 @@ namespace ClientWPF.ViewModels.Components
 		public override async Task UpdateAsync(bool force = false)
 		{
 			if (User == "" || Hash == "") return;
-			var newImage = await Resources!.GetImage(User, Hash, false);
+			var newImage = await Resources.GetImage(User, Hash, false);
 			if (Image != newImage) Image = newImage;
 		}
 	}

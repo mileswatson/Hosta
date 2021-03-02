@@ -18,7 +18,7 @@ namespace HostaTests.Crypto
 		[TestMethod]
 		public void TestImportExport()
 		{
-			var newIdentity = PrivateIdentity.Import(PrivateIdentity.Export(privateIdentity));
+			var newIdentity = PrivateIdentity.Import(PrivateIdentity.Export(privateIdentity)).Value;
 			Assert.AreEqual(privateIdentity.ID, newIdentity.ID);
 		}
 

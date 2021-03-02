@@ -35,14 +35,14 @@ namespace ClientWPF.ViewModels.HomeTab
 
 		public ViewModel()
 		{
-			_feed = new PostFeedViewModel(Resources!.Self, new());
+			_feed = new PostFeedViewModel(Resources.Self, new());
 			Friends = new PeopleViewModel((string id) =>
 			{
 				Feed = new(id, new());
 				Profile = new(id);
 				Update(false);
 			});
-			_profile = new ProfileViewModel(Resources!.Self);
+			_profile = new ProfileViewModel(Resources.Self);
 		}
 
 		public override Task UpdateAsync(bool force)

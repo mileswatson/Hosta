@@ -53,7 +53,12 @@ namespace ClientWPF.ViewModels
 			else
 			{
 				var hex = Transcoder.BytesFromHex(await Env.ReadFile(file));
-				identity = PrivateIdentity.Import(hex);
+				var result = PrivateIdentity.Import(hex);
+                if (result.IsError) {
+                    Env.Alert("Could not load identity!!");
+                    return;
+                }
+                identity = result.Value;
 			}
 
 			APITranslatorClient nodeConnection;
@@ -80,7 +85,7 @@ namespace ClientWPF.ViewModels
 		public void OnDisconnect()
 		{
 			VM = startup;
-			Resources?.Dispose();
+            Resources.Dispose();
 		}
 
 		public override Task UpdateAsync(bool force)

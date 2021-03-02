@@ -1,8 +1,11 @@
 ﻿using Hosta.Tools;
+using RustyResults;
+using static RustyResults.Helpers;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Hosta.Net
 {
@@ -48,14 +51,14 @@ namespace Hosta.Net
 		/// Accepts an incoming connection request.
 		/// </summary>
 		/// <returns>The accepted SocketMessenger.</returns>
-		public async Task<SocketMessenger> Accept()
+		public async Task<Result<SocketMessenger, ConnectionError, DisposedError>> Accept()
 		{
-			ThrowIfDisposed();
+			if (disposed) return Error(new DisposedError());
 
-			await acceptQueue.GetPass().ConfigureAwait(false);
-			ThrowIfDisposed();
+			var pass = await acceptQueue.GetPass().ConfigureAwait(false);
+			if (pass.IsError) return Error(new DisposedError());
 
-			var tcs = new TaskCompletionSource<Socket>();
+			var tcs = new TaskCompletionSource<Result<Socket, ConnectionError>>();
 			try
 			{
 				listener.BeginAccept(
@@ -71,7 +74,8 @@ namespace Hosta.Net
 						}
 						catch (Exception e)
 						{
-							tcs.SetException(e);
+							Debug.WriteLine(e);
+							tcs.SetResult(Error(new ConnectionError()));
 						}
 					}),
 					null
@@ -90,14 +94,18 @@ namespace Hosta.Net
 				} while (true);
 
 				// Attempt to return the result
-				var socket = tcs.Task.Result;
-				return new SocketMessenger(tcs.Task.Result);
+				var result = tcs.Task.Result;
+				if (result.IsError) return Error(new ConnectionError());
+				return new SocketMessenger(result.Value);
 			}
 			finally
 			{
 				acceptQueue.ReturnPass();
 			}
 		}
+
+		public struct DisposedError { }
+		public struct ConnectionError { }
 
 		//// Implements IDisposable
 

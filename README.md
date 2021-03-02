@@ -32,11 +32,11 @@
   <span> · </span>
   <a href="https://github.com/mileswatson/Hosta/wiki/Documentation-📃">Docs</a>
   <span> · </span>
-  <a href="!https://github.com/mileswatson/Hosta/discussions/21">Feature Requests</a>
+  <a href="https://github.com/mileswatson/Hosta/discussions/21">Feature Requests</a>
   <span> · </span>
-  <a href="!https://github.com/mileswatson/Hosta/issues">Bug Reports</a>
+  <a href="https://github.com/mileswatson/Hosta/issues">Bug Reports</a>
   <span> · </span>
-  <a href="!https://github.com/mileswatson/Hosta/discussions/20">Support</a>
+  <a href="https://github.com/mileswatson/Hosta/discussions/20">Support</a>
 </h3>
 
 <h1></h1>
@@ -119,50 +119,3 @@ You must also enter the IP address of your node - if running on the same compute
 ### 3. Update
 
 Currently, the client program must be updated manually - replace the current executable with the executable from the latest `client.zip` release.
-
-# Build and Test
-
-Building and testing is currently only supported on Windows x64 - however, some functionalities may also work on Linux or ARM.
-
-### 1. Install Dependencies
-
-First, install the [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0).
-
-Next, install Docker:
-
- - Linux: Install [Docker Engine](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04) and [Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04#prerequisites)
- - Windows / MacOS: Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
-
-### 2. Clone the repo
-
-`git clone https://github.com/mileswatson/hosta.git`
-
-### 3. Unit Tests
-
-In the root directory of the project (`/Hosta`), run the following command.
-
-`./scripts/test.cmd`
-
-### 4. Build
-
-In the root directory of the project, run the following command.
-
-`./scripts/build.cmd`
-
-### 6. Run
-
-To start the node, run the following commands from the root directory of the project. Replace `YOURPATH` with a path to a folder to store the node data, and `YOURPORT` with a port to bind the server to (12001 recommended).
-
-`docker run -v YOURPATH:/app/data -p YOURPORT:12000 mileswatson/hosta:node-dev`
-
-To start the client, run the following command from the root directory of the project.
-
-`./src/ClientWPF/bin/HostaClient/ClientWPF.exe`
-
-You can append a path to set as the default directory.
-
-### 7. Publish
-
-To publish zip files to the `/publish` directory, run the following command in the root directory of the project.
-
-`./scripts/publish.cmd`

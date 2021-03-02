@@ -2,6 +2,8 @@
 using Hosta.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -14,6 +16,8 @@ namespace HostaTests.Net
 		public SocketMessenger a;
 		public SocketMessenger b;
 
+		private Random r = new Random();
+
 		public ConnectionTester()
 		{
 			var serverEndpoint = new IPEndPoint(IPAddress.Loopback, 12000);
@@ -22,7 +26,7 @@ namespace HostaTests.Net
 
 			var connected = SocketMessenger.CreateAndConnect(serverEndpoint);
 
-			a = server.Accept().Result;
+			a = server.Accept().Result.Value;
 
 			b = connected.Result;
 		}
@@ -34,33 +38,40 @@ namespace HostaTests.Net
 		public async Task TestValid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			var sent = a!.Send(bytes);
-			var message = await b!.Receive();
-			await sent;
-			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message));
+			var sent = a.Send(bytes);
+			var message = await b.Receive();
+			Assert.IsTrue(await sent);
+			Assert.IsTrue(Enumerable.SequenceEqual<byte>(bytes, message.Value));
 		}
 
 		[TestMethod]
 		public async Task TestLoad()
 		{
+			HashSet<int> numbers = new();
 			var iter = 1000;
-			Echo(iter);
 			for (int i = 0; i < iter; i++)
 			{
-				_ = a!.Send(BitConverter.GetBytes(i));
+				Echo();
 			}
 			for (int i = 0; i < iter; i++)
 			{
-				Assert.AreEqual(BitConverter.ToInt32(await a!.Receive()), i);
+				var sent = a.Send(BitConverter.GetBytes(i));
+				Assert.IsTrue(await sent);
+				numbers.Add(i);
+			}
+			for (int i = 0; i < iter; i++)
+			{
+				var num = BitConverter.ToInt32((await a.Receive()).Value);
+				var found = numbers.Remove(num);
+				if (!found) throw new KeyNotFoundException();
 			}
 		}
 
-		public async void Echo(int iter)
+		public async void Echo()
 		{
-			for (int i = 0; i < iter; i++)
-			{
-				_ = b!.Send(await b.Receive());
-			}
+			var received = await b.Receive();
+			await Task.Delay(r.Next(10, 500));
+			await b.Send(received.Value);
 		}
 
 		[DataTestMethod]
@@ -69,14 +80,14 @@ namespace HostaTests.Net
 		public async Task TestInvalid(int length)
 		{
 			var bytes = SecureRandomGenerator.GetBytes(length);
-			await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a!.Send(bytes));
+			await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => a.Send(bytes));
 		}
 
 		[TestCleanup]
 		public void CleanUp()
 		{
-			a!.Dispose();
-			b!.Dispose();
+			a.Dispose();
+			b.Dispose();
 		}
 	}
 }

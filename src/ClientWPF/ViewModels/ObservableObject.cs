@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels
@@ -35,7 +36,10 @@ namespace ClientWPF.ViewModels
 			{
 				await UpdateAsync(force);
 			}
-			catch { }
+			catch (Exception e)
+            { 
+                Debug.WriteLine(e);
+            }
 			finally
 			{
 				if (status == thisStatus) status = UpdateStatus.NotUpdating;

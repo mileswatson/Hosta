@@ -49,7 +49,7 @@ namespace ClientWPF.ViewModels.HomeTab
 			};
 			Self = new FriendViewModel(new FriendInfo
 			{
-				ID = Resources!.Self,
+				ID = Resources.Self,
 				Name = "You",
 				IsFavorite = true,
 			}, new(), clicked);
@@ -64,7 +64,7 @@ namespace ClientWPF.ViewModels.HomeTab
 			if (friend is null) throw new NullReferenceException();
 			try
 			{
-				await Resources!.SetFriend(friend.ID, friend.Name, isFavorite);
+				await Resources.SetFriend(friend.ID, friend.Name, isFavorite);
 				Env.Alert("Changed favorite status.");
 			}
 			catch (APIException e)
@@ -108,7 +108,7 @@ namespace ClientWPF.ViewModels.HomeTab
 
 				try
 				{
-					await Resources!.AddAddress(friend.ID, address, port);
+					await Resources.AddAddress(friend.ID, address, port);
 					window.Close();
 					friend.Click.Execute(friend);
 					Update(true);
@@ -130,7 +130,7 @@ namespace ClientWPF.ViewModels.HomeTab
 			if (friend is null) throw new NullReferenceException();
 			try
 			{
-				await Resources!.RemoveFriend(friend.ID);
+				await Resources.RemoveFriend(friend.ID);
 				Env.Alert("Removed friend.");
 			}
 			catch (APIException e)
@@ -148,7 +148,7 @@ namespace ClientWPF.ViewModels.HomeTab
 		{
 			Self.Update(force);
 
-			var response = await Resources!.GetFriendList();
+			var response = await Resources.GetFriendList();
 
 			response.Sort(Compare);
 

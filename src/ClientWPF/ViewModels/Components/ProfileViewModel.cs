@@ -56,7 +56,7 @@ namespace ClientWPF.ViewModels.Components
 
 		public override async Task UpdateAsync(bool force)
 		{
-			var newProfile = await Resources!.GetProfile(id, force);
+			var newProfile = await Resources.GetProfile(id, force);
 			if (Profile != newProfile) Profile = newProfile;
 			if (Profile.AvatarHash != Image.Hash) Image = new ImageViewModel(id, Profile.AvatarHash);
 			Image.Update(force);

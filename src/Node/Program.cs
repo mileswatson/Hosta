@@ -50,7 +50,7 @@ namespace Node
 		protected static void OnCancel(object? _, ConsoleCancelEventArgs args)
 		{
 			Console.WriteLine("\nHalting server...");
-			node!.Dispose();
+			node?.Dispose();
 			args.Cancel = true;
 		}
 	}

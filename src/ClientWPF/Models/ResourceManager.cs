@@ -190,7 +190,13 @@ namespace ClientWPF.Models
 
 		//// Static
 
-		public static ResourceManager? Resources { get; set; }
+		private static ResourceManager? _resources = null;
+
+		public static ResourceManager Resources
+		{
+			get => _resources ?? throw new NullReferenceException();
+			set => _resources = _resources is null ? value : throw new Exception($"{nameof(Resources)} has already been set!");
+		}
 
 		static ResourceManager()
 		{
@@ -198,7 +204,7 @@ namespace ClientWPF.Models
 			image.BeginInit();
 			image.DecodePixelWidth = 160;
 			image.CacheOption = BitmapCacheOption.OnLoad;
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/Images/default-avatar.png");
+			var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets/Images/default-avatar.png");
 			image.UriSource = new Uri(path, UriKind.Absolute);
 			image.EndInit();
 			DefaultImage = image;

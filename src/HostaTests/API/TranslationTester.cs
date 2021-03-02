@@ -138,13 +138,13 @@ namespace HostaTests.API
 
 		private readonly Dictionary<string, AddressInfo> addresses = new();
 
-		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity _)
+		public override Task AddAddress(Tuple<string, AddressInfo> address, PublicIdentity? _)
 		{
 			addresses[address.Item1] = address.Item2;
 			return Task.CompletedTask;
 		}
 
-		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity _)
+		public override Task<Dictionary<string, AddressInfo>> GetAddresses(List<string> users, PublicIdentity? _)
 		{
 			var response = new Dictionary<string, AddressInfo>();
 			foreach (var user in users)
@@ -157,37 +157,39 @@ namespace HostaTests.API
 			return Task.FromResult(response);
 		}
 
-		public override Task InformAddress(int port, IPAddress address, PublicIdentity client)
+		public override Task InformAddress(int port, IPAddress? address, PublicIdentity? client)
 		{
+			if (address is null) throw new ArgumentNullException(nameof(client));
+			if (client is null) throw new ArgumentNullException(nameof(address));
 			addresses[client.ID] = new AddressInfo { IP = address.ToString(), Port = port };
 			return Task.CompletedTask;
 		}
 
-		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity _)
+		public override Task<List<FriendInfo>> GetFriendList(PublicIdentity? _)
 		{
 			return Task.FromResult(friends.Select(kvp => kvp.Value).ToList());
 		}
 
-		public override Task RemoveFriend(string user, PublicIdentity _)
+		public override Task RemoveFriend(string user, PublicIdentity? _)
 		{
 			friends.Remove(user);
 			return Task.CompletedTask;
 		}
 
-		public override Task SetFriend(FriendInfo info, PublicIdentity _)
+		public override Task SetFriend(FriendInfo info, PublicIdentity? _)
 		{
 			friends[info.ID] = info;
 			return Task.CompletedTask;
 		}
 
-		public override Task<string> AddImage(AddImageRequest request, PublicIdentity _)
+		public override Task<string> AddImage(AddImageRequest request, PublicIdentity? _)
 		{
 			var hash = Transcoder.HexFromBytes(SHA256.HashData(request.Data));
 			images[hash] = request.Data;
 			return Task.FromResult(hash);
 		}
 
-		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity _)
+		public override Task<GetImageResponse> GetImage(string hash, PublicIdentity? _)
 		{
 			return Task.FromResult(new GetImageResponse
 			{
@@ -196,18 +198,18 @@ namespace HostaTests.API
 			});
 		}
 
-		public override Task<List<ImageInfo>> GetImageList(PublicIdentity _)
+		public override Task<List<ImageInfo>> GetImageList(PublicIdentity? _)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override Task RemoveImage(string hash, PublicIdentity _)
+		public override Task RemoveImage(string hash, PublicIdentity? _)
 		{
 			images.Remove(hash);
 			return Task.CompletedTask;
 		}
 
-		public override Task<string> AddPost(AddPostRequest request, PublicIdentity _)
+		public override Task<string> AddPost(AddPostRequest request, PublicIdentity? _)
 		{
 			var id = Transcoder.HexFromBytes(SecureRandomGenerator.GetBytes(32));
 			posts[id] = new GetPostResponse
@@ -219,7 +221,7 @@ namespace HostaTests.API
 			return Task.FromResult(id);
 		}
 
-		public override Task<GetPostResponse> GetPost(string id, PublicIdentity _)
+		public override Task<GetPostResponse> GetPost(string id, PublicIdentity? _)
 		{
 			var request = posts[id];
 			return Task.FromResult(new GetPostResponse
@@ -230,7 +232,7 @@ namespace HostaTests.API
 			});
 		}
 
-		public override Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity _)
+		public override Task<List<PostInfo>> GetPostList(DateTimeOffset start, PublicIdentity? _)
 		{
 			var list = new List<PostInfo>();
 			foreach (var kvp in posts)
@@ -245,18 +247,18 @@ namespace HostaTests.API
 			return Task.FromResult(list);
 		}
 
-		public override Task RemovePost(string id, PublicIdentity _)
+		public override Task RemovePost(string id, PublicIdentity? _)
 		{
 			posts.Remove(id);
 			return Task.CompletedTask;
 		}
 
-		public override Task<GetProfileResponse> GetProfile(PublicIdentity _)
+		public override Task<GetProfileResponse> GetProfile(PublicIdentity? _)
 		{
 			return Task.FromResult(storedProfile);
 		}
 
-		public override Task SetProfile(SetProfileRequest profile, PublicIdentity _)
+		public override Task SetProfile(SetProfileRequest profile, PublicIdentity? _)
 		{
 			storedProfile = new GetProfileResponse
 			{
